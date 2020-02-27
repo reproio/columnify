@@ -1,0 +1,12 @@
+{
+  "Tag":"name=primitives",
+  "Fields":[
+    {"Tag":"name=boolean, type=BOOLEAN"},
+    {"Tag":"name=int,     type=INT32"},
+    {"Tag":"name=long,    type=INT64"},
+    {"Tag":"name=float,   type=FLOAT"},
+    {"Tag":"name=double,  type=DOUBLE"},
+    {"Tag":"name=bytes,   type=BYTE_ARRAY"},
+    {"Tag":"name=string,  type=UTF8"}
+  ]
+}
