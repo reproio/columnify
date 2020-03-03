@@ -2,26 +2,26 @@ package main
 
 import (
 	"flag"
-	"log"
-
 	"github.com/repro/columnify/columnifier"
+	"log"
 )
 
 func main() {
-	schemaType := flag.String("schema-type", "", "")
-	schemaFile := flag.String("schema-file", "", "")
-	dataType := flag.String("data-type", "jsonl", "")
-	dataFiles := flag.String("data-files", "", "") // TODO accept pattern
-	output := flag.String("output", "", "")
+	schemaType := flag.String("schemaType", "", "schema type, [avro|json]")
+	schemaFile := flag.String("schemaFile", "", "path to schema file")
+	dataType := flag.String("dataType", "jsonl", "data type, [jsonl]")
+	output := flag.String("output", "", "path to output file")
 
 	flag.Parse()
+
+	files := flag.Args()
 
 	c, err := columnifier.NewColumnifier(*schemaType, *schemaFile, *dataType, *output)
 	if err != nil {
 		log.Fatalf("Failed to init: %v\n", err)
 	}
 
-	err = c.WriteFromFiles([]string{*dataFiles})
+	err = c.WriteFromFiles(files)
 	if err != nil {
 		log.Fatalf("Failed to write: %v\n", err)
 	}
