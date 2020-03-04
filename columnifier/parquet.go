@@ -2,14 +2,17 @@ package columnifier
 
 import (
 	"fmt"
+	"io/ioutil"
+	"strings"
+
+	customSource "github.com/repro/columnify/parquet/source"
 	"github.com/repro/columnify/schema/sink/parquet"
 	"github.com/repro/columnify/schema/source/avro"
 	"github.com/xitongsys/parquet-go-source/local"
 	"github.com/xitongsys/parquet-go/marshal"
 	"github.com/xitongsys/parquet-go/schema"
+	"github.com/xitongsys/parquet-go/source"
 	"github.com/xitongsys/parquet-go/writer"
-	"io/ioutil"
-	"strings"
 )
 
 type parquetColumnifier struct {
@@ -17,7 +20,7 @@ type parquetColumnifier struct {
 	dt string
 }
 
-func NewParquetColumnifier(st string, sf string, dt string, o string) (*parquetColumnifier, error) {
+func NewParquetColumnifier(st string, sf string, dt string, output string) (*parquetColumnifier, error) {
 	schemaContent, err := ioutil.ReadFile(sf)
 	if err != nil {
 		return nil, err
@@ -43,9 +46,14 @@ func NewParquetColumnifier(st string, sf string, dt string, o string) (*parquetC
 		return nil, fmt.Errorf("unsupported schema type: %s", st)
 	}
 
-	fw, err := local.NewLocalFileWriter(o)
-	if err != nil {
-		return nil, err
+	var fw source.ParquetFile
+	if output != "" {
+		fw, err = local.NewLocalFileWriter(output)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		fw = customSource.NewStdioFile()
 	}
 
 	w, err := writer.NewParquetWriter(fw, nil, 1)

@@ -8,8 +8,8 @@ const (
 )
 
 type Columnifier interface {
-    Write(data []byte) error
-    WriteFromFiles(paths []string) error
+	Write(data []byte) error
+	WriteFromFiles(paths []string) error
 	Flush() error
 }
 

@@ -2,15 +2,29 @@ package main
 
 import (
 	"flag"
-	"github.com/repro/columnify/columnifier"
+	"fmt"
 	"log"
+
+	"github.com/repro/columnify/columnifier"
 )
 
+func printUsage() {
+	_, err := fmt.Fprintf(flag.CommandLine.Output(), "Usage of columnify: columnify [-flags] [input files]\n")
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	flag.PrintDefaults()
+}
+
 func main() {
+	flag.Usage = printUsage
+
 	schemaType := flag.String("schemaType", "", "schema type, [avro|json]")
 	schemaFile := flag.String("schemaFile", "", "path to schema file")
 	dataType := flag.String("dataType", "jsonl", "data type, [jsonl]")
-	output := flag.String("output", "", "path to output file")
+	output := flag.String("output", "", "path to output file; default: stdout")
 
 	flag.Parse()
 
