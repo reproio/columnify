@@ -4,6 +4,7 @@ const (
 	schemaTypeAvro = "avro"
 	schemaTypeJson = "json"
 
+	dataTypeCsv   = "csv"
 	dataTypeJsonl = "jsonl"
 )
 
