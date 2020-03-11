@@ -1,4 +1,4 @@
-package parquet
+package parquetgo
 
 import (
 	"github.com/apache/arrow/go/arrow"

@@ -1,23 +1,75 @@
 package columnifier
 
 import (
+	"encoding/csv"
+	"encoding/json"
 	"fmt"
-	"github.com/apache/arrow/go/arrow"
-	columnifyParquet "github.com/repro/columnify/parquet"
+	columnifyParquet "github.com/repro/columnify/parquetgo"
 	"github.com/repro/columnify/schema/sink/parquet"
 	"github.com/repro/columnify/schema/source/avro"
 	"github.com/xitongsys/parquet-go-source/local"
+	"github.com/xitongsys/parquet-go/marshal"
 	"github.com/xitongsys/parquet-go/schema"
 	"github.com/xitongsys/parquet-go/source"
 	"github.com/xitongsys/parquet-go/writer"
+	"io"
 	"io/ioutil"
 	"strings"
 )
 
+func getFieldNamesFromSchemaHandler(sh *schema.SchemaHandler) ([]string, error) {
+	elems := sh.SchemaElements
+
+	if len(elems) < 2 {
+		return nil, fmt.Errorf("no element is available for format")
+	}
+
+	names := make([]string, 0, len(elems[1:]))
+	for _, e := range elems[1:] {
+		names = append(names, e.Name)
+	}
+
+	return names, nil
+}
+
+func formatCsvToJson(names []string, data []byte) ([]string, error) {
+	reader := csv.NewReader(strings.NewReader(string(data)))
+
+	numFields := len(names)
+	arr := make([]string, 0)
+	for {
+		values, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		if numFields != len(values) {
+			return nil, fmt.Errorf("value is incompleted")
+		}
+
+		e := make(map[string]string, 0)
+		for i, v := range values {
+			e[names[i]] = v
+		}
+
+		marshaled, err := json.Marshal(e)
+		if err != nil {
+			return nil, err
+		}
+
+		arr = append(arr, string(marshaled))
+	}
+	
+	return arr, nil
+}
+
 type parquetColumnifier struct {
 	w  *writer.ParquetWriter
 	dt string
-	s  *arrow.Schema
 }
 
 func NewParquetColumnifier(st string, sf string, dt string, output string) (*parquetColumnifier, error) {
@@ -26,7 +78,6 @@ func NewParquetColumnifier(st string, sf string, dt string, output string) (*par
 		return nil, err
 	}
 
-	var s *arrow.Schema
 	var sh *schema.SchemaHandler
 	switch st {
 	case schemaTypeAvro:
@@ -34,7 +85,6 @@ func NewParquetColumnifier(st string, sf string, dt string, output string) (*par
 		if err != nil {
 			return nil, err
 		}
-		s = arrowSchema.ArrowSchema
 		sh, err = parquet.NewSchemaHandlerFromArrow(*arrowSchema)
 		if err != nil {
 			return nil, err
@@ -65,40 +115,41 @@ func NewParquetColumnifier(st string, sf string, dt string, output string) (*par
 	w.SchemaHandler = sh
 	w.Footer.Schema = append(w.Footer.Schema, sh.SchemaElements...)
 
-	switch dt {
-	case dataTypeJsonl:
-		// w.MarshalFunc = marshal.MarshalJSON
-		w.MarshalFunc = columnifyParquet.MarshalArrow
-	default:
-		return nil, fmt.Errorf("unsupported data type: %s", dt)
-	}
+	// TODO switch marshaler based on data type
+	// NOTE Use JSONL as intermediate representation temporarily
+	w.MarshalFunc = marshal.MarshalJSON
 
 	return &parquetColumnifier{
 		w:  w,
 		dt: dt,
-		s:  s,
 	}, nil
 }
 
 func (c *parquetColumnifier) Write(data []byte) error {
 	switch c.dt {
+	case dataTypeCsv:
+		fieldNames, err := getFieldNamesFromSchemaHandler(c.w.SchemaHandler)
+		if err != nil {
+			return err
+		}
+		jsonArr, err := formatCsvToJson(fieldNames, data)
+		if err != nil {
+			return err
+		}
+		for _, e := range jsonArr {
+			err := c.w.Write(e)
+			if err != nil {
+				return err
+			}
+		}
+
 	case dataTypeJsonl:
-		r, err := FromJsonlToArrow(c.s, strings.Split(string(data), "\n"))
-		if err != nil {
-			return err
-		}
-		err = c.w.Write(r)
-		if err != nil {
-			return err
-		}
-		/*
 		for _, j := range strings.Split(string(data), "\n") {
 			err := c.w.Write(j)
 			if err != nil {
 				return err
 			}
 		}
-		*/
 	default:
 		return fmt.Errorf("unsupported data type: %s", c.dt)
 	}
