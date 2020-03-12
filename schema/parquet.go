@@ -1,17 +1,16 @@
-package parquet
+package schema
 
 import (
 	"fmt"
 
+	"github.com/repro/columnify/intermediate"
+
 	"github.com/apache/arrow/go/arrow"
-	"github.com/repro/columnify/schema/intermediate"
 	"github.com/xitongsys/parquet-go/common"
 	"github.com/xitongsys/parquet-go/parquet"
 	"github.com/xitongsys/parquet-go/schema"
 	"github.com/xitongsys/parquet-go/types"
 )
-
-var ErroInvalidSchemaConversion = fmt.Errorf("invalid schema conversion")
 
 var (
 	arrowToParquet = map[arrow.DataType]string{
@@ -72,7 +71,7 @@ func NewSchemaHandlerFromArrow(s intermediate.IntermediateSchema) (*schema.Schem
 			tags = append(tags, &tag)
 
 		} else {
-			return nil, ErroInvalidSchemaConversion
+			return nil, fmt.Errorf("invalid schema conversion")
 		}
 	}
 

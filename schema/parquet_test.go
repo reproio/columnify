@@ -1,10 +1,10 @@
-package parquet
+package schema
 
 import (
 	"reflect"
 	"testing"
 
-	"github.com/repro/columnify/schema/intermediate"
+	"github.com/repro/columnify/intermediate"
 
 	"github.com/apache/arrow/go/arrow"
 	"github.com/xitongsys/parquet-go/parquet"

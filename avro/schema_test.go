@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func areSameRecordType(l, r recordType) bool {
+func areSameRecordType(l, r RecordType) bool {
 	ll, err := json.Marshal(l)
 	if err != nil {
 		return false
@@ -22,7 +22,7 @@ func areSameRecordType(l, r recordType) bool {
 func TestUnmarshal(t *testing.T) {
 	cases := []struct {
 		schema   string
-		expected recordType
+		expected RecordType
 		err      error
 	}{
 		{
@@ -37,25 +37,25 @@ func TestUnmarshal(t *testing.T) {
   ]
 }
 `,
-			expected: recordType{
+			expected: RecordType{
 				Name:    "LongList",
 				Aliases: []string{"LinkedLongs"},
-				Fields: []recordField{
+				Fields: []RecordField{
 					{
 						Name: "value",
-						Type: avroType{
-							primitiveType: toPrimitiveType("long"),
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("long"),
 						},
 					},
 					{
 						Name: "next",
-						Type: avroType{
-							unionType: &unionType{
+						Type: AvroType{
+							UnionType: &UnionType{
 								{
-									primitiveType: toPrimitiveType("null"),
+									PrimitiveType: ToPrimitiveType("null"),
 								},
 								{
-									definedType: toDefinedType("LongList"),
+									DefinedType: ToDefinedType("LongList"),
 								},
 							},
 						},
@@ -67,7 +67,7 @@ func TestUnmarshal(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		var actual recordType
+		var actual RecordType
 		err := json.Unmarshal([]byte(c.schema), &actual)
 
 		if err != c.err {

@@ -6,6 +6,7 @@ const (
 
 	dataTypeCsv   = "csv"
 	dataTypeJsonl = "jsonl"
+	dataTypeLtsv  = "ltsv"
 )
 
 type Columnifier interface {

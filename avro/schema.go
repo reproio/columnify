@@ -55,27 +55,27 @@ var (
 	}
 )
 
-type primitiveType string
+type PrimitiveType string
 
-type recordType struct {
+type RecordType struct {
 	Type      string        `json:"type"` // MUST be "record"
 	Name      string        `json:"name"`
 	Namespace string        `json:"namespace"`
 	Doc       string        `json:"doc"`
 	Aliases   []string      `json:"aliases"`
-	Fields    []recordField `json:"fields"`
+	Fields    []RecordField `json:"fields"`
 }
 
-type recordField struct {
+type RecordField struct {
 	Name    string   `json:"name"`
 	Doc     string   `json:"doc"`
-	Type    avroType `json:"type"`
+	Type    AvroType `json:"type"`
 	Default string   `json:"default"`
 	Order   string   `json:"order"`
 	Aliases []string `json:"aliases"`
 }
 
-type enumsType struct {
+type EnumsType struct {
 	Type      string   `json:"type"` // MUST be "enum"
 	Name      string   `json:"name"`
 	Namespace string   `json:"namespace"`
@@ -84,19 +84,19 @@ type enumsType struct {
 	Symbols   []string `json:"symbols"`
 }
 
-type arrayType struct {
+type ArrayType struct {
 	Type  string   `json:"type"` // MUST be "array"
-	Items avroType `json:"items"`
+	Items AvroType `json:"items"`
 }
 
-type mapsType struct {
+type MapsType struct {
 	Type   string   `json:"type"` // MUST be "map"
-	Values avroType `json:"values"`
+	Values AvroType `json:"values"`
 }
 
-type unionType []avroType
+type UnionType []AvroType
 
-type fixedType struct {
+type FixedType struct {
 	Type      string   `json:"type"` // MUST be "fixed"
 	Name      string   `json:"name"`
 	Namespace string   `json:"namespace"`
@@ -104,7 +104,7 @@ type fixedType struct {
 	Size      int64    `json:"size"`
 }
 
-type logicalType struct {
+type LogicalType struct {
 	Type        string `json:"type"` // MUST follow spec
 	LogicalType string `json:"logicalType"`
 
@@ -113,98 +113,98 @@ type logicalType struct {
 	Precision int64 `json:"precision"`
 }
 
-type definedType string // a type name already defined before
+type DefinedType string // a type name already defined before
 
-type avroType struct {
-	primitiveType *primitiveType
-	recordType    *recordType
-	enumsType     *enumsType
-	arrayType     *arrayType
-	mapsType      *mapsType
-	unionType     *unionType
-	fixedType     *fixedType
-	logicalType   *logicalType
-	definedType   *definedType
+type AvroType struct {
+	PrimitiveType *PrimitiveType
+	RecordType    *RecordType
+	EnumsType     *EnumsType
+	ArrayType     *ArrayType
+	MapsType      *MapsType
+	UnionType     *UnionType
+	FixedType     *FixedType
+	LogicalType   *LogicalType
+	DefinedType   *DefinedType
 }
 
-func (t *avroType) UnmarshalJSON(b []byte) error {
-	var pt primitiveType
+func (t *AvroType) UnmarshalJSON(b []byte) error {
+	var pt PrimitiveType
 	if err := json.Unmarshal(b, &pt); err == nil {
 		if IsValidPrimitiveType(pt) {
-			t.primitiveType = &pt
+			t.PrimitiveType = &pt
 			return nil
 		}
 	}
 
-	var rt recordType
+	var rt RecordType
 	if err := json.Unmarshal(b, &rt); err == nil {
 		if rt.Type != AvroComplexType_Record {
 			return ErrInvalidAvroSchema
 		}
-		t.recordType = &rt
+		t.RecordType = &rt
 		return nil
 	}
 
-	var et enumsType
+	var et EnumsType
 	if err := json.Unmarshal(b, &et); err == nil {
 		if et.Type == AvroComplexType_Enums {
-			t.enumsType = &et
+			t.EnumsType = &et
 			return nil
 		}
 	}
 
-	var at arrayType
+	var at ArrayType
 	if err := json.Unmarshal(b, &at); err == nil {
 		if at.Type == AvroComplexType_Array {
-			t.arrayType = &at
+			t.ArrayType = &at
 			return nil
 		}
 	}
 
-	var mt mapsType
+	var mt MapsType
 	if err := json.Unmarshal(b, &mt); err == nil {
 		if mt.Type == AvroComplexType_Maps {
-			t.mapsType = &mt
+			t.MapsType = &mt
 			return nil
 		}
 	}
 
-	var ut unionType
+	var ut UnionType
 	if err := json.Unmarshal(b, &ut); err == nil {
-		t.unionType = &ut
+		t.UnionType = &ut
 		return nil
 	}
 
-	var ft fixedType
+	var ft FixedType
 	if err := json.Unmarshal(b, &ft); err == nil {
 		if ft.Type == AvroComplexType_Fixed {
-			t.fixedType = &ft
+			t.FixedType = &ft
 			return nil
 		}
 	}
 
-	var lt logicalType
+	var lt LogicalType
 	if err := json.Unmarshal(b, &lt); err == nil {
 		if IsValidLogicalType(lt) {
-			t.logicalType = &lt
+			t.LogicalType = &lt
 			return nil
 		}
 	}
 
-	var dt definedType
+	var dt DefinedType
 	if err := json.Unmarshal(b, &dt); err == nil {
 		// NOTE no validation to ensure the type name was defined
 		// TODO check the type name is already defined
-		t.definedType = &dt
+		t.DefinedType = &dt
 		return nil
 	}
 
 	return ErrInvalidAvroSchema
 }
 
-func IsValidPrimitiveType(t primitiveType) bool {
+func IsValidPrimitiveType(t PrimitiveType) bool {
 	for _, pt := range avroPrimitiveTypes {
-		if t == primitiveType(pt) {
+		if t == PrimitiveType(pt) {
 			return true
 		}
 	}
@@ -212,7 +212,7 @@ func IsValidPrimitiveType(t primitiveType) bool {
 	return false
 }
 
-func IsValidLogicalType(t logicalType) bool {
+func IsValidLogicalType(t LogicalType) bool {
 	if types, ok := avroValidTypesForLogicalType[string(t.LogicalType)]; ok {
 		for _, tpe := range types {
 			if t.Type == tpe {
@@ -222,4 +222,14 @@ func IsValidLogicalType(t logicalType) bool {
 	}
 
 	return false
+}
+
+func ToPrimitiveType(v string) *PrimitiveType {
+	vv := PrimitiveType(v)
+	return &vv
+}
+
+func ToDefinedType(v string) *DefinedType {
+	vv := DefinedType(v)
+	return &vv
 }

@@ -1,13 +1,14 @@
 package parquetgo
 
 import (
+	"testing"
+
 	"github.com/apache/arrow/go/arrow"
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/apache/arrow/go/arrow/memory"
 	"github.com/xitongsys/parquet-go/common"
 	"github.com/xitongsys/parquet-go/parquet"
 	"github.com/xitongsys/parquet-go/schema"
-	"testing"
 )
 
 func int32ToPtr(v int32) *int32 { return &v }
