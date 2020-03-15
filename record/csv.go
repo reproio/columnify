@@ -10,11 +10,11 @@ import (
 	"github.com/xitongsys/parquet-go/schema"
 )
 
-type delimiter string
+type delimiter rune
 
 const (
-	CsvDelimiter delimiter = ","
-	TsvDelimiter delimiter = "\t"
+	CsvDelimiter delimiter = ','
+	TsvDelimiter delimiter = '\t'
 )
 
 func getFieldNamesFromSchemaHandler(sh *schema.SchemaHandler) ([]string, error) {
@@ -32,8 +32,9 @@ func getFieldNamesFromSchemaHandler(sh *schema.SchemaHandler) ([]string, error) 
 	return names, nil
 }
 
-func formatCsvToJson(names []string, data []byte) ([]string, error) {
+func formatCsvToJson(names []string, data []byte, delimiter delimiter) ([]string, error) {
 	reader := csv.NewReader(strings.NewReader(string(data)))
+	reader.Comma = rune(delimiter)
 
 	numFields := len(names)
 	arr := make([]string, 0)
@@ -73,7 +74,7 @@ func FormatCsv(sh *schema.SchemaHandler, data []byte, delimiter delimiter) ([]st
 		return nil, err
 	}
 
-	records, err := formatCsvToJson(fieldNames, data)
+	records, err := formatCsvToJson(fieldNames, data, delimiter)
 	if err != nil {
 		return nil, err
 	}

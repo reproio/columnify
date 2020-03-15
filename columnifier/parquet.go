@@ -96,6 +96,12 @@ func (c *parquetColumnifier) Write(data []byte) error {
 			return err
 		}
 
+	case dataTypeTsv:
+		records, err = record.FormatCsv(c.w.SchemaHandler, data, record.TsvDelimiter)
+		if err != nil {
+			return err
+		}
+
 	default:
 		return fmt.Errorf("unsupported data type: %s", c.dt)
 	}
