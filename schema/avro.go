@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/repro/columnify/intermediate"
-
 	"github.com/repro/columnify/avro"
 
 	"github.com/apache/arrow/go/arrow"
@@ -24,7 +22,7 @@ var (
 	}
 )
 
-func NewArrowSchemaFromAvroSchema(schemaContent []byte) (*intermediate.IntermediateSchema, error) {
+func NewArrowSchemaFromAvroSchema(schemaContent []byte) (*IntermediateSchema, error) {
 	var rt avro.RecordType
 	if err := json.Unmarshal(schemaContent, &rt); err != nil {
 		return nil, err
@@ -46,7 +44,7 @@ func NewArrowSchemaFromAvroSchema(schemaContent []byte) (*intermediate.Intermedi
 		fields = append(fields, f)
 	}
 
-	return intermediate.NewIntermediateSchema(arrow.NewSchema(fields, nil), rt.Name), nil
+	return NewIntermediateSchema(arrow.NewSchema(fields, nil), rt.Name), nil
 }
 
 func toArrowType(t avro.AvroType) (arrow.DataType, bool, error) {

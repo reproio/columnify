@@ -1,4 +1,4 @@
-package intermediate
+package schema
 
 import "github.com/apache/arrow/go/arrow"
 

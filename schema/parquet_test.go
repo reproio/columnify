@@ -4,8 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/repro/columnify/intermediate"
-
 	"github.com/apache/arrow/go/arrow"
 	"github.com/xitongsys/parquet-go/parquet"
 	"github.com/xitongsys/parquet-go/schema"
@@ -15,12 +13,12 @@ func int32ToPtr(v int32) *int32 { return &v }
 
 func TestNewSchemaHandlerFromArrow(t *testing.T) {
 	cases := []struct {
-		intermediate *intermediate.IntermediateSchema
+		intermediate *IntermediateSchema
 		expected     schema.SchemaHandler
 		err          error
 	}{
 		{
-			intermediate: intermediate.NewIntermediateSchema(
+			intermediate: NewIntermediateSchema(
 				arrow.NewSchema(
 					[]arrow.Field{
 						{

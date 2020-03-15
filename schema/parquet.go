@@ -3,8 +3,6 @@ package schema
 import (
 	"fmt"
 
-	"github.com/repro/columnify/intermediate"
-
 	"github.com/apache/arrow/go/arrow"
 	"github.com/xitongsys/parquet-go/common"
 	"github.com/xitongsys/parquet-go/parquet"
@@ -24,7 +22,7 @@ var (
 	}
 )
 
-func NewSchemaHandlerFromArrow(s intermediate.IntermediateSchema) (*schema.SchemaHandler, error) {
+func NewSchemaHandlerFromArrow(s IntermediateSchema) (*schema.SchemaHandler, error) {
 	elems := make([]*parquet.SchemaElement, 0)
 	tags := make([]*common.Tag, 0)
 
