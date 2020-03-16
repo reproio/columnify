@@ -25,37 +25,197 @@ func TestUnmarshal(t *testing.T) {
 		expected RecordType
 		err      error
 	}{
+		// Only primitives
 		{
 			schema: `
 {
   "type": "record",
-  "name": "LongList",
-  "aliases": ["LinkedLongs"],
+  "name": "Primitives",
   "fields" : [
-    {"name": "value", "type": "long"},
-    {"name": "next", "type": ["null", "LongList"]}
+    {"name": "boolean", "type": "boolean"},
+    {"name": "int",     "type": "int"},
+    {"name": "long",    "type": "long"},
+    {"name": "float",   "type": "float"},
+    {"name": "double",  "type": "double"},
+    {"name": "bytes",   "type": "bytes"},
+    {"name": "string",  "type": "string"}
   ]
 }
 `,
 			expected: RecordType{
-				Name:    "LongList",
-				Aliases: []string{"LinkedLongs"},
+				Type: AvroComplexType_Record,
+				Name: "Primitives",
 				Fields: []RecordField{
 					{
-						Name: "value",
+						Name: "boolean",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("boolean"),
+						},
+					},
+					{
+						Name: "int",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("int"),
+						},
+					},
+					{
+						Name: "long",
 						Type: AvroType{
 							PrimitiveType: ToPrimitiveType("long"),
 						},
 					},
 					{
-						Name: "next",
+						Name: "float",
 						Type: AvroType{
-							UnionType: &UnionType{
-								{
-									PrimitiveType: ToPrimitiveType("null"),
-								},
-								{
-									DefinedType: ToDefinedType("LongList"),
+							PrimitiveType: ToPrimitiveType("float"),
+						},
+					},
+					{
+						Name: "double",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("double"),
+						},
+					},
+					{
+						Name: "bytes",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("bytes"),
+						},
+					},
+					{
+						Name: "string",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("string"),
+						},
+					},
+				},
+			},
+			err: nil,
+		},
+		{
+			schema: `
+{
+  "type": "record",
+  "name": "Nested",
+  "fields" : [
+    {"name": "boolean", "type": "boolean"},
+    {"name": "int",     "type": "int"},
+    {"name": "long",    "type": "long"},
+    {"name": "float",   "type": "float"},
+    {"name": "double",  "type": "double"},
+    {"name": "bytes",   "type": "bytes"},
+    {"name": "string",  "type": "string"},
+    {"name": "record",  "type": {
+      "type": "record",
+      "name": "Level1",
+      "fields" : [
+        {"name": "boolean", "type": "boolean"},
+        {"name": "int",     "type": "int"},
+        {"name": "long",    "type": "long"},
+        {"name": "float",   "type": "float"},
+        {"name": "double",  "type": "double"},
+        {"name": "bytes",   "type": "bytes"},
+        {"name": "string",  "type": "string"}
+      ]}
+    }
+  ]
+}
+`,
+			expected: RecordType{
+				Type: AvroComplexType_Record,
+				Name: "Nested",
+				Fields: []RecordField{
+					{
+						Name: "boolean",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("boolean"),
+						},
+					},
+					{
+						Name: "int",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("int"),
+						},
+					},
+					{
+						Name: "long",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("long"),
+						},
+					},
+					{
+						Name: "float",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("float"),
+						},
+					},
+					{
+						Name: "double",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("double"),
+						},
+					},
+					{
+						Name: "bytes",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("bytes"),
+						},
+					},
+					{
+						Name: "string",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("string"),
+						},
+					},
+					{
+						Name: "record",
+						Type: AvroType{
+							RecordType: &RecordType{
+								Type: AvroComplexType_Record,
+								Name: "Level1",
+								Fields: []RecordField{
+									{
+										Name: "boolean",
+										Type: AvroType{
+											PrimitiveType: ToPrimitiveType("boolean"),
+										},
+									},
+									{
+										Name: "int",
+										Type: AvroType{
+											PrimitiveType: ToPrimitiveType("int"),
+										},
+									},
+									{
+										Name: "long",
+										Type: AvroType{
+											PrimitiveType: ToPrimitiveType("long"),
+										},
+									},
+									{
+										Name: "float",
+										Type: AvroType{
+											PrimitiveType: ToPrimitiveType("float"),
+										},
+									},
+									{
+										Name: "double",
+										Type: AvroType{
+											PrimitiveType: ToPrimitiveType("double"),
+										},
+									},
+									{
+										Name: "bytes",
+										Type: AvroType{
+											PrimitiveType: ToPrimitiveType("bytes"),
+										},
+									},
+									{
+										Name: "string",
+										Type: AvroType{
+											PrimitiveType: ToPrimitiveType("string"),
+										},
+									},
 								},
 							},
 						},
@@ -74,7 +234,7 @@ func TestUnmarshal(t *testing.T) {
 			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
 		}
 
-		if areSameRecordType(actual, c.expected) {
+		if !areSameRecordType(actual, c.expected) {
 			t.Errorf("expected: %v, but actual: %v\n", c.expected, actual)
 		}
 	}

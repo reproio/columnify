@@ -2,14 +2,12 @@ package columnifier
 
 import (
 	"fmt"
-	"io/ioutil"
-
 	"github.com/repro/columnify/record"
+	"io/ioutil"
 
 	"github.com/repro/columnify/parquetgo"
 	"github.com/repro/columnify/schema"
 	"github.com/xitongsys/parquet-go-source/local"
-	"github.com/xitongsys/parquet-go/marshal"
 	parquetSchema "github.com/xitongsys/parquet-go/schema"
 	parquetSource "github.com/xitongsys/parquet-go/source"
 	"github.com/xitongsys/parquet-go/writer"
@@ -29,11 +27,11 @@ func NewParquetColumnifier(st string, sf string, dt string, output string) (*par
 	var sh *parquetSchema.SchemaHandler
 	switch st {
 	case schemaTypeAvro:
-		arrowSchema, err := schema.NewArrowSchemaFromAvroSchema(schemaContent)
+		intermediateSchema, err := schema.NewSchemaFromAvroSchema(schemaContent)
 		if err != nil {
 			return nil, err
 		}
-		sh, err = schema.NewSchemaHandlerFromArrow(*arrowSchema)
+		sh, err = schema.NewSchemaHandlerFromArrow(*intermediateSchema)
 		if err != nil {
 			return nil, err
 		}
@@ -63,9 +61,6 @@ func NewParquetColumnifier(st string, sf string, dt string, output string) (*par
 	w.SchemaHandler = sh
 	w.Footer.Schema = append(w.Footer.Schema, sh.SchemaElements...)
 
-	// TODO switch marshaler based on data type
-	// NOTE Use JSONL as intermediate representation temporarily
-	w.MarshalFunc = marshal.MarshalJSON
 
 	return &parquetColumnifier{
 		w:  w,
@@ -74,8 +69,11 @@ func NewParquetColumnifier(st string, sf string, dt string, output string) (*par
 }
 
 func (c *parquetColumnifier) Write(data []byte) error {
-	var records []string
+	var records []map[string]interface{}
 	var err error
+
+	// Consider intermediate record type is map[string]interface{}
+	c.w.MarshalFunc = parquetgo.MarshalMap
 
 	switch c.dt {
 	case dataTypeCsv:

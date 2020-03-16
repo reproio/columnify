@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	primitivesToArrow = map[avro.PrimitiveType]arrow.DataType{
+	avroPrimitivesToArrow = map[avro.PrimitiveType]arrow.DataType{
 		avro.AvroPrimitiveType_Boolean: arrow.FixedWidthTypes.Boolean,
 		avro.AvroPrimitiveType_Int:     arrow.PrimitiveTypes.Uint32,
 		avro.AvroPrimitiveType_Long:    arrow.PrimitiveTypes.Uint64,
@@ -22,7 +22,7 @@ var (
 	}
 )
 
-func NewArrowSchemaFromAvroSchema(schemaContent []byte) (*IntermediateSchema, error) {
+func NewSchemaFromAvroSchema(schemaContent []byte) (*IntermediateSchema, error) {
 	var rt avro.RecordType
 	if err := json.Unmarshal(schemaContent, &rt); err != nil {
 		return nil, err
@@ -30,35 +30,53 @@ func NewArrowSchemaFromAvroSchema(schemaContent []byte) (*IntermediateSchema, er
 
 	fields := make([]arrow.Field, 0)
 	for _, f := range rt.Fields {
-		t, nullable, err := toArrowType(f.Type)
+		af, err := avroFieldToArrowField(f)
 		if err != nil {
 			return nil, err
 		}
-
-		f := arrow.Field{
-			Name:     f.Name,
-			Type:     t,
-			Nullable: nullable,
-		}
-
-		fields = append(fields, f)
+		fields = append(fields, *af)
 	}
 
 	return NewIntermediateSchema(arrow.NewSchema(fields, nil), rt.Name), nil
 }
 
-func toArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
+func avroFieldToArrowField(f avro.RecordField) (*arrow.Field, error) {
+	t, nullable, err := avroTypeToArrowType(f.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	return &arrow.Field{
+		Name:     f.Name,
+		Type:     t,
+		Nullable: nullable,
+	}, nil
+}
+
+func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 	if t.PrimitiveType != nil {
-		if t, ok := primitivesToArrow[*t.PrimitiveType]; !ok {
-			return nil, false, fmt.Errorf("invalid schema conversion")
+		if t, ok := avroPrimitivesToArrow[*t.PrimitiveType]; !ok {
+			return nil, false, fmt.Errorf("invalid schema conversion at %v", t)
 		} else {
 			return t, false, nil
 		}
 	}
 
+	if t.RecordType != nil {
+		fields := make([]arrow.Field, 0, len(t.RecordType.Fields))
+		for _, f := range t.RecordType.Fields {
+			af, err := avroFieldToArrowField(f)
+			if err != nil {
+				return nil, false, err
+			}
+			fields = append(fields, *af)
+		}
+		return arrow.StructOf(fields...), false, nil
+	}
+
 	if t.UnionType != nil {
 		if t := isNullableField(t); t != nil {
-			if nested, _, err := toArrowType(*t); err == nil {
+			if nested, _, err := avroTypeToArrowType(*t); err == nil {
 				return nested, true, nil
 			}
 		}

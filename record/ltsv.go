@@ -1,16 +1,15 @@
 package record
 
 import (
-	"encoding/json"
 	"strings"
 
 	"github.com/Songmu/go-ltsv"
 )
 
-func FormatLtsv(data []byte) ([]string, error) {
+func FormatLtsv(data []byte) ([]map[string]interface{}, error) {
 	lines := strings.Split(string(data), "\n")
 
-	records := make([]string, 0)
+	records := make([]map[string]interface{}, 0)
 	for _, l := range lines {
 		v := map[string]string{}
 
@@ -19,12 +18,12 @@ func FormatLtsv(data []byte) ([]string, error) {
 			return nil, err
 		}
 
-		marshaled, err := json.Marshal(v)
-		if err != nil {
-			return nil, err
+		m := make(map[string]interface{}, 0)
+		for k, v := range v {
+			m[k] = v
 		}
 
-		records = append(records, string(marshaled))
+		records = append(records, m)
 	}
 
 	return records, nil

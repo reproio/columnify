@@ -2,7 +2,6 @@ package record
 
 import (
 	"encoding/csv"
-	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
@@ -32,12 +31,12 @@ func getFieldNamesFromSchemaHandler(sh *schema.SchemaHandler) ([]string, error) 
 	return names, nil
 }
 
-func formatCsvToJson(names []string, data []byte, delimiter delimiter) ([]string, error) {
+func formatCsvToMap(names []string, data []byte, delimiter delimiter) ([]map[string]interface{}, error) {
 	reader := csv.NewReader(strings.NewReader(string(data)))
 	reader.Comma = rune(delimiter)
 
 	numFields := len(names)
-	arr := make([]string, 0)
+	arr := make([]map[string]interface{}, 0)
 	for {
 		values, err := reader.Read()
 		if err == io.EOF {
@@ -52,29 +51,24 @@ func formatCsvToJson(names []string, data []byte, delimiter delimiter) ([]string
 			return nil, fmt.Errorf("value is incompleted")
 		}
 
-		e := make(map[string]string, 0)
+		e := make(map[string]interface{}, 0)
 		for i, v := range values {
 			e[names[i]] = v
 		}
 
-		marshaled, err := json.Marshal(e)
-		if err != nil {
-			return nil, err
-		}
-
-		arr = append(arr, string(marshaled))
+		arr = append(arr, e)
 	}
 
 	return arr, nil
 }
 
-func FormatCsv(sh *schema.SchemaHandler, data []byte, delimiter delimiter) ([]string, error) {
+func FormatCsv(sh *schema.SchemaHandler, data []byte, delimiter delimiter) ([]map[string]interface{}, error) {
 	fieldNames, err := getFieldNamesFromSchemaHandler(sh)
 	if err != nil {
 		return nil, err
 	}
 
-	records, err := formatCsvToJson(fieldNames, data, delimiter)
+	records, err := formatCsvToMap(fieldNames, data, delimiter)
 	if err != nil {
 		return nil, err
 	}
