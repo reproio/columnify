@@ -35,8 +35,12 @@ func NewParquetColumnifier(st string, sf string, dt string, output string) (*par
 		if err != nil {
 			return nil, err
 		}
-	case schemaTypeJson:
-		sh, err = parquetSchema.NewSchemaHandlerFromJSON(string(schemaContent))
+	case schemaTypeBigquery:
+		intermediateSchema, err := schema.NewSchemaFromBigQuerySchema(schemaContent)
+		if err != nil {
+			return nil, err
+		}
+		sh, err = schema.NewSchemaHandlerFromArrow(*intermediateSchema)
 		if err != nil {
 			return nil, err
 		}

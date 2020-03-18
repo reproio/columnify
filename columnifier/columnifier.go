@@ -1,8 +1,8 @@
 package columnifier
 
 const (
-	schemaTypeAvro = "avro"
-	schemaTypeJson = "json"
+	schemaTypeAvro     = "avro"
+	schemaTypeBigquery = "bigquery"
 
 	dataTypeCsv   = "csv"
 	dataTypeJsonl = "jsonl"

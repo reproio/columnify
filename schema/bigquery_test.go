@@ -26,7 +26,17 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
     "mode": "REQUIRED"
   },
   {
+    "name": "long",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
     "name": "float",
+    "type": "FLOAT",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "double",
     "type": "FLOAT",
     "mode": "REQUIRED"
   },
@@ -56,7 +66,17 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 						Nullable: false,
 					},
 					{
+						Name:     "long",
+						Type:     arrow.PrimitiveTypes.Uint64,
+						Nullable: false,
+					},
+					{
 						Name:     "float",
+						Type:     arrow.PrimitiveTypes.Float64,
+						Nullable: false,
+					},
+					{
+						Name:     "double",
 						Type:     arrow.PrimitiveTypes.Float64,
 						Nullable: false,
 					},
@@ -90,7 +110,17 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
     "mode": "REQUIRED"
   },
   {
+    "name": "long",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
     "name": "float",
+    "type": "FLOAT",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "double",
     "type": "FLOAT",
     "mode": "REQUIRED"
   },
@@ -120,7 +150,17 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
         "mode": "REQUIRED"
       },
       {
+        "name": "long",
+        "type": "INTEGER",
+        "mode": "REQUIRED"
+      },
+      {
         "name": "float",
+        "type": "FLOAT",
+        "mode": "REQUIRED"
+      },
+      {
+        "name": "double",
         "type": "FLOAT",
         "mode": "REQUIRED"
       },
@@ -151,7 +191,17 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 						Nullable: false,
 					},
 					{
+						Name:     "long",
+						Type:     arrow.PrimitiveTypes.Uint64,
+						Nullable: false,
+					},
+					{
 						Name:     "float",
+						Type:     arrow.PrimitiveTypes.Float64,
+						Nullable: false,
+					},
+					{
+						Name:     "double",
 						Type:     arrow.PrimitiveTypes.Float64,
 						Nullable: false,
 					},
@@ -180,7 +230,17 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 									Nullable: false,
 								},
 								{
+									Name:     "long",
+									Type:     arrow.PrimitiveTypes.Uint64,
+									Nullable: false,
+								},
+								{
 									Name:     "float",
+									Type:     arrow.PrimitiveTypes.Float64,
+									Nullable: false,
+								},
+								{
+									Name:     "double",
 									Type:     arrow.PrimitiveTypes.Float64,
 									Nullable: false,
 								},
@@ -218,7 +278,17 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
     "mode": "REQUIRED"
   },
   {
+    "name": "long",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
     "name": "float",
+    "type": "FLOAT",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "double",
     "type": "FLOAT",
     "mode": "REQUIRED"
   },
@@ -248,7 +318,17 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
         "mode": "REQUIRED"
       },
       {
+        "name": "long",
+        "type": "INTEGER",
+        "mode": "REQUIRED"
+      },
+      {
         "name": "float",
+        "type": "FLOAT",
+        "mode": "REQUIRED"
+      },
+      {
+        "name": "double",
         "type": "FLOAT",
         "mode": "REQUIRED"
       },
@@ -279,7 +359,17 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 						Nullable: false,
 					},
 					{
+						Name:     "long",
+						Type:     arrow.PrimitiveTypes.Uint64,
+						Nullable: false,
+					},
+					{
 						Name:     "float",
+						Type:     arrow.PrimitiveTypes.Float64,
+						Nullable: false,
+					},
+					{
+						Name:     "double",
 						Type:     arrow.PrimitiveTypes.Float64,
 						Nullable: false,
 					},
@@ -309,7 +399,17 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 										Nullable: false,
 									},
 									{
+										Name:     "long",
+										Type:     arrow.PrimitiveTypes.Uint64,
+										Nullable: false,
+									},
+									{
 										Name:     "float",
+										Type:     arrow.PrimitiveTypes.Float64,
+										Nullable: false,
+									},
+									{
+										Name:     "double",
 										Type:     arrow.PrimitiveTypes.Float64,
 										Nullable: false,
 									},

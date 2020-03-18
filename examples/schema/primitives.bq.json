@@ -1,0 +1,37 @@
+[
+  {
+    "name": "boolean",
+    "type": "BOOLEAN",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "int",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "long",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "float",
+    "type": "FLOAT",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "double",
+    "type": "FLOAT",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "bytes",
+    "type": "BYTES",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "string",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  }
+]
