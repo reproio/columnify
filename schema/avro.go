@@ -20,6 +20,16 @@ var (
 		avro.AvroPrimitiveType_Bytes:   arrow.BinaryTypes.Binary,
 		// AvroPrimitiveTypeNull doesn't have direct mapping rule
 	}
+
+	avroLogicalTypeToArrow = map[string]arrow.DataType{
+		avro.AvroLogicalType_Date:            arrow.FixedWidthTypes.Date64,
+		avro.AvroLogicalType_Duration:        arrow.FixedWidthTypes.Duration_ms,
+		avro.AvroLogicalType_TimeMillis:      arrow.FixedWidthTypes.Time32ms,
+		avro.AvroLogicalType_TimeMicros:      arrow.FixedWidthTypes.Time64us,
+		avro.AvroLogicalType_TimestampMillis: arrow.FixedWidthTypes.Timestamp_ms,
+		avro.AvroLogicalType_TimestampMicros: arrow.FixedWidthTypes.Timestamp_us,
+		// avro.AvroLogicalType_Decimal doesn't have direct mapping rule
+	}
 )
 
 func NewSchemaFromAvroSchema(schemaContent []byte) (*IntermediateSchema, error) {
@@ -74,6 +84,20 @@ func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 		return arrow.StructOf(fields...), false, nil
 	}
 
+	// TODO enum type
+
+	if t.ArrayType != nil {
+		itemType, _, err := avroTypeToArrowType(t.ArrayType.Items)
+		if err != nil {
+			return nil, false, err
+		}
+		return arrow.ListOf(itemType), false, nil
+	}
+
+	if t.MapsType != nil {
+		return nil, false, fmt.Errorf("map type conversion is unsupported")
+	}
+
 	if t.UnionType != nil {
 		if t := isNullableField(t); t != nil {
 			if nested, _, err := avroTypeToArrowType(*t); err == nil {
@@ -82,7 +106,17 @@ func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 		}
 	}
 
-	// TODO support more types
+	// TODO fixed type
+
+	if t.LogicalType != nil {
+		if t, ok := avroLogicalTypeToArrow[t.LogicalType.LogicalType]; !ok {
+			return nil, false, fmt.Errorf("invalid schema conversion at %v", t)
+		} else {
+			return t, false, nil
+		}
+	}
+
+	// TODO defined types
 
 	return nil, false, fmt.Errorf("invalid schema")
 }

@@ -92,6 +92,8 @@ func TestUnmarshal(t *testing.T) {
 			},
 			err: nil,
 		},
+
+		// Nested record
 		{
 			schema: `
 {
@@ -214,6 +216,148 @@ func TestUnmarshal(t *testing.T) {
 										Name: "string",
 										Type: AvroType{
 											PrimitiveType: ToPrimitiveType("string"),
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			err: nil,
+		},
+
+		// Array
+		{
+			schema: `
+{
+  "type": "record",
+  "name": "Array",
+  "fields" : [
+    {"name": "boolean", "type": "boolean"},
+    {"name": "int",     "type": "int"},
+    {"name": "long",    "type": "long"},
+    {"name": "float",   "type": "float"},
+    {"name": "double",  "type": "double"},
+    {"name": "bytes",   "type": "bytes"},
+    {"name": "string",  "type": "string"},
+    {"name": "array",   "type": {
+      "type": "array",
+      "items": {
+        "type": "record",
+        "name": "Level1",
+        "fields" : [
+          {"name": "boolean", "type": "boolean"},
+          {"name": "int",     "type": "int"},
+          {"name": "long",    "type": "long"},
+          {"name": "float",   "type": "float"},
+          {"name": "double",  "type": "double"},
+          {"name": "bytes",   "type": "bytes"},
+          {"name": "string",  "type": "string"}
+        ]
+      }}
+    }
+  ]
+}
+`,
+			expected: RecordType{
+				Type: AvroComplexType_Record,
+				Name: "Array",
+				Fields: []RecordField{
+					{
+						Name: "boolean",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("boolean"),
+						},
+					},
+					{
+						Name: "int",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("int"),
+						},
+					},
+					{
+						Name: "long",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("long"),
+						},
+					},
+					{
+						Name: "float",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("float"),
+						},
+					},
+					{
+						Name: "double",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("double"),
+						},
+					},
+					{
+						Name: "bytes",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("bytes"),
+						},
+					},
+					{
+						Name: "string",
+						Type: AvroType{
+							PrimitiveType: ToPrimitiveType("string"),
+						},
+					},
+					{
+						Name: "array",
+						Type: AvroType{
+							ArrayType: &ArrayType{
+								Type: AvroComplexType_Array,
+								Items: AvroType{
+									RecordType: &RecordType{
+										Type: AvroComplexType_Record,
+										Name: "Level1",
+										Fields: []RecordField{
+											{
+												Name: "boolean",
+												Type: AvroType{
+													PrimitiveType: ToPrimitiveType("boolean"),
+												},
+											},
+											{
+												Name: "int",
+												Type: AvroType{
+													PrimitiveType: ToPrimitiveType("int"),
+												},
+											},
+											{
+												Name: "long",
+												Type: AvroType{
+													PrimitiveType: ToPrimitiveType("long"),
+												},
+											},
+											{
+												Name: "float",
+												Type: AvroType{
+													PrimitiveType: ToPrimitiveType("float"),
+												},
+											},
+											{
+												Name: "double",
+												Type: AvroType{
+													PrimitiveType: ToPrimitiveType("double"),
+												},
+											},
+											{
+												Name: "bytes",
+												Type: AvroType{
+													PrimitiveType: ToPrimitiveType("bytes"),
+												},
+											},
+											{
+												Name: "string",
+												Type: AvroType{
+													PrimitiveType: ToPrimitiveType("string"),
+												},
+											},
 										},
 									},
 								},

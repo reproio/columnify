@@ -1,7 +1,6 @@
 package parquetgo
 
 import (
-	"fmt"
 	"github.com/xitongsys/parquet-go/common"
 	"github.com/xitongsys/parquet-go/layout"
 	"github.com/xitongsys/parquet-go/marshal"
@@ -11,55 +10,6 @@ import (
 	"reflect"
 	"strings"
 )
-
-// prepareTables returns tables from schema.
-func prepareTables(schemaHandler *schema.SchemaHandler) (map[string]*layout.Table, error) {
-	tables := make(map[string]*layout.Table)
-
-	for i, e := range schemaHandler.SchemaElements {
-		if e.GetNumChildren() == 0 {
-			pathStr := schemaHandler.IndexMap[int32(i)]
-			path := common.StrToPath(pathStr)
-
-			maxDefinitionLevel, err := schemaHandler.MaxDefinitionLevel(path)
-			if err != nil {
-				return nil, err
-			}
-
-			maxRepetitionLevel, err := schemaHandler.MaxRepetitionLevel(path)
-			if err != nil {
-				return nil, err
-			}
-
-			var tpe parquet.Type
-			if index, ok := schemaHandler.MapIndex[pathStr]; ok {
-				if int(index) < len(schemaHandler.SchemaElements) {
-					tpe = schemaHandler.SchemaElements[index].GetType()
-				} else {
-					return nil, fmt.Errorf("invalid index %v to schema elements %v ", index, schemaHandler.SchemaElements)
-				}
-			} else {
-				return nil, fmt.Errorf("invalid schema key: %v", pathStr)
-			}
-
-			if i >= len(schemaHandler.Infos) {
-				return nil, fmt.Errorf("invalid index %v to schema info %v ", i, schemaHandler.Infos)
-			}
-			info := schemaHandler.Infos[i]
-
-			tables[pathStr] = &layout.Table{
-				Path:               path,
-				MaxDefinitionLevel: maxDefinitionLevel,
-				MaxRepetitionLevel: maxRepetitionLevel,
-				RepetitionType:     e.GetRepetitionType(),
-				Type:               tpe,
-				Info:               info,
-			}
-		}
-	}
-
-	return tables, nil
-}
 
 // MarshalMap converts []map[string]interface{} to parquet tables.
 func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.SchemaHandler) (*map[string]*layout.Table, error) {

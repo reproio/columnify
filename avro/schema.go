@@ -31,8 +31,6 @@ const (
 )
 
 var (
-	ErrInvalidAvroSchema = fmt.Errorf("invalid avro schema")
-
 	avroPrimitiveTypes = []string{
 		AvroPrimitiveType_Null,
 		AvroPrimitiveType_Boolean,
@@ -138,11 +136,10 @@ func (t *AvroType) UnmarshalJSON(b []byte) error {
 
 	var rt RecordType
 	if err := json.Unmarshal(b, &rt); err == nil {
-		if rt.Type != AvroComplexType_Record {
-			return ErrInvalidAvroSchema
+		if rt.Type == AvroComplexType_Record {
+			t.RecordType = &rt
+			return nil
 		}
-		t.RecordType = &rt
-		return nil
 	}
 
 	var et EnumsType
@@ -199,7 +196,7 @@ func (t *AvroType) UnmarshalJSON(b []byte) error {
 		return nil
 	}
 
-	return ErrInvalidAvroSchema
+	return fmt.Errorf("invalid avro schema because of unexpected data: %v", b)
 }
 
 func IsValidPrimitiveType(t PrimitiveType) bool {

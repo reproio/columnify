@@ -106,7 +106,8 @@ func TestNewSchemaHandlerFromArrow(t *testing.T) {
 			},
 			err: nil,
 		},
-		// nested types
+
+		// Nested types
 		{
 			intermediate: NewIntermediateSchema(
 				arrow.NewSchema(
@@ -147,8 +148,8 @@ func TestNewSchemaHandlerFromArrow(t *testing.T) {
 							Nullable: false,
 						},
 						{
-							Name:     "record",
-							Type:     arrow.StructOf(
+							Name: "record",
+							Type: arrow.StructOf(
 								[]arrow.Field{
 									{
 										Name:     "boolean",
@@ -279,6 +280,181 @@ func TestNewSchemaHandlerFromArrow(t *testing.T) {
 			},
 			err: nil,
 		},
+
+		// Array
+		{
+			intermediate: NewIntermediateSchema(
+				arrow.NewSchema(
+					[]arrow.Field{
+						{
+							Name:     "boolean",
+							Type:     arrow.FixedWidthTypes.Boolean,
+							Nullable: false,
+						},
+						{
+							Name:     "int",
+							Type:     arrow.PrimitiveTypes.Uint32,
+							Nullable: false,
+						},
+						{
+							Name:     "long",
+							Type:     arrow.PrimitiveTypes.Uint64,
+							Nullable: false,
+						},
+						{
+							Name:     "float",
+							Type:     arrow.PrimitiveTypes.Float32,
+							Nullable: false,
+						},
+						{
+							Name:     "double",
+							Type:     arrow.PrimitiveTypes.Float64,
+							Nullable: false,
+						},
+						{
+							Name:     "bytes",
+							Type:     arrow.BinaryTypes.Binary,
+							Nullable: false,
+						},
+						{
+							Name:     "string",
+							Type:     arrow.BinaryTypes.String,
+							Nullable: false,
+						},
+						{
+							Name: "array",
+							Type: arrow.ListOf(
+								arrow.StructOf(
+									[]arrow.Field{
+										{
+											Name:     "boolean",
+											Type:     arrow.FixedWidthTypes.Boolean,
+											Nullable: false,
+										},
+										{
+											Name:     "int",
+											Type:     arrow.PrimitiveTypes.Uint32,
+											Nullable: false,
+										},
+										{
+											Name:     "long",
+											Type:     arrow.PrimitiveTypes.Uint64,
+											Nullable: false,
+										},
+										{
+											Name:     "float",
+											Type:     arrow.PrimitiveTypes.Float32,
+											Nullable: false,
+										},
+										{
+											Name:     "double",
+											Type:     arrow.PrimitiveTypes.Float64,
+											Nullable: false,
+										},
+										{
+											Name:     "bytes",
+											Type:     arrow.BinaryTypes.Binary,
+											Nullable: false,
+										},
+										{
+											Name:     "string",
+											Type:     arrow.BinaryTypes.String,
+											Nullable: false,
+										},
+									}...
+								)),
+							Nullable: false,
+						},
+					}, nil),
+				"array"),
+			expected: schema.SchemaHandler{
+				SchemaElements: []*parquet.SchemaElement{
+					{
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "array",
+						NumChildren:    int32ToPtr(8),
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_BOOLEAN),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "boolean",
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_INT32),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "int",
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_INT64),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "long",
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_FLOAT),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "float",
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_DOUBLE),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "double",
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_BYTE_ARRAY),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "bytes",
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_BYTE_ARRAY),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						ConvertedType:  parquet.ConvertedTypePtr(parquet.ConvertedType_UTF8),
+						Name:           "string",
+					},
+					{
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REPEATED),
+						Name:           "array",
+						NumChildren:    int32ToPtr(7),
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_BOOLEAN),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "boolean",
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_INT32),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "int",
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_INT64),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "long",
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_FLOAT),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "float",
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_DOUBLE),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "double",
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_BYTE_ARRAY),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "bytes",
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_BYTE_ARRAY),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						ConvertedType:  parquet.ConvertedTypePtr(parquet.ConvertedType_UTF8),
+						Name:           "string",
+					},
+				},
+			},
+			err: nil,
+		},
 	}
 
 	for _, c := range cases {
@@ -290,7 +466,7 @@ func TestNewSchemaHandlerFromArrow(t *testing.T) {
 
 		// For now, compare only SchemaElements
 		if !reflect.DeepEqual(actual.SchemaElements, c.expected.SchemaElements) {
-			t.Errorf("expected: %v, but actual: %v\n", c.expected, actual)
+			t.Errorf("expected: %v, but actual: %v\n", c.expected.SchemaElements, actual.SchemaElements)
 		}
 	}
 }

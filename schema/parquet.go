@@ -115,6 +115,29 @@ func arrowFieldToParquetSchemaInfo(f arrow.Field) ([]*parquet.SchemaElement, []*
 		}
 	}
 
+	// list
+	if f.Type.ID() == arrow.LIST {
+		if lt, ok := f.Type.(*arrow.ListType); ok {
+			item := arrow.Field{
+				Name: f.Name,
+				Type: lt.Elem(),
+			}
+
+			elems, tags, err := arrowFieldToParquetSchemaInfo(item)
+			if err != nil {
+				return nil, nil, err
+			}
+			if len(elems) == 0 || len(tags) == 0 {
+				return nil, nil, fmt.Errorf("empty array found at %v", lt)
+			}
+
+			// Mark item type is repeated
+			elems[0].RepetitionType = parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REPEATED)
+
+			return elems, tags, nil
+		}
+	}
+
 	// TODO other non-primitive types
 
 	return nil, nil, fmt.Errorf("invalid schema conversion at %v", f)

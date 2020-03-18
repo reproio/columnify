@@ -1,0 +1,29 @@
+{
+  "type": "record",
+  "name": "Array",
+  "fields" : [
+    {"name": "boolean", "type": "boolean"},
+    {"name": "int",     "type": "int"},
+    {"name": "long",    "type": "long"},
+    {"name": "float",   "type": "float"},
+    {"name": "double",  "type": "double"},
+    {"name": "bytes",   "type": "bytes"},
+    {"name": "string",  "type": "string"},
+    {"name": "array",   "type": {
+      "type": "array",
+      "items": {
+        "type": "record",
+        "name": "Level1",
+        "fields" : [
+          {"name": "boolean", "type": "boolean"},
+          {"name": "int",     "type": "int"},
+          {"name": "long",    "type": "long"},
+          {"name": "float",   "type": "float"},
+          {"name": "double",  "type": "double"},
+          {"name": "bytes",   "type": "bytes"},
+          {"name": "string",  "type": "string"}
+        ]
+      }
+    }}
+  ]
+}
