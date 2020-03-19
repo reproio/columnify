@@ -15,10 +15,10 @@ import (
 
 type parquetColumnifier struct {
 	w  *writer.ParquetWriter
-	dt string
+	rt string
 }
 
-func NewParquetColumnifier(st string, sf string, dt string, output string) (*parquetColumnifier, error) {
+func NewParquetColumnifier(st string, sf string, rt string, output string) (*parquetColumnifier, error) {
 	schemaContent, err := ioutil.ReadFile(sf)
 	if err != nil {
 		return nil, err
@@ -65,10 +65,9 @@ func NewParquetColumnifier(st string, sf string, dt string, output string) (*par
 	w.SchemaHandler = sh
 	w.Footer.Schema = append(w.Footer.Schema, sh.SchemaElements...)
 
-
 	return &parquetColumnifier{
 		w:  w,
-		dt: dt,
+		rt: rt,
 	}, nil
 }
 
@@ -79,33 +78,33 @@ func (c *parquetColumnifier) Write(data []byte) error {
 	// Consider intermediate record type is map[string]interface{}
 	c.w.MarshalFunc = parquetgo.MarshalMap
 
-	switch c.dt {
-	case dataTypeCsv:
+	switch c.rt {
+	case recordTypeCsv:
 		records, err = record.FormatCsv(c.w.SchemaHandler, data, record.CsvDelimiter)
 		if err != nil {
 			return err
 		}
 
-	case dataTypeJsonl:
+	case recordTypeJsonl:
 		records, err = record.FormatJsonl(data)
 		if err != nil {
 			return err
 		}
 
-	case dataTypeLtsv:
+	case recordTypeLtsv:
 		records, err = record.FormatLtsv(data)
 		if err != nil {
 			return err
 		}
 
-	case dataTypeTsv:
+	case recordTypeTsv:
 		records, err = record.FormatCsv(c.w.SchemaHandler, data, record.TsvDelimiter)
 		if err != nil {
 			return err
 		}
 
 	default:
-		return fmt.Errorf("unsupported data type: %s", c.dt)
+		return fmt.Errorf("unsupported data type: %s", c.rt)
 	}
 
 	for _, r := range records {

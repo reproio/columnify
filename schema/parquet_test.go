@@ -186,7 +186,7 @@ func TestNewSchemaHandlerFromArrow(t *testing.T) {
 										Type:     arrow.BinaryTypes.String,
 										Nullable: false,
 									},
-								}...
+								}...,
 							),
 							Nullable: false,
 						},
@@ -361,7 +361,7 @@ func TestNewSchemaHandlerFromArrow(t *testing.T) {
 											Type:     arrow.BinaryTypes.String,
 											Nullable: false,
 										},
-									}...
+									}...,
 								)),
 							Nullable: false,
 						},

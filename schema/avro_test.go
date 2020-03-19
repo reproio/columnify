@@ -139,8 +139,8 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 						Nullable: false,
 					},
 					{
-						Name:     "record",
-						Type:     arrow.StructOf(
+						Name: "record",
+						Type: arrow.StructOf(
 							[]arrow.Field{
 								{
 									Name:     "boolean",
@@ -177,13 +177,13 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 									Type:     arrow.BinaryTypes.String,
 									Nullable: false,
 								},
-							}...
+							}...,
 						),
 						Nullable: false,
 					},
 				}, nil,
 			),
-			err:      nil,
+			err: nil,
 		},
 
 		// Array
@@ -257,8 +257,8 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 						Nullable: false,
 					},
 					{
-						Name:     "array",
-						Type:     arrow.ListOf(
+						Name: "array",
+						Type: arrow.ListOf(
 							arrow.StructOf(
 								[]arrow.Field{
 									{
@@ -296,7 +296,7 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 										Type:     arrow.BinaryTypes.String,
 										Nullable: false,
 									},
-								}...
+								}...,
 							)),
 						Nullable: false,
 					},

@@ -4,10 +4,10 @@ const (
 	schemaTypeAvro     = "avro"
 	schemaTypeBigquery = "bigquery"
 
-	dataTypeCsv   = "csv"
-	dataTypeJsonl = "jsonl"
-	dataTypeLtsv  = "ltsv"
-	dataTypeTsv   = "tsv"
+	recordTypeCsv   = "csv"
+	recordTypeJsonl = "jsonl"
+	recordTypeLtsv  = "ltsv"
+	recordTypeTsv   = "tsv"
 )
 
 type Columnifier interface {
@@ -16,6 +16,6 @@ type Columnifier interface {
 	Flush() error
 }
 
-func NewColumnifier(st string, sf string, dt string, o string) (Columnifier, error) {
-	return NewParquetColumnifier(st, sf, dt, o)
+func NewColumnifier(st string, sf string, rt string, o string) (Columnifier, error) {
+	return NewParquetColumnifier(st, sf, rt, o)
 }

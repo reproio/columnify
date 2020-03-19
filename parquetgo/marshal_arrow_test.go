@@ -2,45 +2,72 @@ package parquetgo
 
 import (
 	"fmt"
-	"github.com/apache/arrow/go/arrow"
 	"github.com/repro/columnify/schema"
 	"github.com/xitongsys/parquet-go/layout"
 	"reflect"
 	"testing"
+
+	"github.com/apache/arrow/go/arrow"
+	"github.com/apache/arrow/go/arrow/array"
+	"github.com/apache/arrow/go/arrow/memory"
 )
 
-func TestMarshalMap(t *testing.T) {
+func int32ToPtr(v int32) *int32 { return &v }
+
+func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 	cases := []struct {
 		input  []interface{}
-		bgn    int
-		end    int
 		schema *schema.IntermediateSchema
 		expect *map[string]*layout.Table
 		err    error
 	}{
 		{
-			input: []interface{}{
-				map[string]interface{}{
-					"boolean": false,
-					"bytes":   fmt.Sprintf("%v", []byte("foo")),
-					"double":  1.1,
-					"float":   1.1,
-					"int":     1,
-					"long":    1,
-					"string":  "foo",
-				},
-				map[string]interface{}{
-					"boolean": true,
-					"bytes":   fmt.Sprintf("%v", []byte("bar")),
-					"double":  2.2,
-					"float":   2.2,
-					"int":     2,
-					"long":    2,
-					"string":  "bar",
-				},
-			},
-			bgn: 0,
-			end: 2,
+			input: func() []interface{} {
+				pool := memory.NewGoAllocator()
+				b := array.NewRecordBuilder(pool, arrow.NewSchema(
+					[]arrow.Field{
+						{
+							Name: "boolean",
+							Type: arrow.FixedWidthTypes.Boolean,
+						},
+						{
+							Name: "int",
+							Type: arrow.PrimitiveTypes.Uint32,
+						},
+						{
+							Name: "long",
+							Type: arrow.PrimitiveTypes.Uint64,
+						},
+						{
+							Name: "float",
+							Type: arrow.PrimitiveTypes.Float32,
+						},
+						{
+							Name: "double",
+							Type: arrow.PrimitiveTypes.Float64,
+						},
+						{
+							Name: "bytes",
+							Type: arrow.BinaryTypes.Binary,
+						},
+						{
+							Name: "string",
+							Type: arrow.BinaryTypes.String,
+						},
+					},
+					nil),
+				)
+
+				b.Field(0).(*array.BooleanBuilder).AppendValues([]bool{false, true}, []bool{true, true})
+				b.Field(1).(*array.Uint32Builder).AppendValues([]uint32{1, 2}, []bool{true, true})
+				b.Field(2).(*array.Uint64Builder).AppendValues([]uint64{1, 2}, []bool{true, true})
+				b.Field(3).(*array.Float32Builder).AppendValues([]float32{1.1, 2.2}, []bool{true, true})
+				b.Field(4).(*array.Float64Builder).AppendValues([]float64{1.1, 2.2}, []bool{true, true})
+				b.Field(5).(*array.BinaryBuilder).AppendValues([][]byte{[]byte("foo"), []byte("bar")}, []bool{true, true})
+				b.Field(6).(*array.StringBuilder).AppendValues([]string{"foo", "bar"}, []bool{true, true})
+
+				return []interface{}{NewWrappedRecord(b)}
+			}(),
 			schema: schema.NewIntermediateSchema(
 				arrow.NewSchema(
 					[]arrow.Field{
@@ -128,7 +155,8 @@ func TestMarshalMap(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
-		tables, err := MarshalMap(c.input, c.bgn, c.end, sh)
+		tables, err := MarshalArrow(c.input, 0, 1, sh)
+
 		if err != c.err {
 			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
 		}

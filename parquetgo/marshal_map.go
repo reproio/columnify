@@ -106,7 +106,7 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 					for key, _ := range node.PathMap.Children {
 						ki, ok := keysMap[key]
 
-						if ok && node.Val.MapIndex(keys[ki]).Elem().IsValid() {
+						if ok && node.Val.MapIndex(keys[ki]).Elem().IsValid() { // non-null
 							newNode := nodeBuf.GetNode()
 							newNode.PathMap = node.PathMap.Children[key]
 							newNode.Val = node.Val.MapIndex(keys[ki]).Elem()
@@ -120,7 +120,7 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 							}
 							stack = append(stack, newNode)
 
-						} else {
+						} else { // null
 							newPathStr := node.PathMap.Children[key].Path
 							for path, table := range res {
 								if strings.HasPrefix(path, newPathStr) &&

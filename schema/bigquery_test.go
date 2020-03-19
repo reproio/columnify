@@ -254,7 +254,7 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 									Type:     arrow.BinaryTypes.String,
 									Nullable: false,
 								},
-							}...
+							}...,
 						),
 						Nullable: false,
 					},
@@ -423,7 +423,7 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 										Type:     arrow.BinaryTypes.String,
 										Nullable: false,
 									},
-								}...
+								}...,
 							),
 						),
 						Nullable: true,

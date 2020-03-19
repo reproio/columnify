@@ -2,7 +2,6 @@ package schema
 
 import (
 	"fmt"
-
 	"github.com/apache/arrow/go/arrow"
 	"github.com/xitongsys/parquet-go/common"
 	"github.com/xitongsys/parquet-go/parquet"

@@ -58,4 +58,3 @@ func prepareTables(schemaHandler *schema.SchemaHandler) (map[string]*layout.Tabl
 
 	return tables, nil
 }
-

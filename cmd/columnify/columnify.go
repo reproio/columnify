@@ -23,14 +23,14 @@ func main() {
 
 	schemaType := flag.String("schemaType", "", "schema type, [avro|json]")
 	schemaFile := flag.String("schemaFile", "", "path to schema file")
-	dataType := flag.String("dataType", "jsonl", "data type, [jsonl]")
+	recordType := flag.String("recordType", "jsonl", "data type, [jsonl]")
 	output := flag.String("output", "", "path to output file; default: stdout")
 
 	flag.Parse()
 
 	files := flag.Args()
 
-	c, err := columnifier.NewColumnifier(*schemaType, *schemaFile, *dataType, *output)
+	c, err := columnifier.NewColumnifier(*schemaType, *schemaFile, *recordType, *output)
 	if err != nil {
 		log.Fatalf("Failed to init: %v\n", err)
 	}
