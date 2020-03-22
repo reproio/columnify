@@ -58,7 +58,7 @@ func NewParquetColumnifier(st string, sf string, rt string, output string) (*par
 }
 
 func (c *parquetColumnifier) Write(data []byte) error {
-	// Consider intermediate record type is map[string]interface{}
+	// Intermediate record type is map[string]interface{}
 	c.w.MarshalFunc = parquetgo.MarshalMap
 	records, err := record.FormatToMap(data, c.schema, c.rt)
 	if err != nil {
@@ -70,6 +70,18 @@ func (c *parquetColumnifier) Write(data []byte) error {
 			return err
 		}
 	}
+
+	// Intermediate record type is wrapped Apache Arrow record
+	/*
+		c.w.MarshalFunc = parquetgo.MarshalArrow
+		records, err := record.FormatToArrow(data, c.schema, c.rt)
+		if err != nil {
+			return err
+		}
+		if err := c.w.Write(&records); err != nil {
+			return err
+		}
+	*/
 
 	return nil
 }

@@ -6,10 +6,11 @@ import (
 )
 
 const (
-	RecordTypeCsv   = "csv"
-	RecordTypeJsonl = "jsonl"
-	RecordTypeLtsv  = "ltsv"
-	RecordTypeTsv   = "tsv"
+	RecordTypeCsv     = "csv"
+	RecordTypeJsonl   = "jsonl"
+	RecordTypeLtsv    = "ltsv"
+	RecordTypeMsgpack = "msgpack"
+	RecordTypeTsv     = "tsv"
 )
 
 func FormatToArrow(data []byte, s *schema.IntermediateSchema, recordType string) (*WrappedRecord, error) {
@@ -31,6 +32,9 @@ func FormatToMap(data []byte, s *schema.IntermediateSchema, recordType string) (
 
 	case RecordTypeLtsv:
 		return FormatLtsvToMap(data)
+
+	case RecordTypeMsgpack:
+		return FormatMsgpackToMap(data)
 
 	case RecordTypeTsv:
 		return FormatCsvToMap(s, data, TsvDelimiter)

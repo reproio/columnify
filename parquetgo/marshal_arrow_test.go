@@ -13,8 +13,6 @@ import (
 	"github.com/apache/arrow/go/arrow/memory"
 )
 
-func int32ToPtr(v int32) *int32 { return &v }
-
 func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 	cases := []struct {
 		input  func(s *schema.IntermediateSchema) []interface{}
