@@ -6,7 +6,7 @@ import (
 	"github.com/Songmu/go-ltsv"
 )
 
-func FormatLtsv(data []byte) ([]map[string]interface{}, error) {
+func FormatLtsvToMap(data []byte) ([]map[string]interface{}, error) {
 	lines := strings.Split(string(data), "\n")
 
 	records := make([]map[string]interface{}, 0)

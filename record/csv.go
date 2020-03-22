@@ -3,10 +3,9 @@ package record
 import (
 	"encoding/csv"
 	"fmt"
+	"github.com/repro/columnify/schema"
 	"io"
 	"strings"
-
-	"github.com/xitongsys/parquet-go/schema"
 )
 
 type delimiter rune
@@ -16,22 +15,27 @@ const (
 	TsvDelimiter delimiter = '\t'
 )
 
-func getFieldNamesFromSchemaHandler(sh *schema.SchemaHandler) ([]string, error) {
-	elems := sh.SchemaElements
+func getFieldNamesFromSchema(s *schema.IntermediateSchema) ([]string, error) {
+	elems := s.ArrowSchema.Fields()
 
 	if len(elems) < 2 {
 		return nil, fmt.Errorf("no element is available for format")
 	}
 
-	names := make([]string, 0, len(elems[1:]))
-	for _, e := range elems[1:] {
+	names := make([]string, 0, len(elems))
+	for _, e := range elems {
 		names = append(names, e.Name)
 	}
 
 	return names, nil
 }
 
-func formatCsvToMap(names []string, data []byte, delimiter delimiter) ([]map[string]interface{}, error) {
+func FormatCsvToMap(s *schema.IntermediateSchema, data []byte, delimiter delimiter) ([]map[string]interface{}, error) {
+	names, err := getFieldNamesFromSchema(s)
+	if err != nil {
+		return nil, err
+	}
+
 	reader := csv.NewReader(strings.NewReader(string(data)))
 	reader.Comma = rune(delimiter)
 
@@ -48,7 +52,7 @@ func formatCsvToMap(names []string, data []byte, delimiter delimiter) ([]map[str
 		}
 
 		if numFields != len(values) {
-			return nil, fmt.Errorf("value is incompleted")
+			return nil, fmt.Errorf("values are incompleted: %v", values)
 		}
 
 		e := make(map[string]interface{}, 0)
@@ -60,18 +64,4 @@ func formatCsvToMap(names []string, data []byte, delimiter delimiter) ([]map[str
 	}
 
 	return arr, nil
-}
-
-func FormatCsv(sh *schema.SchemaHandler, data []byte, delimiter delimiter) ([]map[string]interface{}, error) {
-	fieldNames, err := getFieldNamesFromSchemaHandler(sh)
-	if err != nil {
-		return nil, err
-	}
-
-	records, err := formatCsvToMap(fieldNames, data, delimiter)
-	if err != nil {
-		return nil, err
-	}
-
-	return records, nil
 }

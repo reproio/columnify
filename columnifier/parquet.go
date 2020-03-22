@@ -1,21 +1,20 @@
 package columnifier
 
 import (
-	"fmt"
 	"github.com/repro/columnify/record"
 	"io/ioutil"
 
 	"github.com/repro/columnify/parquetgo"
 	"github.com/repro/columnify/schema"
 	"github.com/xitongsys/parquet-go-source/local"
-	parquetSchema "github.com/xitongsys/parquet-go/schema"
 	parquetSource "github.com/xitongsys/parquet-go/source"
 	"github.com/xitongsys/parquet-go/writer"
 )
 
 type parquetColumnifier struct {
-	w  *writer.ParquetWriter
-	rt string
+	w      *writer.ParquetWriter
+	schema *schema.IntermediateSchema
+	rt     string
 }
 
 func NewParquetColumnifier(st string, sf string, rt string, output string) (*parquetColumnifier, error) {
@@ -24,28 +23,14 @@ func NewParquetColumnifier(st string, sf string, rt string, output string) (*par
 		return nil, err
 	}
 
-	var sh *parquetSchema.SchemaHandler
-	switch st {
-	case schemaTypeAvro:
-		intermediateSchema, err := schema.NewSchemaFromAvroSchema(schemaContent)
-		if err != nil {
-			return nil, err
-		}
-		sh, err = schema.NewSchemaHandlerFromArrow(*intermediateSchema)
-		if err != nil {
-			return nil, err
-		}
-	case schemaTypeBigquery:
-		intermediateSchema, err := schema.NewSchemaFromBigQuerySchema(schemaContent)
-		if err != nil {
-			return nil, err
-		}
-		sh, err = schema.NewSchemaHandlerFromArrow(*intermediateSchema)
-		if err != nil {
-			return nil, err
-		}
-	default:
-		return nil, fmt.Errorf("unsupported schema type: %s", st)
+	intermediateSchema, err := schema.GetSchema(schemaContent, st)
+	if err != nil {
+		return nil, err
+	}
+
+	sh, err := schema.NewSchemaHandlerFromArrow(*intermediateSchema)
+	if err != nil {
+		return nil, err
 	}
 
 	var fw parquetSource.ParquetFile
@@ -66,45 +51,18 @@ func NewParquetColumnifier(st string, sf string, rt string, output string) (*par
 	w.Footer.Schema = append(w.Footer.Schema, sh.SchemaElements...)
 
 	return &parquetColumnifier{
-		w:  w,
-		rt: rt,
+		w:      w,
+		schema: intermediateSchema,
+		rt:     rt,
 	}, nil
 }
 
 func (c *parquetColumnifier) Write(data []byte) error {
-	var records []map[string]interface{}
-	var err error
-
 	// Consider intermediate record type is map[string]interface{}
 	c.w.MarshalFunc = parquetgo.MarshalMap
-
-	switch c.rt {
-	case recordTypeCsv:
-		records, err = record.FormatCsv(c.w.SchemaHandler, data, record.CsvDelimiter)
-		if err != nil {
-			return err
-		}
-
-	case recordTypeJsonl:
-		records, err = record.FormatJsonl(data)
-		if err != nil {
-			return err
-		}
-
-	case recordTypeLtsv:
-		records, err = record.FormatLtsv(data)
-		if err != nil {
-			return err
-		}
-
-	case recordTypeTsv:
-		records, err = record.FormatCsv(c.w.SchemaHandler, data, record.TsvDelimiter)
-		if err != nil {
-			return err
-		}
-
-	default:
-		return fmt.Errorf("unsupported data type: %s", c.rt)
+	records, err := record.FormatToMap(data, c.schema, c.rt)
+	if err != nil {
+		return err
 	}
 
 	for _, r := range records {
