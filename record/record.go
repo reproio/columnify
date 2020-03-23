@@ -6,6 +6,7 @@ import (
 )
 
 const (
+	RecordTypeAvro    = "avro"
 	RecordTypeCsv     = "csv"
 	RecordTypeJsonl   = "jsonl"
 	RecordTypeLtsv    = "ltsv"
@@ -24,6 +25,9 @@ func FormatToArrow(data []byte, s *schema.IntermediateSchema, recordType string)
 }
 func FormatToMap(data []byte, s *schema.IntermediateSchema, recordType string) ([]map[string]interface{}, error) {
 	switch recordType {
+	case RecordTypeAvro:
+		return FormatAvroToMap(data)
+
 	case RecordTypeCsv:
 		return FormatCsvToMap(s, data, CsvDelimiter)
 

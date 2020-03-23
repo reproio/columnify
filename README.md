@@ -63,13 +63,18 @@ $ parquet-tools cat -json out.parquet
 
 ### Input
 
-- `JSONL(NewLine delimited JSON)`
+- Apache Avro
+- CSV
+- JSONL(NewLine delimited JSON)
+- LTSV
+- Message Pack
+- TSV
 
 ### Output
 
-- `Apache Parquet`
+- Apache Parquet
 
 ### Schema
 
-- [JSON for parquet-go](https://github.com/xitongsys/parquet-go#json)
 - [Apache Avro](https://avro.apache.org/docs/1.8.2/spec.html)
+- [BigQuery Schema](https://cloud.google.com/bigquery/docs/schemas?hl=ja#specifying_a_json_schema_file)

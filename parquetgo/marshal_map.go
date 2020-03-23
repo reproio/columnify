@@ -173,6 +173,15 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 						stack = append(stack, newNode)
 					}
 
+				} else if info.Type == "BYTE_ARRAY" || info.Type == "FIXED_LEN_BYTE_ARRAY" { // byte array; its a primitive type
+					table := res[node.PathMap.Path]
+					pT, cT := types.TypeNameToParquetType(info.Type, info.BaseType)
+					val := types.JSONTypeToParquetType(node.Val, pT, cT, int(info.Length), int(info.Scale))
+
+					table.Values = append(table.Values, val)
+					table.DefinitionLevels = append(table.DefinitionLevels, node.DL)
+					table.RepetitionLevels = append(table.RepetitionLevels, node.RL)
+
 				} else { //Repeated
 					if ln <= 0 {
 						for key, table := range res {
