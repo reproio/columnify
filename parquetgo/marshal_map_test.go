@@ -1,13 +1,31 @@
 package parquetgo
 
 import (
-	"fmt"
+	"bytes"
+	"encoding/base64"
 	"github.com/apache/arrow/go/arrow"
 	"github.com/repro/columnify/schema"
 	"github.com/xitongsys/parquet-go/layout"
 	"reflect"
 	"testing"
 )
+
+func base64Str(d []byte, t *testing.T) string {
+	var buf bytes.Buffer
+	encoder := base64.NewEncoder(base64.StdEncoding, &buf)
+
+	_, err := encoder.Write(d)
+	if err != nil {
+		t.Fatalf("invalid test case: %v", err)
+	}
+
+	err = encoder.Close()
+	if err != nil {
+		t.Fatalf("invalid test case: %v", err)
+	}
+
+	return buf.String()
+}
 
 func TestMarshalMap(t *testing.T) {
 	cases := []struct {
@@ -23,7 +41,7 @@ func TestMarshalMap(t *testing.T) {
 			input: []interface{}{
 				map[string]interface{}{
 					"boolean": false,
-					"bytes":   fmt.Sprintf("%v", []byte("foo")),
+					"bytes":   []byte("foo"),
 					"double":  1.1,
 					"float":   1.1,
 					"int":     1,
@@ -32,7 +50,7 @@ func TestMarshalMap(t *testing.T) {
 				},
 				map[string]interface{}{
 					"boolean": true,
-					"bytes":   fmt.Sprintf("%v", []byte("bar")),
+					"bytes":   []byte("bar"),
 					"double":  2.2,
 					"float":   2.2,
 					"int":     2,
@@ -109,7 +127,7 @@ func TestMarshalMap(t *testing.T) {
 					RepetitionLevels: []int32{0, 0},
 				},
 				"Primitives.Bytes": {
-					Values:           []interface{}{fmt.Sprintf("%v", []byte("foo")), fmt.Sprintf("%v", []byte("bar"))},
+					Values:           []interface{}{base64Str([]byte("foo"), t), base64Str([]byte("bar"), t)},
 					DefinitionLevels: []int32{0, 0},
 					RepetitionLevels: []int32{0, 0},
 				},
@@ -127,7 +145,7 @@ func TestMarshalMap(t *testing.T) {
 			input: []interface{}{
 				map[string]interface{}{
 					"boolean": false,
-					"bytes":   fmt.Sprintf("%v", []byte("foo")),
+					"bytes":   []byte("foo"),
 					"double":  1.1,
 					"float":   1.1,
 					"int":     1,
@@ -135,7 +153,7 @@ func TestMarshalMap(t *testing.T) {
 					"string":  "foo",
 					"record": map[string]interface{}{
 						"boolean": false,
-						"bytes":   fmt.Sprintf("%v", []byte("foo")),
+						"bytes":   []byte("foo"),
 						"double":  1.1,
 						"float":   1.1,
 						"int":     1,
@@ -145,7 +163,7 @@ func TestMarshalMap(t *testing.T) {
 				},
 				map[string]interface{}{
 					"boolean": true,
-					"bytes":   fmt.Sprintf("%v", []byte("bar")),
+					"bytes":   []byte("bar"),
 					"double":  2.2,
 					"float":   2.2,
 					"int":     2,
@@ -153,7 +171,7 @@ func TestMarshalMap(t *testing.T) {
 					"string":  "bar",
 					"record": map[string]interface{}{
 						"boolean": true,
-						"bytes":   fmt.Sprintf("%v", []byte("bar")),
+						"bytes":   []byte("bar"),
 						"double":  2.2,
 						"float":   2.2,
 						"int":     2,
@@ -268,7 +286,7 @@ func TestMarshalMap(t *testing.T) {
 					RepetitionLevels: []int32{0, 0},
 				},
 				"Nested.Bytes": {
-					Values:           []interface{}{fmt.Sprintf("%v", []byte("foo")), fmt.Sprintf("%v", []byte("bar"))},
+					Values:           []interface{}{base64Str([]byte("foo"), t), base64Str([]byte("bar"), t)},
 					DefinitionLevels: []int32{0, 0},
 					RepetitionLevels: []int32{0, 0},
 				},
@@ -303,7 +321,7 @@ func TestMarshalMap(t *testing.T) {
 					RepetitionLevels: []int32{0, 0},
 				},
 				"Nested.Record.Bytes": {
-					Values:           []interface{}{fmt.Sprintf("%v", []byte("foo")), fmt.Sprintf("%v", []byte("bar"))},
+					Values:           []interface{}{base64Str([]byte("foo"), t), base64Str([]byte("bar"), t)},
 					DefinitionLevels: []int32{0, 0},
 					RepetitionLevels: []int32{0, 0},
 				},
@@ -321,7 +339,7 @@ func TestMarshalMap(t *testing.T) {
 			input: []interface{}{
 				map[string]interface{}{
 					"boolean": false,
-					"bytes":   fmt.Sprintf("%v", []byte("foo")),
+					"bytes":   []byte("foo"),
 					"double":  1.1,
 					"float":   1.1,
 					"int":     1,
@@ -330,7 +348,7 @@ func TestMarshalMap(t *testing.T) {
 					"array": []interface{}{
 						map[string]interface{}{
 							"boolean": false,
-							"bytes":   fmt.Sprintf("%v", []byte("foo")),
+							"bytes":   []byte("foo"),
 							"double":  1.1,
 							"float":   1.1,
 							"int":     1,
@@ -341,7 +359,7 @@ func TestMarshalMap(t *testing.T) {
 				},
 				map[string]interface{}{
 					"boolean": true,
-					"bytes":   fmt.Sprintf("%v", []byte("bar")),
+					"bytes":   []byte("bar"),
 					"double":  2.2,
 					"float":   2.2,
 					"int":     2,
@@ -350,7 +368,7 @@ func TestMarshalMap(t *testing.T) {
 					"array": []interface{}{
 						map[string]interface{}{
 							"boolean": true,
-							"bytes":   fmt.Sprintf("%v", []byte("bar")),
+							"bytes":   []byte("bar"),
 							"double":  2.2,
 							"float":   2.2,
 							"int":     2,
@@ -473,7 +491,7 @@ func TestMarshalMap(t *testing.T) {
 					RepetitionLevels: []int32{0, 0},
 				},
 				"Arrays.Bytes": {
-					Values:           []interface{}{fmt.Sprintf("%v", []byte("foo")), fmt.Sprintf("%v", []byte("bar"))},
+					Values:           []interface{}{base64Str([]byte("foo"), t), base64Str([]byte("bar"), t)},
 					DefinitionLevels: []int32{0, 0},
 					RepetitionLevels: []int32{0, 0},
 				},
@@ -508,7 +526,7 @@ func TestMarshalMap(t *testing.T) {
 					RepetitionLevels: []int32{0, 0},
 				},
 				"Arrays.Array.Bytes": {
-					Values:           []interface{}{fmt.Sprintf("%v", []byte("foo")), fmt.Sprintf("%v", []byte("bar"))},
+					Values:           []interface{}{base64Str([]byte("foo"), t), base64Str([]byte("bar"), t)},
 					DefinitionLevels: []int32{1, 1},
 					RepetitionLevels: []int32{0, 0},
 				},

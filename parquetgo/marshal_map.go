@@ -1,6 +1,9 @@
 package parquetgo
 
 import (
+	"bytes"
+	"encoding/base64"
+	"fmt"
 	"github.com/xitongsys/parquet-go/common"
 	"github.com/xitongsys/parquet-go/layout"
 	"github.com/xitongsys/parquet-go/marshal"
@@ -174,11 +177,13 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 					}
 
 				} else if info.Type == "BYTE_ARRAY" || info.Type == "FIXED_LEN_BYTE_ARRAY" { // byte array; its a primitive type
-					table := res[node.PathMap.Path]
-					pT, cT := types.TypeNameToParquetType(info.Type, info.BaseType)
-					val := types.JSONTypeToParquetType(node.Val, pT, cT, int(info.Length), int(info.Scale))
+					v, err := marshalPrimitive(node.Val, info)
+					if err != nil {
+						return nil, err
+					}
 
-					table.Values = append(table.Values, val)
+					table := res[node.PathMap.Path]
+					table.Values = append(table.Values, v)
 					table.DefinitionLevels = append(table.DefinitionLevels, node.DL)
 					table.RepetitionLevels = append(table.RepetitionLevels, node.RL)
 
@@ -210,11 +215,13 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 				}
 
 			default: // else; should be primitive types
-				table := res[node.PathMap.Path]
-				pT, cT := types.TypeNameToParquetType(info.Type, info.BaseType)
-				val := types.JSONTypeToParquetType(node.Val, pT, cT, int(info.Length), int(info.Scale))
+				v, err := marshalPrimitive(node.Val, info)
+				if err != nil {
+					return nil, err
+				}
 
-				table.Values = append(table.Values, val)
+				table := res[node.PathMap.Path]
+				table.Values = append(table.Values, v)
 				table.DefinitionLevels = append(table.DefinitionLevels, node.DL)
 				table.RepetitionLevels = append(table.RepetitionLevels, node.RL)
 			}
@@ -222,4 +229,28 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 	}
 
 	return &res, nil
+}
+
+func marshalPrimitive(val reflect.Value, info *common.Tag) (interface{}, error) {
+	if val.Type().Kind() == reflect.Interface && val.IsNil() {
+		return nil, fmt.Errorf("invalid input type: %v", val.Type())
+	}
+
+	pT, cT := types.TypeNameToParquetType(info.Type, info.BaseType)
+
+	var s string
+	if (*pT == parquet.Type_BYTE_ARRAY || *pT == parquet.Type_FIXED_LEN_BYTE_ARRAY) && cT == nil && val.Kind() == reflect.Slice { // raw binary
+		var buf bytes.Buffer
+		encoder := base64.NewEncoder(base64.StdEncoding, &buf)
+		defer func() { _ = encoder.Close() }()
+
+		if _, err := encoder.Write(val.Bytes()); err != nil {
+			return nil, err
+		}
+		s = buf.String()
+	} else {
+		s = fmt.Sprintf("%v", val)
+	}
+
+	return types.StrToParquetType(s, pT, cT, int(info.Length), int(info.Scale)), nil
 }
