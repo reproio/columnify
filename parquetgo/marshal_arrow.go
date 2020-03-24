@@ -13,6 +13,7 @@ import (
 	"reflect"
 )
 
+// MarshalMap converts 1 arrow record to parquet tables.
 func MarshalArrow(maybeRecord []interface{}, bgn int, end int, schemaHandler *schema.SchemaHandler) (*map[string]*layout.Table, error) {
 	// NOTE This marshaler expects record values aggregation has done before call
 	if len(maybeRecord) != 1 {

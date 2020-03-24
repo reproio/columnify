@@ -7,6 +7,7 @@ import (
 	"github.com/xitongsys/parquet-go/source"
 )
 
+// stdioFile is an implementation of ParquetFile, just writing data to stdout.
 type stdioFile struct {
 }
 

@@ -21,9 +21,9 @@ func printUsage() {
 func main() {
 	flag.Usage = printUsage
 
-	schemaType := flag.String("schemaType", "", "schema type, [avro|json]")
+	schemaType := flag.String("schemaType", "", "schema type, [avro|bigquery]")
 	schemaFile := flag.String("schemaFile", "", "path to schema file")
-	recordType := flag.String("recordType", "jsonl", "data type, [jsonl]")
+	recordType := flag.String("recordType", "jsonl", "record data format type, [avro|csv|jsonl|ltsv|msgpack|tsv]")
 	output := flag.String("output", "", "path to output file; default: stdout")
 
 	flag.Parse()
