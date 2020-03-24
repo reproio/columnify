@@ -3,8 +3,9 @@ package record
 import (
 	"bytes"
 	"fmt"
-	"github.com/vmihailenco/msgpack/v4"
 	"io"
+
+	"github.com/vmihailenco/msgpack/v4"
 )
 
 func FormatMsgpackToMap(data []byte) ([]map[string]interface{}, error) {

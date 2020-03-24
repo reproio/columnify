@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
+	"reflect"
+	"strings"
+
 	"github.com/xitongsys/parquet-go/common"
 	"github.com/xitongsys/parquet-go/layout"
 	"github.com/xitongsys/parquet-go/marshal"
 	"github.com/xitongsys/parquet-go/parquet"
 	"github.com/xitongsys/parquet-go/schema"
 	"github.com/xitongsys/parquet-go/types"
-	"reflect"
-	"strings"
 )
 
 // MarshalMap converts []map[string]interface{} to parquet tables.

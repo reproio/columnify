@@ -2,11 +2,12 @@ package parquetgo
 
 import (
 	"fmt"
+	"reflect"
+	"testing"
+
 	"github.com/repro/columnify/record"
 	"github.com/repro/columnify/schema"
 	"github.com/xitongsys/parquet-go/layout"
-	"reflect"
-	"testing"
 
 	"github.com/apache/arrow/go/arrow"
 	"github.com/apache/arrow/go/arrow/array"

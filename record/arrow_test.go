@@ -1,12 +1,13 @@
 package record
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/apache/arrow/go/arrow"
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/apache/arrow/go/arrow/memory"
 	"github.com/repro/columnify/schema"
-	"reflect"
-	"testing"
 )
 
 func TestNewArrowSchemaFromAvroSchema(t *testing.T) {

@@ -1,8 +1,9 @@
 package schema
 
 import (
-	"github.com/apache/arrow/go/arrow"
 	"testing"
+
+	"github.com/apache/arrow/go/arrow"
 )
 
 func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {

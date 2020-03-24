@@ -3,11 +3,12 @@ package parquetgo
 import (
 	"bytes"
 	"encoding/base64"
+	"reflect"
+	"testing"
+
 	"github.com/apache/arrow/go/arrow"
 	"github.com/repro/columnify/schema"
 	"github.com/xitongsys/parquet-go/layout"
-	"reflect"
-	"testing"
 )
 
 func base64Str(d []byte, t *testing.T) string {

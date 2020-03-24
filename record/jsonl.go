@@ -2,8 +2,9 @@ package record
 
 import (
 	"encoding/json"
-	"github.com/apache/arrow/go/arrow"
 	"strings"
+
+	"github.com/apache/arrow/go/arrow"
 )
 
 func FormatJsonlToMap(data []byte) ([]map[string]interface{}, error) {

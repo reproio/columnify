@@ -3,6 +3,7 @@ package record
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/linkedin/goavro/v2"
 )
 

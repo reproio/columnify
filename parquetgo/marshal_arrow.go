@@ -2,6 +2,8 @@ package parquetgo
 
 import (
 	"fmt"
+	"reflect"
+
 	"github.com/apache/arrow/go/arrow"
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/repro/columnify/record"
@@ -10,7 +12,6 @@ import (
 	"github.com/xitongsys/parquet-go/parquet"
 	"github.com/xitongsys/parquet-go/schema"
 	"github.com/xitongsys/parquet-go/types"
-	"reflect"
 )
 
 // MarshalMap converts 1 arrow record to parquet tables.

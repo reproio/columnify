@@ -2,6 +2,7 @@ package parquetgo
 
 import (
 	"fmt"
+
 	"github.com/xitongsys/parquet-go/common"
 	"github.com/xitongsys/parquet-go/layout"
 	"github.com/xitongsys/parquet-go/parquet"

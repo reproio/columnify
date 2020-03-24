@@ -3,9 +3,10 @@ package record
 import (
 	"encoding/csv"
 	"fmt"
-	"github.com/repro/columnify/schema"
 	"io"
 	"strings"
+
+	"github.com/repro/columnify/schema"
 )
 
 type delimiter rune
