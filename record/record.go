@@ -3,7 +3,7 @@ package record
 import (
 	"fmt"
 
-	"github.com/repro/columnify/schema"
+	"github.com/reproio/columnify/schema"
 )
 
 const (

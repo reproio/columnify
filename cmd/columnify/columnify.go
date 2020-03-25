@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/repro/columnify/columnifier"
+	"github.com/reproio/columnify/columnifier"
 )
 
 func printUsage() {

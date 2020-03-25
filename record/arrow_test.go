@@ -7,7 +7,7 @@ import (
 	"github.com/apache/arrow/go/arrow"
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/apache/arrow/go/arrow/memory"
-	"github.com/repro/columnify/schema"
+	"github.com/reproio/columnify/schema"
 )
 
 func TestNewArrowSchemaFromAvroSchema(t *testing.T) {

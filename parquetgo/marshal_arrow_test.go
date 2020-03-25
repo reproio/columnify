@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/repro/columnify/record"
-	"github.com/repro/columnify/schema"
+	"github.com/reproio/columnify/record"
+	"github.com/reproio/columnify/schema"
 	"github.com/xitongsys/parquet-go/layout"
 
 	"github.com/apache/arrow/go/arrow"

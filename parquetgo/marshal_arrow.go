@@ -6,7 +6,7 @@ import (
 
 	"github.com/apache/arrow/go/arrow"
 	"github.com/apache/arrow/go/arrow/array"
-	"github.com/repro/columnify/record"
+	"github.com/reproio/columnify/record"
 	"github.com/xitongsys/parquet-go/common"
 	"github.com/xitongsys/parquet-go/layout"
 	"github.com/xitongsys/parquet-go/parquet"

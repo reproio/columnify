@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/repro/columnify/avro"
+	"github.com/reproio/columnify/avro"
 
 	"github.com/apache/arrow/go/arrow"
 )

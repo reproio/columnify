@@ -3,10 +3,10 @@ package columnifier
 import (
 	"io/ioutil"
 
-	"github.com/repro/columnify/record"
+	"github.com/reproio/columnify/record"
 
-	"github.com/repro/columnify/parquetgo"
-	"github.com/repro/columnify/schema"
+	"github.com/reproio/columnify/parquetgo"
+	"github.com/reproio/columnify/schema"
 	"github.com/xitongsys/parquet-go-source/local"
 	parquetSource "github.com/xitongsys/parquet-go/source"
 	"github.com/xitongsys/parquet-go/writer"

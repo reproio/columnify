@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/apache/arrow/go/arrow"
-	"github.com/repro/columnify/schema"
+	"github.com/reproio/columnify/schema"
 	"github.com/xitongsys/parquet-go/layout"
 )
 

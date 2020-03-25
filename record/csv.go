@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/repro/columnify/schema"
+	"github.com/reproio/columnify/schema"
 )
 
 type delimiter rune

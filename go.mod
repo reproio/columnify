@@ -1,4 +1,4 @@
-module github.com/repro/columnify
+module github.com/reproio/columnify
 
 go 1.13
 
