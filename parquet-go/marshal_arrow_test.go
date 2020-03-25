@@ -1,4 +1,4 @@
-package parquetgo
+package parquet_go
 
 import (
 	"fmt"

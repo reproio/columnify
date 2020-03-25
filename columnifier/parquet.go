@@ -5,7 +5,7 @@ import (
 
 	"github.com/reproio/columnify/record"
 
-	"github.com/reproio/columnify/parquetgo"
+	"github.com/reproio/columnify/parquet-go"
 	"github.com/reproio/columnify/schema"
 	"github.com/xitongsys/parquet-go-source/local"
 	parquetSource "github.com/xitongsys/parquet-go/source"
@@ -41,7 +41,7 @@ func NewParquetColumnifier(st string, sf string, rt string, output string) (*par
 			return nil, err
 		}
 	} else {
-		fw = parquetgo.NewStdioFile()
+		fw = parquet_go.NewStdioFile()
 	}
 
 	w, err := writer.NewParquetWriter(fw, nil, 1)
@@ -60,7 +60,7 @@ func NewParquetColumnifier(st string, sf string, rt string, output string) (*par
 
 func (c *parquetColumnifier) Write(data []byte) error {
 	// Intermediate record type is map[string]interface{}
-	c.w.MarshalFunc = parquetgo.MarshalMap
+	c.w.MarshalFunc = parquet_go.MarshalMap
 	records, err := record.FormatToMap(data, c.schema, c.rt)
 	if err != nil {
 		return err
