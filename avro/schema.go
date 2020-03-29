@@ -31,6 +31,8 @@ const (
 )
 
 var (
+	ErrInvalidAvroSchema = fmt.Errorf("invalid avro schema because of unexpected data")
+
 	avroPrimitiveTypes = []string{
 		AvroPrimitiveType_Null,
 		AvroPrimitiveType_Boolean,
@@ -128,7 +130,7 @@ type AvroType struct {
 func (t *AvroType) UnmarshalJSON(b []byte) error {
 	var pt PrimitiveType
 	if err := json.Unmarshal(b, &pt); err == nil {
-		if IsValidPrimitiveType(pt) {
+		if isValidPrimitiveType(pt) {
 			t.PrimitiveType = &pt
 			return nil
 		}
@@ -182,7 +184,7 @@ func (t *AvroType) UnmarshalJSON(b []byte) error {
 
 	var lt LogicalType
 	if err := json.Unmarshal(b, &lt); err == nil {
-		if IsValidLogicalType(lt) {
+		if isValidLogicalType(lt) {
 			t.LogicalType = &lt
 			return nil
 		}
@@ -196,10 +198,15 @@ func (t *AvroType) UnmarshalJSON(b []byte) error {
 		return nil
 	}
 
-	return fmt.Errorf("invalid avro schema because of unexpected data: %v", b)
+	return fmt.Errorf("invalid value %v causes %w", b, ErrInvalidAvroSchema)
 }
 
-func IsValidPrimitiveType(t PrimitiveType) bool {
+func ToPrimitiveType(v string) *PrimitiveType {
+	vv := PrimitiveType(v)
+	return &vv
+}
+
+func isValidPrimitiveType(t PrimitiveType) bool {
 	for _, pt := range avroPrimitiveTypes {
 		if t == PrimitiveType(pt) {
 			return true
@@ -209,7 +216,7 @@ func IsValidPrimitiveType(t PrimitiveType) bool {
 	return false
 }
 
-func IsValidLogicalType(t LogicalType) bool {
+func isValidLogicalType(t LogicalType) bool {
 	if types, ok := avroValidTypesForLogicalType[string(t.LogicalType)]; ok {
 		for _, tpe := range types {
 			if t.Type == tpe {
@@ -219,14 +226,4 @@ func IsValidLogicalType(t LogicalType) bool {
 	}
 
 	return false
-}
-
-func ToPrimitiveType(v string) *PrimitiveType {
-	vv := PrimitiveType(v)
-	return &vv
-}
-
-func ToDefinedType(v string) *DefinedType {
-	vv := DefinedType(v)
-	return &vv
 }

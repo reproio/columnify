@@ -29,5 +29,5 @@ func FormatJsonlToArrow(s *arrow.Schema, data []byte) (*WrappedRecord, error) {
 		return nil, err
 	}
 
-	return formatMapToArrow(s, maps)
+	return formatMapToArrowRecord(s, maps)
 }

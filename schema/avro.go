@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/reproio/columnify/avro"
-
 	"github.com/apache/arrow/go/arrow"
+	"github.com/reproio/columnify/avro"
 )
 
 var (
+	ErrUnconvertibleAvroSchema = fmt.Errorf("input avro schema is unable to convert arrow schema")
+
 	avroPrimitivesToArrow = map[avro.PrimitiveType]arrow.DataType{
 		avro.AvroPrimitiveType_Boolean: arrow.FixedWidthTypes.Boolean,
 		avro.AvroPrimitiveType_Int:     arrow.PrimitiveTypes.Uint32,
@@ -84,7 +85,9 @@ func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 		return arrow.StructOf(fields...), false, nil
 	}
 
-	// TODO enum type
+	if t.EnumsType != nil {
+		return arrow.BinaryTypes.String, false, nil
+	}
 
 	if t.ArrayType != nil {
 		itemType, _, err := avroTypeToArrowType(t.ArrayType.Items)
@@ -95,18 +98,22 @@ func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 	}
 
 	if t.MapsType != nil {
+		// TODO support map type
+		// NOTE arrow go module has not supported map typpe yet ???
 		return nil, false, fmt.Errorf("map type conversion is unsupported")
 	}
 
 	if t.UnionType != nil {
-		if t := isNullableField(t); t != nil {
-			if nested, _, err := avroTypeToArrowType(*t); err == nil {
+		if nt := isNullableField(t.UnionType); nt != nil {
+			if nested, _, err := avroTypeToArrowType(*nt); err == nil {
 				return nested, true, nil
 			}
 		}
 	}
 
-	// TODO fixed type
+	if t.FixedType != nil {
+		return arrow.BinaryTypes.Binary, false, nil
+	}
 
 	if t.LogicalType != nil {
 		if t, ok := avroLogicalTypeToArrow[t.LogicalType.LogicalType]; !ok {
@@ -118,12 +125,11 @@ func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 
 	// TODO defined types
 
-	return nil, false, fmt.Errorf("invalid schema")
+	return nil, false, fmt.Errorf("%v causes: %w", t, ErrUnconvertibleAvroSchema)
 }
 
-func isNullableField(t avro.AvroType) *avro.AvroType {
-	ut := t.UnionType
-	if len(*ut) == 2 && (*ut)[0].PrimitiveType == avro.ToPrimitiveType(avro.AvroPrimitiveType_Null) {
+func isNullableField(ut *avro.UnionType) *avro.AvroType {
+	if len(*ut) == 2 && *(*ut)[0].PrimitiveType == *avro.ToPrimitiveType(avro.AvroPrimitiveType_Null) {
 		// According to Avro spec, the "null" is usually listed first
 		return &(*ut)[1]
 	}

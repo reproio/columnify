@@ -1,2 +1,2 @@
 {"boolean": false, "int": 1, "long": 1, "float": 1.1, "double": 1.1, "bytes": "bytes", "string": "string", "array": [{"boolean": false, "int": 1, "long": 1, "float": 1.1, "double": 1.1, "bytes": "bytes", "string": "string"}]}
-{"boolean": false, "int": 2, "long": 2, "float": 2.2, "double": 2.2, "bytes": "bytes", "string": "string", "array": [{"boolean": false, "int": 2, "long": 2, "float": 2.2, "double": 2.2, "bytes": "bytes", "string": "string"}]}
+{"boolean": true, "int": 2, "long": 2, "float": 2.2, "double": 2.2, "bytes": "bytes", "string": "string", "array": [{"boolean": false, "int": 2, "long": 2, "float": 2.2, "double": 2.2, "bytes": "bytes", "string": "string"}]}

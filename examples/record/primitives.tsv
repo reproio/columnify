@@ -1,1 +1,2 @@
-true	42	420	4.2	44.22	bytes	string
+false	1	1	1.1	1.1	foo	foo
+true	2	2	2.2	2.2	bar	bar

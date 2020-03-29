@@ -186,6 +186,38 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 			err: nil,
 		},
 
+		// Enum
+		{
+			avroSchema: `
+{
+  "type": "record",
+  "name": "Enum",
+  "fields" : [
+    {
+      "name": "enum",
+      "type": {
+        "name": "enum",
+        "type": "enum",
+        "namespace": "enum",
+        "aliases": ["alias"],
+        "symbols": ["ZERO", "ONE", "TWO"]
+      }
+    }
+  ]
+}
+`,
+			expected: arrow.NewSchema(
+				[]arrow.Field{
+					{
+						Name:     "enum",
+						Type:     arrow.BinaryTypes.String,
+						Nullable: false,
+					},
+				}, nil,
+			),
+			err: nil,
+		},
+
 		// Array
 		{
 			avroSchema: `
@@ -298,6 +330,141 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 									},
 								}...,
 							)),
+						Nullable: false,
+					},
+				}, nil,
+			),
+			err: nil,
+		},
+
+		// Union
+		{
+			avroSchema: `
+{
+  "type": "record",
+  "name": "Union",
+  "fields" : [
+    {
+      "name": "union",
+      "type": ["null", "string"]
+    }
+  ]
+}
+`,
+			expected: arrow.NewSchema(
+				[]arrow.Field{
+					{
+						Name:     "union",
+						Type:     arrow.BinaryTypes.String,
+						Nullable: true,
+					},
+				}, nil,
+			),
+			err: nil,
+		},
+
+		// Fixed
+		{
+			avroSchema: `
+{
+  "type": "record",
+  "name": "Fixed",
+  "fields" : [
+    {
+      "name": "fixed",
+      "type": {
+        "type": "fixed",
+        "name": "fixed",
+        "namespace": "fixed",
+        "aliases": ["alias"],
+        "size": 16
+      }
+    }
+  ]
+}
+`,
+			expected: arrow.NewSchema(
+				[]arrow.Field{
+					{
+						Name:     "fixed",
+						Type:     arrow.BinaryTypes.Binary,
+						Nullable: false,
+					},
+				}, nil,
+			),
+			err: nil,
+		},
+
+		// Logical Types
+		{
+			avroSchema: `
+{
+  "type": "record",
+  "name": "LogicalTypes",
+  "fields" : [
+    {
+      "name": "date",
+      "type": {
+        "type": "int",
+        "logicalType": "date"
+      }
+    },
+    {
+      "name": "time-millis",
+      "type": {
+        "type": "int",
+        "logicalType": "time-millis"
+      }
+    },
+    {
+      "name": "time-micros",
+      "type": {
+        "type": "long",
+        "logicalType": "time-micros"
+      }
+    },
+    {
+      "name": "timestamp-millis",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "timestamp-micros",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-micros"
+      }
+    }
+  ]
+}
+`,
+			expected: arrow.NewSchema(
+				[]arrow.Field{
+					{
+						Name:     "date",
+						Type:     arrow.FixedWidthTypes.Date64,
+						Nullable: false,
+					},
+					{
+						Name:     "time-millis",
+						Type:     arrow.FixedWidthTypes.Time32ms,
+						Nullable: false,
+					},
+					{
+						Name:     "time-micros",
+						Type:     arrow.FixedWidthTypes.Time64us,
+						Nullable: false,
+					},
+					{
+						Name:     "timestamp-millis",
+						Type:     arrow.FixedWidthTypes.Timestamp_ms,
+						Nullable: false,
+					},
+					{
+						Name:     "timestamp-micros",
+						Type:     arrow.FixedWidthTypes.Timestamp_us,
 						Nullable: false,
 					},
 				}, nil,

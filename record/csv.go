@@ -58,6 +58,7 @@ func FormatCsvToMap(s *schema.IntermediateSchema, data []byte, delimiter delimit
 
 		e := make(map[string]interface{}, 0)
 		for i, v := range values {
+			// TODO cast to actual types
 			e[names[i]] = v
 		}
 
