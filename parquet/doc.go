@@ -9,4 +9,4 @@
 	parquetgo package enriches these points for handling Arrow based data.
 
 */
-package parquet_go
+package parquet
