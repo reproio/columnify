@@ -14,6 +14,8 @@ import (
 	"github.com/xitongsys/parquet-go/types"
 )
 
+var ErrMarshalArrow = fmt.Errorf("input data is unavailable to marshal")
+
 // MarshalMap converts 1 arrow record to parquet tables.
 func MarshalArrow(maybeRecord []interface{}, bgn int, end int, schemaHandler *schema.SchemaHandler) (*map[string]*layout.Table, error) {
 	// NOTE This marshaler expects record values aggregation has done before call
@@ -62,6 +64,11 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 		return nil, fmt.Errorf("schema not found to path: %v", pathStr)
 	}
 
+	maxRl, err := sh.MaxRepetitionLevel(common.StrToPath(pathStr))
+	if err != nil {
+		return nil, err
+	}
+
 	switch data.DataType().ID() {
 	case arrow.BOOL:
 		values := array.NewBooleanData(data)
@@ -72,7 +79,7 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 			}
 			tables[pathStr].Values = append(tables[pathStr].Values, v)
 			tables[pathStr].DefinitionLevels = append(tables[pathStr].DefinitionLevels, parentDl+deltaDl)
-			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, isParentList))
+			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, maxRl, isParentList))
 		}
 
 	case arrow.UINT32:
@@ -84,7 +91,7 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 			}
 			tables[pathStr].Values = append(tables[pathStr].Values, v)
 			tables[pathStr].DefinitionLevels = append(tables[pathStr].DefinitionLevels, parentDl+deltaDl)
-			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, isParentList))
+			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, maxRl, isParentList))
 		}
 
 	case arrow.UINT64:
@@ -96,7 +103,7 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 			}
 			tables[pathStr].Values = append(tables[pathStr].Values, v)
 			tables[pathStr].DefinitionLevels = append(tables[pathStr].DefinitionLevels, parentDl+deltaDl)
-			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, isParentList))
+			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, maxRl, isParentList))
 		}
 
 	case arrow.FLOAT32:
@@ -108,7 +115,7 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 			}
 			tables[pathStr].Values = append(tables[pathStr].Values, v)
 			tables[pathStr].DefinitionLevels = append(tables[pathStr].DefinitionLevels, parentDl+deltaDl)
-			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, isParentList))
+			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, maxRl, isParentList))
 		}
 
 	case arrow.FLOAT64:
@@ -120,7 +127,7 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 			}
 			tables[pathStr].Values = append(tables[pathStr].Values, v)
 			tables[pathStr].DefinitionLevels = append(tables[pathStr].DefinitionLevels, parentDl+deltaDl)
-			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, isParentList))
+			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, maxRl, isParentList))
 		}
 
 	case arrow.STRING:
@@ -132,7 +139,7 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 			}
 			tables[pathStr].Values = append(tables[pathStr].Values, v)
 			tables[pathStr].DefinitionLevels = append(tables[pathStr].DefinitionLevels, parentDl+deltaDl)
-			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, isParentList))
+			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, maxRl, isParentList))
 		}
 
 	case arrow.BINARY:
@@ -144,10 +151,9 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 			}
 			tables[pathStr].Values = append(tables[pathStr].Values, v)
 			tables[pathStr].DefinitionLevels = append(tables[pathStr].DefinitionLevels, parentDl+deltaDl)
-			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, isParentList))
+			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, getRepetitionLevel(i, parentRl, maxRl, isParentList))
 		}
 
-	// TODO rl and dl
 	case arrow.STRUCT:
 		values := array.NewStructData(data)
 		st, stOk := values.DataType().(*arrow.StructType)
@@ -161,8 +167,19 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 		for i := 0; i < values.NumField(); i++ {
 			childPathMap := pathMap.Children[keys[i]]
 			data := values.Field(i).Data()
-			var err error
-			tables, err = marshalArrowData(data, tables, sh, childPathMap, parentRl, parentDl, false)
+
+			deltaRl := int32(0)
+			deltaDl := int32(0)
+			/*
+				isValid := values.IsValid(i)
+				deltaRl := getRepetitionLevel(i, parentRl, maxRl, isParentList)
+				deltaDl, err := getDefinitionLevel(isValid, info)
+				if err != nil {
+					return nil, err
+				}
+			*/
+
+			tables, err = marshalArrowData(data, tables, sh, childPathMap, parentRl+deltaRl, parentDl+deltaDl, false)
 			if err != nil {
 				return nil, err
 			}
@@ -170,10 +187,26 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 
 	case arrow.LIST:
 		values := array.NewListData(data)
-		var err error
-		tables, err = marshalArrowData(values.ListValues().Data(), tables, sh, pathMap, parentRl, parentDl+1, true)
-		if err != nil {
-			return nil, err
+		for i := 0; i < values.Len(); i++ {
+			j := i + values.Offset()
+			bgn := int64(values.Offsets()[j])
+			end := int64(values.Offsets()[j+1])
+			slice := array.NewSlice(values.ListValues(), bgn, end)
+
+			isValid := values.IsValid(i)
+			deltaRl := getRepetitionLevel(i, parentRl, maxRl, isParentList)
+			deltaDl, err := getDefinitionLevel(isValid, info)
+			if err != nil {
+				return nil, err
+			}
+			deltaDl++
+
+			if isValid {
+				tables, err = marshalArrowData(slice.Data(), tables, sh, pathMap, parentRl+deltaRl, parentDl+deltaDl, true)
+				if err != nil {
+					return nil, err
+				}
+			}
 		}
 
 	default:
@@ -207,9 +240,28 @@ func formatValue(value interface{}, info *common.Tag) interface{} {
 	return types.StrToParquetType(fmt.Sprintf("%v", value), pT, cT, int(info.Length), int(info.Scale))
 }
 
-func getRepetitionLevel(index int, parentRl int32, isParentList bool) int32 {
+func getDefinitionLevel(isValid bool, info *common.Tag) (int32, error) {
+	switch info.RepetitionType {
+	case parquet.FieldRepetitionType_REQUIRED:
+		if isValid {
+			return 0, nil
+		} else {
+			return -1, fmt.Errorf("null value detected for required field: %v", info)
+		}
+	case parquet.FieldRepetitionType_OPTIONAL:
+		if isValid {
+			return 1, nil
+		} else {
+			return 0, nil
+		}
+	default:
+		return -1, fmt.Errorf("invalid field repetition type for: %v", info)
+	}
+}
+
+func getRepetitionLevel(index int, parentRl int32, maxRl int32, isParentList bool) int32 {
 	if isParentList && index != 0 {
-		return parentRl + 1
+		return parentRl + maxRl
 	} else {
 		return parentRl
 	}
