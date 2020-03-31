@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/reproio/columnify/schema"
+
 	"github.com/linkedin/goavro/v2"
 )
 
@@ -27,4 +29,13 @@ func FormatAvroToMap(data []byte) ([]map[string]interface{}, error) {
 	}
 
 	return maps, nil
+}
+
+func FormatAvroToArrow(s *schema.IntermediateSchema, data []byte) (*WrappedRecord, error) {
+	maps, err := FormatAvroToMap(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return formatMapToArrowRecord(s.ArrowSchema, maps)
 }

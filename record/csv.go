@@ -67,3 +67,12 @@ func FormatCsvToMap(s *schema.IntermediateSchema, data []byte, delimiter delimit
 
 	return arr, nil
 }
+
+func FormatCsvToArrow(s *schema.IntermediateSchema, data []byte, delimiter delimiter) (*WrappedRecord, error) {
+	maps, err := FormatCsvToMap(s, data, delimiter)
+	if err != nil {
+		return nil, err
+	}
+
+	return formatMapToArrowRecord(s.ArrowSchema, maps)
+}

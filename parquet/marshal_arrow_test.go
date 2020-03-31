@@ -1,7 +1,6 @@
 package parquet
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -104,7 +103,7 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 					RepetitionLevels: []int32{0, 0},
 				},
 				"Primitives.Bytes": {
-					Values:           []interface{}{fmt.Sprintf("%v", []byte("foo")), fmt.Sprintf("%v", []byte("bar"))},
+					Values:           []interface{}{base64Str([]byte("foo"), t), base64Str([]byte("bar"), t)},
 					DefinitionLevels: []int32{0, 0},
 					RepetitionLevels: []int32{0, 0},
 				},
@@ -253,7 +252,7 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 					RepetitionLevels: []int32{0, 0},
 				},
 				"Nested.Bytes": {
-					Values:           []interface{}{fmt.Sprintf("%v", []byte("foo")), fmt.Sprintf("%v", []byte("bar"))},
+					Values:           []interface{}{base64Str([]byte("foo"), t), base64Str([]byte("bar"), t)},
 					DefinitionLevels: []int32{0, 0},
 					RepetitionLevels: []int32{0, 0},
 				},
@@ -288,7 +287,7 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 					RepetitionLevels: []int32{0, 0},
 				},
 				"Nested.Record.Bytes": {
-					Values:           []interface{}{fmt.Sprintf("%v", []byte("foo")), fmt.Sprintf("%v", []byte("bar"))},
+					Values:           []interface{}{base64Str([]byte("foo"), t), base64Str([]byte("bar"), t)},
 					DefinitionLevels: []int32{0, 0},
 					RepetitionLevels: []int32{0, 0},
 				},
@@ -448,7 +447,7 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 					RepetitionLevels: []int32{0, 0},
 				},
 				"Arrays.Bytes": {
-					Values:           []interface{}{fmt.Sprintf("%v", []byte("foo")), fmt.Sprintf("%v", []byte("bar"))},
+					Values:           []interface{}{base64Str([]byte("foo"), t), base64Str([]byte("bar"), t)},
 					DefinitionLevels: []int32{0, 0},
 					RepetitionLevels: []int32{0, 0},
 				},

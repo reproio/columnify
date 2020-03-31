@@ -3,6 +3,8 @@ package record
 import (
 	"strings"
 
+	"github.com/reproio/columnify/schema"
+
 	"github.com/Songmu/go-ltsv"
 )
 
@@ -27,4 +29,13 @@ func FormatLtsvToMap(data []byte) ([]map[string]interface{}, error) {
 	}
 
 	return records, nil
+}
+
+func FormatLtsvToArrow(s *schema.IntermediateSchema, data []byte) (*WrappedRecord, error) {
+	maps, err := FormatLtsvToMap(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return formatMapToArrowRecord(s.ArrowSchema, maps)
 }

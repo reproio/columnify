@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/reproio/columnify/schema"
+
 	"github.com/vmihailenco/msgpack/v4"
 )
 
@@ -29,4 +31,13 @@ func FormatMsgpackToMap(data []byte) ([]map[string]interface{}, error) {
 	}
 
 	return maps, nil
+}
+
+func FormatMsgpackToArrow(s *schema.IntermediateSchema, data []byte) (*WrappedRecord, error) {
+	maps, err := FormatMsgpackToMap(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return formatMapToArrowRecord(s.ArrowSchema, maps)
 }

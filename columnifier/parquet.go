@@ -74,7 +74,7 @@ func (c *parquetColumnifier) Write(data []byte) error {
 
 	// Intermediate record type is wrapped Apache Arrow record
 	/*
-		c.w.MarshalFunc = parquetgo.MarshalArrow
+		c.w.MarshalFunc = parquet.MarshalArrow
 		records, err := record.FormatToArrow(data, c.schema, c.rt)
 		if err != nil {
 			return err

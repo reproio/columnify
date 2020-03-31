@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/apache/arrow/go/arrow"
+	"github.com/reproio/columnify/schema"
 )
 
 func FormatJsonlToMap(data []byte) ([]map[string]interface{}, error) {
@@ -23,11 +23,11 @@ func FormatJsonlToMap(data []byte) ([]map[string]interface{}, error) {
 	return records, nil
 }
 
-func FormatJsonlToArrow(s *arrow.Schema, data []byte) (*WrappedRecord, error) {
+func FormatJsonlToArrow(s *schema.IntermediateSchema, data []byte) (*WrappedRecord, error) {
 	maps, err := FormatJsonlToMap(data)
 	if err != nil {
 		return nil, err
 	}
 
-	return formatMapToArrowRecord(s, maps)
+	return formatMapToArrowRecord(s.ArrowSchema, maps)
 }

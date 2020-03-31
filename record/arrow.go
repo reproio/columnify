@@ -2,6 +2,9 @@ package record
 
 import (
 	"fmt"
+	"log"
+	"reflect"
+
 	"github.com/apache/arrow/go/arrow"
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/apache/arrow/go/arrow/memory"
@@ -72,33 +75,49 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 		if builderOk && valueOk {
 			vb.Append(vv)
 		} else {
+			log.Println(reflect.TypeOf(v))
 			return nil, fmt.Errorf("unexpected input: %v as bool value", v)
 		}
 
 	case arrow.UINT32:
 		vb, builderOk := b.(*array.Uint32Builder)
-		vv, valueOk := v.(float64)
-		if builderOk && valueOk {
+		if !builderOk {
+			return nil, fmt.Errorf("unexpected input: %v as uint32 value", v)
+		}
+		switch vv := v.(type) {
+		case int32:
 			vb.Append(uint32(vv))
-		} else {
+		case float64:
+			vb.Append(uint32(vv))
+		default:
 			return nil, fmt.Errorf("unexpected input: %v as uint32 value", v)
 		}
 
 	case arrow.UINT64:
 		vb, builderOk := b.(*array.Uint64Builder)
-		vv, valueOk := v.(float64)
-		if builderOk && valueOk {
+		if !builderOk {
+			return nil, fmt.Errorf("unexpected input: %v as uint64 value", v)
+		}
+		switch vv := v.(type) {
+		case int64:
 			vb.Append(uint64(vv))
-		} else {
+		case float64:
+			vb.Append(uint64(vv))
+		default:
 			return nil, fmt.Errorf("unexpected input: %v as uint64 value", v)
 		}
 
 	case arrow.FLOAT32:
 		vb, builderOk := b.(*array.Float32Builder)
-		vv, valueOk := v.(float64)
-		if valueOk && builderOk {
+		if !builderOk {
+			return nil, fmt.Errorf("unexpected input: %v as float32 value", v)
+		}
+		switch vv := v.(type) {
+		case float32:
 			vb.Append(float32(vv))
-		} else {
+		case float64:
+			vb.Append(float32(vv))
+		default:
 			return nil, fmt.Errorf("unexpected input: %v as float32 value", v)
 		}
 
@@ -122,10 +141,15 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 
 	case arrow.BINARY:
 		vb, builderOk := b.(*array.BinaryBuilder)
-		vv, valueOk := v.(string)
-		if builderOk && valueOk {
+		if !builderOk {
+			return nil, fmt.Errorf("unexpected input: %v as binary value", v)
+		}
+		switch vv := v.(type) {
+		case string:
 			vb.Append([]byte(vv))
-		} else {
+		case []byte:
+			vb.Append(vv)
+		default:
 			return nil, fmt.Errorf("unexpected input: %v as binary value", v)
 		}
 
