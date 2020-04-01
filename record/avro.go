@@ -23,7 +23,7 @@ func FormatAvroToMap(data []byte) ([]map[string]interface{}, error) {
 		}
 		m, mapOk := v.(map[string]interface{})
 		if !mapOk {
-			return nil, fmt.Errorf("invalid input: %v", v)
+			return nil, fmt.Errorf("invalid value %v; %w", v, ErrUnconvertibleRecord)
 		}
 		maps = append(maps, m)
 	}

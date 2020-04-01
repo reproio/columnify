@@ -1,6 +1,7 @@
 package record
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/reproio/columnify/schema"
@@ -13,6 +14,11 @@ const (
 	RecordTypeLtsv    = "ltsv"
 	RecordTypeMsgpack = "msgpack"
 	RecordTypeTsv     = "tsv"
+)
+
+var (
+	ErrUnsupportedRecord   = errors.New("unsupported record")
+	ErrUnconvertibleRecord = errors.New("input record is unable to convert")
 )
 
 func FormatToArrow(data []byte, s *schema.IntermediateSchema, recordType string) (*WrappedRecord, error) {
@@ -36,7 +42,7 @@ func FormatToArrow(data []byte, s *schema.IntermediateSchema, recordType string)
 		return FormatCsvToArrow(s, data, TsvDelimiter)
 
 	default:
-		return nil, fmt.Errorf("unsupported data type: %s", recordType)
+		return nil, fmt.Errorf("unsupported record type %s; %w", recordType, ErrUnsupportedRecord)
 	}
 }
 
@@ -61,6 +67,6 @@ func FormatToMap(data []byte, s *schema.IntermediateSchema, recordType string) (
 		return FormatCsvToMap(s, data, TsvDelimiter)
 
 	default:
-		return nil, fmt.Errorf("unsupported data type: %s", recordType)
+		return nil, fmt.Errorf("unsupported record type %s; %w", recordType, ErrUnsupportedRecord)
 	}
 }

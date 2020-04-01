@@ -128,7 +128,7 @@ func arrowFieldToParquetSchemaInfo(f arrow.Field) ([]*parquet.SchemaElement, []*
 				return nil, nil, err
 			}
 			if len(elems) == 0 || len(tags) == 0 {
-				return nil, nil, fmt.Errorf("empty array found at %v", lt)
+				return nil, nil, fmt.Errorf("empty array %v; %w", lt, ErrUnconvertibleSchema)
 			}
 
 			// Mark item type is repeated
@@ -140,7 +140,7 @@ func arrowFieldToParquetSchemaInfo(f arrow.Field) ([]*parquet.SchemaElement, []*
 
 	// TODO other non-primitive types
 
-	return nil, nil, fmt.Errorf("invalid schema conversion at %v", f)
+	return nil, nil, fmt.Errorf("unsupported arrow schema %v; %w", f, ErrUnconvertibleSchema)
 }
 
 func arrowNullableToParquetRepetitionType(nullable bool) *parquet.FieldRepetitionType {

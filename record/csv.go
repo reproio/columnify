@@ -20,7 +20,7 @@ func getFieldNamesFromSchema(s *schema.IntermediateSchema) ([]string, error) {
 	elems := s.ArrowSchema.Fields()
 
 	if len(elems) < 2 {
-		return nil, fmt.Errorf("no element is available for format")
+		return nil, fmt.Errorf("no element is available; %w", ErrUnconvertibleRecord)
 	}
 
 	names := make([]string, 0, len(elems))
@@ -53,7 +53,7 @@ func FormatCsvToMap(s *schema.IntermediateSchema, data []byte, delimiter delimit
 		}
 
 		if numFields != len(values) {
-			return nil, fmt.Errorf("values are incompleted: %v", values)
+			return nil, fmt.Errorf("incompleted value %v; %w", values, ErrUnconvertibleRecord)
 		}
 
 		e := make(map[string]interface{}, 0)

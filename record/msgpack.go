@@ -24,7 +24,7 @@ func FormatMsgpackToMap(data []byte) ([]map[string]interface{}, error) {
 
 		m, mapOk := arr.(map[string]interface{})
 		if !mapOk {
-			return nil, fmt.Errorf("invalid input: %v", arr)
+			return nil, fmt.Errorf("invalid input %v; %w", arr, ErrUnconvertibleRecord)
 		}
 
 		maps = append(maps, m)
