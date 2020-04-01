@@ -1,0 +1,191 @@
+{
+  "type": "record",
+  "name": "Complicated",
+  "doc": "It contains most kind of primitive/complex/logical types",
+  "aliases": ["Root"],
+  "fields" : [
+    {"name": "r_boolean", "type": "boolean"},
+    {"name": "r_int",     "type": "int"},
+    {"name": "r_long",    "type": "long"},
+    {"name": "r_float",   "type": "float"},
+    {"name": "r_double",  "type": "double"},
+    {"name": "r_bytes",   "type": "bytes"},
+    {"name": "r_string",  "type": "string"},
+    {"name": "r_record",  "type": {
+      "type": "record",
+      "name": "Level1_1",
+      "fields" : [
+        {"name": "r_boolean", "type": "boolean"},
+        {"name": "r_int",     "type": "int"},
+        {"name": "r_long",    "type": "long"},
+        {"name": "r_float",   "type": "float"},
+        {"name": "r_double",  "type": "double"},
+        {"name": "r_bytes",   "type": "bytes"},
+        {"name": "r_string",  "type": "string"},
+        {"name": "r_record",  "type": {
+          "type": "record",
+          "name": "Level2_1__1",
+          "fields" : [
+            {"name": "r_boolean", "type": "boolean"},
+            {"name": "r_int",     "type": "int"},
+            {"name": "r_long",    "type": "long"},
+            {"name": "r_float",   "type": "float"},
+            {"name": "r_double",  "type": "double"},
+            {"name": "r_bytes",   "type": "bytes"},
+            {"name": "r_string",  "type": "string"}
+          ]}
+        },
+        {"name": "r_array",   "type": {
+          "type": "array",
+          "items": {
+            "type": "record",
+            "name": "Level2_1__2",
+            "fields" : [
+              {"name": "r_boolean", "type": "boolean"},
+              {"name": "r_int",     "type": "int"},
+              {"name": "r_long",    "type": "long"},
+              {"name": "r_float",   "type": "float"},
+              {"name": "r_double",  "type": "double"},
+              {"name": "r_bytes",   "type": "bytes"},
+              {"name": "r_string",  "type": "string"}
+            ]
+          }
+        }}
+      ]}
+    },
+    {"name": "r_enum", "type": {
+        "type": "enum",
+        "name": "Enum1",
+        "symbols": ["ZERO", "ONE", "TWO"]
+      }
+    },
+    {"name": "r_array",   "type": {
+      "type": "array",
+      "items": {
+        "type": "record",
+        "name": "Level1_2",
+        "fields" : [
+          {"name": "r_boolean", "type": "boolean"},
+          {"name": "r_int",     "type": "int"},
+          {"name": "r_long",    "type": "long"},
+          {"name": "r_float",   "type": "float"},
+          {"name": "r_double",  "type": "double"},
+          {"name": "r_bytes",   "type": "bytes"},
+          {"name": "r_string",  "type": "string"},
+          {"name": "r_array",   "type": {
+            "type": "array",
+            "items": {
+              "type": "record",
+              "name": "Level2_2",
+              "fields" : [
+                {"name": "r_boolean", "type": "boolean"},
+                {"name": "r_int",     "type": "int"},
+                {"name": "r_long",    "type": "long"},
+                {"name": "r_float",   "type": "float"},
+                {"name": "r_double",  "type": "double"},
+                {"name": "r_bytes",   "type": "bytes"},
+                {"name": "r_string",  "type": "string"}
+              ]
+            }
+          }}
+        ]
+      }
+    }},
+    {"name": "r_date", "type": {
+        "type": "int",
+        "logicalType": "date"
+      }
+    },
+    {"name": "r_timemillis", "type": {
+        "type": "int",
+        "logicalType": "time-millis"
+      }
+    },
+    {"name": "r_timemicros", "type": {
+        "type": "long",
+        "logicalType": "time-micros"
+      }
+    },
+    {"name": "r_timestampmillis", "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {"name": "r_timestampmicros", "type": {
+        "type": "long",
+        "logicalType": "timestamp-micros"
+      }
+    },
+    {"name": "o_boolean", "type": ["null", "boolean"], "default": null},
+    {"name": "o_int",     "type": ["null", "int"],     "default": null},
+    {"name": "o_long",    "type": ["null", "long"],    "default": null},
+    {"name": "o_float",   "type": ["null", "float"],   "default": null},
+    {"name": "o_double",  "type": ["null", "double"],  "default": null},
+    {"name": "o_bytes",   "type": ["null", "bytes"],   "default": null},
+    {"name": "o_string",  "type": ["null", "string"],  "default": null},
+    {"name": "o_record",  "type": ["null", {
+      "type": "record",
+      "name": "Level1_3",
+      "fields" : [
+        {"name": "r_boolean", "type": "boolean"},
+        {"name": "r_int",     "type": "int"},
+        {"name": "r_long",    "type": "long"},
+        {"name": "r_float",   "type": "float"},
+        {"name": "r_double",  "type": "double"},
+        {"name": "r_bytes",   "type": "bytes"},
+        {"name": "r_string",  "type": "string"},
+        {"name": "r_record",  "type": {
+          "type": "record",
+          "name": "Level2_3",
+          "fields" : [
+            {"name": "r_boolean", "type": "boolean"},
+            {"name": "r_int",     "type": "int"},
+            {"name": "r_long",    "type": "long"},
+            {"name": "r_float",   "type": "float"},
+            {"name": "r_double",  "type": "double"},
+            {"name": "r_bytes",   "type": "bytes"},
+            {"name": "r_string",  "type": "string"}
+          ]}
+        }
+      ]}],
+      "default": null
+    },
+    {"name": "o_enum", "type": ["null", {
+        "type": "enum",
+        "name": "Enum2",
+        "symbols": ["ZERO", "ONE", "TWO"]
+      }],
+      "default": null
+    },
+    {"name": "o_date", "type": ["null", {
+        "type": "int",
+        "logicalType": "date"
+      }],
+      "default": null
+    },
+    {"name": "o_timemillis", "type": ["null", {
+        "type": "int",
+        "logicalType": "time-millis"
+      }],
+      "default": null
+    },
+    {"name": "o_timemicros", "type": ["null", {
+        "type": "long",
+        "logicalType": "time-micros"
+      }],
+      "default": null
+    },
+    {"name": "o_timestampmillis", "type": ["null", {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }],
+      "default": null
+    },
+    {"name": "o_timestampmicros", "type": ["null", {
+        "type": "long",
+        "logicalType": "timestamp-micros"
+      }],
+      "default": null
+    }
+  ]
+}

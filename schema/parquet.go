@@ -2,7 +2,6 @@ package schema
 
 import (
 	"fmt"
-
 	"github.com/apache/arrow/go/arrow"
 	"github.com/xitongsys/parquet-go/common"
 	"github.com/xitongsys/parquet-go/parquet"
@@ -11,7 +10,7 @@ import (
 )
 
 var (
-	arrowToParquet = map[arrow.DataType]string{
+	arrowToParquetPrimitiveType = map[arrow.DataType]string{
 		arrow.FixedWidthTypes.Boolean: "BOOLEAN",
 		arrow.PrimitiveTypes.Uint32:   "INT32",
 		arrow.PrimitiveTypes.Uint64:   "INT64",
@@ -19,6 +18,31 @@ var (
 		arrow.PrimitiveTypes.Float64:  "DOUBLE",
 		arrow.BinaryTypes.Binary:      "BYTE_ARRAY",
 		arrow.BinaryTypes.String:      "UTF8",
+	}
+	arrowToParquetConvertedType = map[arrow.DataType]struct {
+		t  *parquet.Type
+		ct *parquet.ConvertedType
+	}{
+		arrow.FixedWidthTypes.Date64: {
+			t:  parquet.TypePtr(parquet.Type_INT32),
+			ct: parquet.ConvertedTypePtr(parquet.ConvertedType_DATE),
+		},
+		arrow.FixedWidthTypes.Time32ms: {
+			t:  parquet.TypePtr(parquet.Type_INT32),
+			ct: parquet.ConvertedTypePtr(parquet.ConvertedType_TIME_MILLIS),
+		},
+		arrow.FixedWidthTypes.Time64us: {
+			t:  parquet.TypePtr(parquet.Type_INT64),
+			ct: parquet.ConvertedTypePtr(parquet.ConvertedType_TIME_MICROS),
+		},
+		arrow.FixedWidthTypes.Timestamp_ms: {
+			t:  parquet.TypePtr(parquet.Type_INT64),
+			ct: parquet.ConvertedTypePtr(parquet.ConvertedType_TIMESTAMP_MILLIS),
+		},
+		arrow.FixedWidthTypes.Timestamp_us: {
+			t:  parquet.TypePtr(parquet.Type_INT64),
+			ct: parquet.ConvertedTypePtr(parquet.ConvertedType_TIMESTAMP_MICROS),
+		},
 	}
 )
 
@@ -62,9 +86,8 @@ func NewSchemaHandlerFromArrow(s IntermediateSchema) (*schema.SchemaHandler, err
 
 func arrowFieldToParquetSchemaInfo(f arrow.Field) ([]*parquet.SchemaElement, []*common.Tag, error) {
 	// primitive types
-	if tn, ok := arrowToParquet[f.Type]; ok {
+	if tn, ok := arrowToParquetPrimitiveType[f.Type]; ok {
 		t, ct := types.TypeNameToParquetType(tn, "")
-
 		e := &parquet.SchemaElement{
 			Type:           t,
 			Name:           f.Name,
@@ -76,7 +99,6 @@ func arrowFieldToParquetSchemaInfo(f arrow.Field) ([]*parquet.SchemaElement, []*
 			InName: common.HeadToUpper(e.GetName()),
 			Type:   tn,
 		}
-
 		return []*parquet.SchemaElement{e}, []*common.Tag{tag}, nil
 	}
 
@@ -138,7 +160,21 @@ func arrowFieldToParquetSchemaInfo(f arrow.Field) ([]*parquet.SchemaElement, []*
 		}
 	}
 
-	// TODO other non-primitive types
+	// logical types
+	if tns, ok := arrowToParquetConvertedType[f.Type]; ok {
+		e := &parquet.SchemaElement{
+			Type:           tns.t,
+			Name:           f.Name,
+			ConvertedType:  tns.ct,
+			RepetitionType: arrowNullableToParquetRepetitionType(f.Nullable),
+		}
+		tag := &common.Tag{
+			ExName: e.GetName(),
+			InName: common.HeadToUpper(e.GetName()),
+			Type:   tns.t.String(),
+		}
+		return []*parquet.SchemaElement{e}, []*common.Tag{tag}, nil
+	}
 
 	return nil, nil, fmt.Errorf("invalid schema conversion at %v", f)
 }

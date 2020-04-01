@@ -28,6 +28,7 @@ it: build
 	./columnify -schemaType avro -schemaFile examples/schema/array.avsc -recordType avro examples/record/array.avro > /dev/null
 	./columnify -schemaType avro -schemaFile examples/schema/array.avsc -recordType jsonl examples/record/array.jsonl > /dev/null
 	./columnify -schemaType avro -schemaFile examples/schema/array.avsc -recordType msgpack examples/record/array.msgpack > /dev/null
+	./columnify -schemaType avro -schemaFile examples/schema/complicated.avsc -recordType avro examples/record/complicated.avro > /dev/null
 	./columnify -schemaType bigquery -schemaFile examples/schema/primitives.bq.json -recordType avro examples/record/primitives.avro > /dev/null
 	./columnify -schemaType bigquery -schemaFile examples/schema/primitives.bq.json -recordType csv examples/record/primitives.csv > /dev/null
 	./columnify -schemaType bigquery -schemaFile examples/schema/primitives.bq.json -recordType jsonl examples/record/primitives.jsonl > /dev/null
