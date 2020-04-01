@@ -1,5 +1,7 @@
 package columnifier
 
+import "io"
+
 const (
 	schemaTypeAvro     = "avro"
 	schemaTypeBigquery = "bigquery"
@@ -11,8 +13,9 @@ const (
 )
 
 type Columnifier interface {
-	Write(data []byte) error
-	WriteFromFiles(paths []string) error
+	io.WriteCloser
+
+	WriteFromFiles(paths []string) (int, error)
 	Flush() error
 }
 

@@ -34,14 +34,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to init: %v\n", err)
 	}
+	defer func() {
+		if err := c.Close(); err != nil {
+			log.Fatalf("Failed to flush: %v\n", err)
+		}
+	}()
 
-	err = c.WriteFromFiles(files)
+	_, err = c.WriteFromFiles(files)
 	if err != nil {
 		log.Fatalf("Failed to write: %v\n", err)
-	}
-
-	err = c.Flush()
-	if err != nil {
-		log.Fatalf("Failed to flush: %v\n", err)
 	}
 }

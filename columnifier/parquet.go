@@ -13,9 +13,10 @@ import (
 )
 
 type parquetColumnifier struct {
-	w      *writer.ParquetWriter
-	schema *schema.IntermediateSchema
-	rt     string
+	w       *writer.ParquetWriter
+	schema  *schema.IntermediateSchema
+	rt      string
+	stopped bool
 }
 
 func NewParquetColumnifier(st string, sf string, rt string, output string) (*parquetColumnifier, error) {
@@ -52,25 +53,28 @@ func NewParquetColumnifier(st string, sf string, rt string, output string) (*par
 	w.Footer.Schema = append(w.Footer.Schema, sh.SchemaElements...)
 
 	return &parquetColumnifier{
-		w:      w,
-		schema: intermediateSchema,
-		rt:     rt,
+		w:       w,
+		schema:  intermediateSchema,
+		rt:      rt,
+		stopped: false,
 	}, nil
 }
 
-func (c *parquetColumnifier) Write(data []byte) error {
+func (c *parquetColumnifier) Write(data []byte) (int, error) {
 	// Intermediate record type is map[string]interface{}
 	c.w.MarshalFunc = parquet.MarshalMap
 	records, err := record.FormatToMap(data, c.schema, c.rt)
 	if err != nil {
-		return err
+		return -1, err
 	}
 
+	beforeSize := c.w.Size
 	for _, r := range records {
 		if err := c.w.Write(r); err != nil {
-			return err
+			return -1, err
 		}
 	}
+	afterSize := c.w.Size
 
 	// Intermediate record type is wrapped Apache Arrow record
 	/*
@@ -84,26 +88,40 @@ func (c *parquetColumnifier) Write(data []byte) error {
 		}
 	*/
 
-	return nil
+	return int(afterSize - beforeSize), nil
 }
 
-func (c *parquetColumnifier) WriteFromFiles(paths []string) error {
+func (c *parquetColumnifier) WriteFromFiles(paths []string) (int, error) {
+	var n int
+
 	for _, p := range paths {
 		data, err := ioutil.ReadFile(p)
 		if err != nil {
-			return err
+			return -1, err
 		}
-		if err := c.Write(data); err != nil {
-			return err
+		if n, err = c.Write(data); err != nil {
+			return -1, err
 		}
 	}
 
-	return nil
+	return n, nil
 }
 
 func (c *parquetColumnifier) Flush() error {
 	if err := c.w.WriteStop(); err != nil {
 		return err
+	}
+	c.stopped = true
+
+	return nil
+}
+
+func (c *parquetColumnifier) Close() error {
+	if !c.stopped {
+		err := c.Flush()
+		if err != nil {
+			return err
+		}
 	}
 
 	return c.w.PFile.Close()
