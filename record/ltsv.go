@@ -1,6 +1,7 @@
 package record
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/reproio/columnify/schema"
@@ -22,6 +23,27 @@ func FormatLtsvToMap(data []byte) ([]map[string]interface{}, error) {
 
 		m := make(map[string]interface{}, 0)
 		for k, v := range v {
+			// bool
+			if v != "0" && v != "1" {
+				if vv, err := strconv.ParseBool(v); err == nil {
+					m[k] = vv
+					continue
+				}
+			}
+
+			// int
+			if vv, err := strconv.ParseInt(v, 10, 64); err == nil {
+				m[k] = vv
+				continue
+			}
+
+			// float
+			if vv, err := strconv.ParseFloat(v, 64); err == nil {
+				m[k] = vv
+				continue
+			}
+
+			// others; to string
 			m[k] = v
 		}
 

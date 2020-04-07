@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
+	"strconv"
 	"strings"
 
 	"github.com/reproio/columnify/schema"
@@ -58,7 +59,27 @@ func FormatCsvToMap(s *schema.IntermediateSchema, data []byte, delimiter delimit
 
 		e := make(map[string]interface{}, 0)
 		for i, v := range values {
-			// TODO cast to actual types
+			// bool
+			if v != "0" && v != "1" {
+				if vv, err := strconv.ParseBool(v); err == nil {
+					e[names[i]] = vv
+					continue
+				}
+			}
+
+			// int
+			if vv, err := strconv.ParseInt(v, 10, 64); err == nil {
+				e[names[i]] = vv
+				continue
+			}
+
+			// float
+			if vv, err := strconv.ParseFloat(v, 64); err == nil {
+				e[names[i]] = vv
+				continue
+			}
+
+			// others; to string
 			e[names[i]] = v
 		}
 

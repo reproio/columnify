@@ -23,7 +23,7 @@ var (
 		t  *parquet.Type
 		ct *parquet.ConvertedType
 	}{
-		arrow.FixedWidthTypes.Date64: {
+		arrow.FixedWidthTypes.Date32: {
 			t:  parquet.TypePtr(parquet.Type_INT32),
 			ct: parquet.ConvertedTypePtr(parquet.ConvertedType_DATE),
 		},

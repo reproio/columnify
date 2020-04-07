@@ -23,7 +23,7 @@ var (
 	}
 
 	avroLogicalTypeToArrow = map[string]arrow.DataType{
-		avro.AvroLogicalType_Date:            arrow.FixedWidthTypes.Date64,
+		avro.AvroLogicalType_Date:            arrow.FixedWidthTypes.Date32,
 		avro.AvroLogicalType_Duration:        arrow.FixedWidthTypes.Duration_ms,
 		avro.AvroLogicalType_TimeMillis:      arrow.FixedWidthTypes.Time32ms,
 		avro.AvroLogicalType_TimeMicros:      arrow.FixedWidthTypes.Time64us,

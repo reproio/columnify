@@ -85,7 +85,25 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 			return nil, fmt.Errorf("unexpected input: %v as uint32 value", v)
 		}
 		switch vv := v.(type) {
+		case int:
+			vb.Append(uint32(vv))
+		case int8:
+			vb.Append(uint32(vv))
+		case int16:
+			vb.Append(uint32(vv))
 		case int32:
+			vb.Append(uint32(vv))
+		case int64:
+			vb.Append(uint32(vv))
+		case uint:
+			vb.Append(uint32(vv))
+		case uint8:
+			vb.Append(uint32(vv))
+		case uint16:
+			vb.Append(uint32(vv))
+		case uint32:
+			vb.Append(uint32(vv))
+		case uint64:
 			vb.Append(uint32(vv))
 		case float64:
 			vb.Append(uint32(vv))
@@ -99,7 +117,21 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 			return nil, fmt.Errorf("unexpected input: %v as uint64 value", v)
 		}
 		switch vv := v.(type) {
+		case int8:
+			vb.Append(uint64(vv))
+		case int16:
+			vb.Append(uint64(vv))
+		case int32:
+			vb.Append(uint64(vv))
 		case int64:
+			vb.Append(uint64(vv))
+		case uint8:
+			vb.Append(uint64(vv))
+		case uint16:
+			vb.Append(uint64(vv))
+		case uint32:
+			vb.Append(uint64(vv))
+		case uint64:
 			vb.Append(uint64(vv))
 		case float64:
 			vb.Append(uint64(vv))

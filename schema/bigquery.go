@@ -16,9 +16,9 @@ var (
 		bigquery.StringFieldType:    arrow.BinaryTypes.String,
 		bigquery.BytesFieldType:     arrow.BinaryTypes.Binary,
 		bigquery.DateFieldType:      arrow.FixedWidthTypes.Date32,
-		bigquery.DateTimeFieldType:  arrow.FixedWidthTypes.Date64,
 		bigquery.TimeFieldType:      arrow.FixedWidthTypes.Time64us,
 		bigquery.TimestampFieldType: arrow.FixedWidthTypes.Timestamp_us,
+		// bigquery.DateTimeFieldType: Unsupported
 	}
 )
 

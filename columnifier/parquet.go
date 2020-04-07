@@ -1,9 +1,8 @@
 package columnifier
 
 import (
-	"io/ioutil"
-
 	"github.com/reproio/columnify/record"
+	"io/ioutil"
 
 	"github.com/reproio/columnify/parquet"
 	"github.com/reproio/columnify/schema"
@@ -73,6 +72,8 @@ func (c *parquetColumnifier) Write(data []byte) error {
 	}
 
 	// Intermediate record type is wrapped Apache Arrow record
+	// It requires Arrow Golang implementation more logical type supports
+	// ref. https://github.com/apache/arrow/blob/9c9dc2012266442d0848e4af0cf52874bc4db151/go/arrow/array/builder.go#L211
 	/*
 		c.w.MarshalFunc = parquet.MarshalArrow
 		records, err := record.FormatToArrow(data, c.schema, c.rt)
