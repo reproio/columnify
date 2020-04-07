@@ -12,6 +12,11 @@ func FormatJsonlToMap(data []byte) ([]map[string]interface{}, error) {
 
 	records := make([]map[string]interface{}, 0)
 	for _, l := range lines {
+		if l == "" {
+			// skip blank line
+			continue
+		}
+
 		var e map[string]interface{}
 		if err := json.Unmarshal([]byte(l), &e); err != nil {
 			return nil, err

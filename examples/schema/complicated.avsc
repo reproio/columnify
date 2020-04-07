@@ -32,8 +32,114 @@
             {"name": "r_float",   "type": "float"},
             {"name": "r_double",  "type": "double"},
             {"name": "r_bytes",   "type": "bytes"},
-            {"name": "r_string",  "type": "string"}
+            {"name": "r_string",  "type": "string"},
+            {"name": "r_enum", "type": {
+                "type": "enum",
+                "name": "Level2_1__1_Enum1",
+                "symbols": ["ZERO", "ONE", "TWO"]
+              }
+            },
+            {"name": "r_date", "type": {
+                "type": "int",
+                "logicalType": "date"
+              }
+            },
+            {"name": "r_timemillis", "type": {
+                "type": "int",
+                "logicalType": "time-millis"
+              }
+            },
+            {"name": "r_timemicros", "type": {
+                "type": "long",
+                "logicalType": "time-micros"
+              }
+            },
+            {"name": "r_timestampmillis", "type": {
+                "type": "long",
+                "logicalType": "timestamp-millis"
+              }
+            },
+            {"name": "r_timestampmicros", "type": {
+                "type": "long",
+                "logicalType": "timestamp-micros"
+              }
+            },
+            {"name": "o_boolean", "type": ["null", "boolean"], "default": null},
+            {"name": "o_int",     "type": ["null", "int"],     "default": null},
+            {"name": "o_long",    "type": ["null", "long"],    "default": null},
+            {"name": "o_float",   "type": ["null", "float"],   "default": null},
+            {"name": "o_double",  "type": ["null", "double"],  "default": null},
+            {"name": "o_bytes",   "type": ["null", "bytes"],   "default": null},
+            {"name": "o_string",  "type": ["null", "string"],  "default": null},
+            {"name": "o_enum", "type": ["null", {
+                "type": "enum",
+                "name": "Level2_1__1_Enum2",
+                "symbols": ["ZERO", "ONE", "TWO"]
+              }],
+              "default": null
+            },
+            {"name": "o_date", "type": ["null", {
+                "type": "int",
+                "logicalType": "date"
+              }],
+              "default": null
+            },
+            {"name": "o_timemillis", "type": ["null", {
+                "type": "int",
+                "logicalType": "time-millis"
+              }],
+              "default": null
+            },
+            {"name": "o_timemicros", "type": ["null", {
+                "type": "long",
+                "logicalType": "time-micros"
+              }],
+              "default": null
+            },
+            {"name": "o_timestampmillis", "type": ["null", {
+                "type": "long",
+                "logicalType": "timestamp-millis"
+              }],
+              "default": null
+            },
+            {"name": "o_timestampmicros", "type": ["null", {
+                "type": "long",
+                "logicalType": "timestamp-micros"
+              }],
+              "default": null
+            }
           ]}
+        },
+        {"name": "r_enum", "type": {
+            "type": "enum",
+            "name": "Level1_1_Enum1",
+            "symbols": ["ZERO", "ONE", "TWO"]
+          }
+        },
+        {"name": "r_date", "type": {
+            "type": "int",
+            "logicalType": "date"
+          }
+        },
+        {"name": "r_timemillis", "type": {
+            "type": "int",
+            "logicalType": "time-millis"
+          }
+        },
+        {"name": "r_timemicros", "type": {
+            "type": "long",
+            "logicalType": "time-micros"
+          }
+        },
+        {"name": "r_timestampmillis", "type": {
+            "type": "long",
+            "logicalType": "timestamp-millis"
+          }
+        },
+        {"name": "r_timestampmicros", "type": {
+            "type": "long",
+            "logicalType": "timestamp-micros"
+          }
         },
         {"name": "r_array",   "type": {
           "type": "array",
@@ -47,7 +153,57 @@
               {"name": "r_float",   "type": "float"},
               {"name": "r_double",  "type": "double"},
               {"name": "r_bytes",   "type": "bytes"},
-              {"name": "r_string",  "type": "string"}
+              {"name": "r_string",  "type": "string"},
+              {"name": "r_enum", "type": {
+                  "type": "enum",
+                  "name": "Level2_1__2_Enum1",
+                  "symbols": ["ZERO", "ONE", "TWO"]
+                }
+              },
+              {"name": "o_boolean", "type": ["null", "boolean"], "default": null},
+              {"name": "o_int",     "type": ["null", "int"],     "default": null},
+              {"name": "o_long",    "type": ["null", "long"],    "default": null},
+              {"name": "o_float",   "type": ["null", "float"],   "default": null},
+              {"name": "o_double",  "type": ["null", "double"],  "default": null},
+              {"name": "o_bytes",   "type": ["null", "bytes"],   "default": null},
+              {"name": "o_string",  "type": ["null", "string"],  "default": null},
+              {"name": "o_enum", "type": ["null", {
+                  "type": "enum",
+                  "name": "Level2_1__2_Enum2",
+                  "symbols": ["ZERO", "ONE", "TWO"]
+                }],
+                "default": null
+              },
+              {"name": "o_date", "type": ["null", {
+                  "type": "int",
+                  "logicalType": "date"
+                }],
+                "default": null
+              },
+              {"name": "o_timemillis", "type": ["null", {
+                  "type": "int",
+                  "logicalType": "time-millis"
+                }],
+                "default": null
+              },
+              {"name": "o_timemicros", "type": ["null", {
+                  "type": "long",
+                  "logicalType": "time-micros"
+                }],
+                "default": null
+              },
+              {"name": "o_timestampmillis", "type": ["null", {
+                  "type": "long",
+                  "logicalType": "timestamp-millis"
+                }],
+                "default": null
+              },
+              {"name": "o_timestampmicros", "type": ["null", {
+                  "type": "long",
+                  "logicalType": "timestamp-micros"
+                }],
+                "default": null
+              }
             ]
           }
         }}
@@ -84,10 +240,129 @@
                 {"name": "r_float",   "type": "float"},
                 {"name": "r_double",  "type": "double"},
                 {"name": "r_bytes",   "type": "bytes"},
-                {"name": "r_string",  "type": "string"}
+                {"name": "r_string",  "type": "string"},
+                {"name": "r_enum", "type": {
+                    "type": "enum",
+                    "name": "Level2_2_Enum1",
+                    "symbols": ["ZERO", "ONE", "TWO"]
+                  }
+                },
+                {"name": "r_date", "type": {
+                    "type": "int",
+                    "logicalType": "date"
+                  }
+                },
+                {"name": "r_timemillis", "type": {
+                    "type": "int",
+                    "logicalType": "time-millis"
+                  }
+                },
+                {"name": "r_timemicros", "type": {
+                    "type": "long",
+                    "logicalType": "time-micros"
+                  }
+                },
+                {"name": "r_timestampmillis", "type": {
+                    "type": "long",
+                    "logicalType": "timestamp-millis"
+                  }
+                },
+                {"name": "r_timestampmicros", "type": {
+                    "type": "long",
+                    "logicalType": "timestamp-micros"
+                  }
+                },
+                {"name": "o_boolean", "type": ["null", "boolean"], "default": null},
+                {"name": "o_int",     "type": ["null", "int"],     "default": null},
+                {"name": "o_long",    "type": ["null", "long"],    "default": null},
+                {"name": "o_float",   "type": ["null", "float"],   "default": null},
+                {"name": "o_double",  "type": ["null", "double"],  "default": null},
+                {"name": "o_bytes",   "type": ["null", "bytes"],   "default": null},
+                {"name": "o_string",  "type": ["null", "string"],  "default": null},
+                {"name": "o_enum", "type": ["null", {
+                    "type": "enum",
+                    "name": "Level2_2_Enum2",
+                    "symbols": ["ZERO", "ONE", "TWO"]
+                  }],
+                  "default": null
+                },
+                {"name": "o_date", "type": ["null", {
+                    "type": "int",
+                    "logicalType": "date"
+                  }],
+                  "default": null
+                },
+                {"name": "o_timemillis", "type": ["null", {
+                    "type": "int",
+                    "logicalType": "time-millis"
+                  }],
+                  "default": null
+                },
+                {"name": "o_timemicros", "type": ["null", {
+                    "type": "long",
+                    "logicalType": "time-micros"
+                  }],
+                  "default": null
+                },
+                {"name": "o_timestampmillis", "type": ["null", {
+                    "type": "long",
+                    "logicalType": "timestamp-millis"
+                  }],
+                  "default": null
+                },
+                {"name": "o_timestampmicros", "type": ["null", {
+                    "type": "long",
+                    "logicalType": "timestamp-micros"
+                  }],
+                  "default": null
+                }
               ]
             }
-          }}
+          }},
+          {"name": "o_boolean", "type": ["null", "boolean"], "default": null},
+          {"name": "o_int",     "type": ["null", "int"],     "default": null},
+          {"name": "o_long",    "type": ["null", "long"],    "default": null},
+          {"name": "o_float",   "type": ["null", "float"],   "default": null},
+          {"name": "o_double",  "type": ["null", "double"],  "default": null},
+          {"name": "o_bytes",   "type": ["null", "bytes"],   "default": null},
+          {"name": "o_string",  "type": ["null", "string"],  "default": null},
+          {"name": "o_enum", "type": ["null", {
+              "type": "enum",
+              "name": "Level1_2_Enum2",
+              "symbols": ["ZERO", "ONE", "TWO"]
+            }],
+            "default": null
+          },
+          {"name": "o_date", "type": ["null", {
+              "type": "int",
+              "logicalType": "date"
+            }],
+            "default": null
+          },
+          {"name": "o_timemillis", "type": ["null", {
+              "type": "int",
+              "logicalType": "time-millis"
+            }],
+            "default": null
+          },
+          {"name": "o_timemicros", "type": ["null", {
+              "type": "long",
+              "logicalType": "time-micros"
+            }],
+            "default": null
+          },
+          {"name": "o_timestampmillis", "type": ["null", {
+              "type": "long",
+              "logicalType": "timestamp-millis"
+            }],
+            "default": null
+          },
+          {"name": "o_timestampmicros", "type": ["null", {
+              "type": "long",
+              "logicalType": "timestamp-micros"
+            }],
+            "default": null
+          }
         ]
       }
     }},
@@ -144,8 +419,158 @@
             {"name": "r_float",   "type": "float"},
             {"name": "r_double",  "type": "double"},
             {"name": "r_bytes",   "type": "bytes"},
-            {"name": "r_string",  "type": "string"}
+            {"name": "r_string",  "type": "string"},
+            {"name": "r_enum", "type": {
+                "type": "enum",
+                "name": "Level2_3_Enum1",
+                "symbols": ["ZERO", "ONE", "TWO"]
+              }
+            },
+            {"name": "r_date", "type": {
+                "type": "int",
+                "logicalType": "date"
+              }
+            },
+            {"name": "r_timemillis", "type": {
+                "type": "int",
+                "logicalType": "time-millis"
+              }
+            },
+            {"name": "r_timemicros", "type": {
+                "type": "long",
+                "logicalType": "time-micros"
+              }
+            },
+            {"name": "r_timestampmillis", "type": {
+                "type": "long",
+                "logicalType": "timestamp-millis"
+              }
+            },
+            {"name": "r_timestampmicros", "type": {
+                "type": "long",
+                "logicalType": "timestamp-micros"
+              }
+            },
+            {"name": "o_boolean", "type": ["null", "boolean"], "default": null},
+            {"name": "o_int",     "type": ["null", "int"],     "default": null},
+            {"name": "o_long",    "type": ["null", "long"],    "default": null},
+            {"name": "o_float",   "type": ["null", "float"],   "default": null},
+            {"name": "o_double",  "type": ["null", "double"],  "default": null},
+            {"name": "o_bytes",   "type": ["null", "bytes"],   "default": null},
+            {"name": "o_string",  "type": ["null", "string"],  "default": null},
+            {"name": "o_enum", "type": ["null", {
+                "type": "enum",
+                "name": "Level2_3_Enum2",
+                "symbols": ["ZERO", "ONE", "TWO"]
+              }],
+              "default": null
+            },
+            {"name": "o_date", "type": ["null", {
+                "type": "int",
+                "logicalType": "date"
+              }],
+              "default": null
+            },
+            {"name": "o_timemillis", "type": ["null", {
+                "type": "int",
+                "logicalType": "time-millis"
+              }],
+              "default": null
+            },
+            {"name": "o_timemicros", "type": ["null", {
+                "type": "long",
+                "logicalType": "time-micros"
+              }],
+              "default": null
+            },
+            {"name": "o_timestampmillis", "type": ["null", {
+                "type": "long",
+                "logicalType": "timestamp-millis"
+              }],
+              "default": null
+            },
+            {"name": "o_timestampmicros", "type": ["null", {
+                "type": "long",
+                "logicalType": "timestamp-micros"
+              }],
+              "default": null
+            }
           ]}
+        },
+        {"name": "r_enum", "type": {
+            "type": "enum",
+            "name": "Level1_3_Enum1",
+            "symbols": ["ZERO", "ONE", "TWO"]
+          }
+        },
+        {"name": "r_date", "type": {
+            "type": "int",
+            "logicalType": "date"
+          }
+        },
+        {"name": "r_timemillis", "type": {
+            "type": "int",
+            "logicalType": "time-millis"
+          }
+        },
+        {"name": "r_timemicros", "type": {
+            "type": "long",
+            "logicalType": "time-micros"
+          }
+        },
+        {"name": "r_timestampmillis", "type": {
+            "type": "long",
+            "logicalType": "timestamp-millis"
+          }
+        },
+        {"name": "r_timestampmicros", "type": {
+            "type": "long",
+            "logicalType": "timestamp-micros"
+          }
+        },
+        {"name": "o_boolean", "type": ["null", "boolean"], "default": null},
+        {"name": "o_int",     "type": ["null", "int"],     "default": null},
+        {"name": "o_long",    "type": ["null", "long"],    "default": null},
+        {"name": "o_float",   "type": ["null", "float"],   "default": null},
+        {"name": "o_double",  "type": ["null", "double"],  "default": null},
+        {"name": "o_bytes",   "type": ["null", "bytes"],   "default": null},
+        {"name": "o_string",  "type": ["null", "string"],  "default": null},
+        {"name": "o_enum", "type": ["null", {
+            "type": "enum",
+            "name": "Level1_3_Enum2",
+            "symbols": ["ZERO", "ONE", "TWO"]
+          }],
+          "default": null
+        },
+        {"name": "o_date", "type": ["null", {
+            "type": "int",
+            "logicalType": "date"
+          }],
+          "default": null
+        },
+        {"name": "o_timemillis", "type": ["null", {
+            "type": "int",
+            "logicalType": "time-millis"
+          }],
+          "default": null
+        },
+        {"name": "o_timemicros", "type": ["null", {
+            "type": "long",
+            "logicalType": "time-micros"
+          }],
+          "default": null
+        },
+        {"name": "o_timestampmillis", "type": ["null", {
+            "type": "long",
+            "logicalType": "timestamp-millis"
+          }],
+          "default": null
+        },
+        {"name": "o_timestampmicros", "type": ["null", {
+            "type": "long",
+            "logicalType": "timestamp-micros"
+          }],
+          "default": null
         }
       ]}],
       "default": null
