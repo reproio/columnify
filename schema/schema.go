@@ -22,6 +22,6 @@ func GetSchema(content []byte, schemaType string) (*IntermediateSchema, error) {
 	case SchemaTypeBigquery:
 		return NewSchemaFromBigQuerySchema(content)
 	default:
-		return nil, fmt.Errorf("%s; %w", schemaType, ErrUnsupportedSchema)
+		return nil, fmt.Errorf("%s: %w", schemaType, ErrUnsupportedSchema)
 	}
 }

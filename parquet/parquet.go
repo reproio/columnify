@@ -20,10 +20,10 @@ var (
 func prepareTables(schemaHandler *schema.SchemaHandler) (map[string]*layout.Table, error) {
 	numSchemaElements := len(schemaHandler.SchemaElements)
 	if len(schemaHandler.Infos) != numSchemaElements {
-		return nil, fmt.Errorf("sizes of SchemaElement and Infos don't match; %w", ErrInvalidParquetSchema)
+		return nil, fmt.Errorf("sizes of SchemaElement and Infos don't match: %w", ErrInvalidParquetSchema)
 	}
 	if len(schemaHandler.MapIndex) != numSchemaElements {
-		return nil, fmt.Errorf("sizes of SchemaElement and MapIndex don't match; %w", ErrInvalidParquetSchema)
+		return nil, fmt.Errorf("sizes of SchemaElement and MapIndex don't match: %w", ErrInvalidParquetSchema)
 	}
 
 	tables := make(map[string]*layout.Table)
@@ -47,10 +47,10 @@ func prepareTables(schemaHandler *schema.SchemaHandler) (map[string]*layout.Tabl
 				if int(index) < len(schemaHandler.SchemaElements) {
 					tpe = schemaHandler.SchemaElements[index].GetType()
 				} else {
-					return nil, fmt.Errorf("invalid index %v to schema elements %v; %w", index, schemaHandler.SchemaElements, ErrInvalidParquetSchema)
+					return nil, fmt.Errorf("invalid index %v to schema elements %v: %w", index, schemaHandler.SchemaElements, ErrInvalidParquetSchema)
 				}
 			} else {
-				return nil, fmt.Errorf("invalid schema key %v; %w", pathStr, ErrInvalidParquetSchema)
+				return nil, fmt.Errorf("invalid schema key %v: %w", pathStr, ErrInvalidParquetSchema)
 			}
 
 			tables[pathStr] = &layout.Table{

@@ -20,12 +20,12 @@ import (
 func MarshalArrow(maybeRecord []interface{}, bgn int, end int, schemaHandler *schema.SchemaHandler) (*map[string]*layout.Table, error) {
 	// NOTE This marshaler expects record values aggregation has done before call
 	if len(maybeRecord) != 1 {
-		return nil, fmt.Errorf("size of records is invalid; %w", ErrInvalidParquetRecord)
+		return nil, fmt.Errorf("size of records is invalid: %w", ErrInvalidParquetRecord)
 	}
 
 	wrapped, recordOk := maybeRecord[0].(*record.WrappedRecord)
 	if !recordOk {
-		return nil, fmt.Errorf("unexpected input type %v; %w", reflect.TypeOf(maybeRecord[0]), ErrInvalidParquetRecord)
+		return nil, fmt.Errorf("unexpected input type %v: %w", reflect.TypeOf(maybeRecord[0]), ErrInvalidParquetRecord)
 	}
 
 	return marshalArrowRecord(wrapped.Record, schemaHandler)
@@ -61,7 +61,7 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 	if i, ok := sh.MapIndex[pathStr]; ok {
 		info = sh.Infos[i]
 	} else {
-		return nil, fmt.Errorf("schema not found to path %v; %w", pathStr, ErrInvalidParquetSchema)
+		return nil, fmt.Errorf("schema not found to path %v: %w", pathStr, ErrInvalidParquetSchema)
 	}
 
 	switch data.DataType().ID() {
@@ -153,7 +153,7 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 		values := array.NewStructData(data)
 		st, stOk := values.DataType().(*arrow.StructType)
 		if !stOk {
-			return nil, fmt.Errorf("unsupported data type %v; %w", values.DataType(), ErrInvalidParquetRecord)
+			return nil, fmt.Errorf("unsupported data type %v: %w", values.DataType(), ErrInvalidParquetRecord)
 		}
 		keys := make([]string, 0, len(st.Fields()))
 		for _, f := range st.Fields() {
@@ -207,7 +207,7 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 		}
 
 	default:
-		return nil, fmt.Errorf("unsupported type %v; %w", data.DataType(), ErrInvalidParquetRecord)
+		return nil, fmt.Errorf("unsupported type %v: %w", data.DataType(), ErrInvalidParquetRecord)
 	}
 
 	return tables, nil
@@ -223,7 +223,7 @@ func arrowPrimitiveToDataPageSource(value interface{}, isValid bool, info *commo
 				return v, 0, nil
 			}
 		} else {
-			return nil, -1, fmt.Errorf("null for required field %v; %w", info, ErrInvalidParquetRecord)
+			return nil, -1, fmt.Errorf("null for required field %v: %w", info, ErrInvalidParquetRecord)
 		}
 	case parquet.FieldRepetitionType_OPTIONAL:
 		if isValid {
@@ -236,7 +236,7 @@ func arrowPrimitiveToDataPageSource(value interface{}, isValid bool, info *commo
 			return nil, 0, nil
 		}
 	default:
-		return nil, -1, fmt.Errorf("invalid field repetition type for %v; %w", info, ErrInvalidParquetRecord)
+		return nil, -1, fmt.Errorf("invalid field repetition type for %v: %w", info, ErrInvalidParquetRecord)
 	}
 }
 
@@ -247,7 +247,7 @@ func formatArrowPrimitive(value interface{}, info *common.Tag) (interface{}, err
 	if (*pT == parquet.Type_BYTE_ARRAY || *pT == parquet.Type_FIXED_LEN_BYTE_ARRAY) && cT == nil {
 		bin, binOk := value.([]byte)
 		if !binOk {
-			return nil, fmt.Errorf("%v is not []byte; %w", value, ErrInvalidParquetRecord)
+			return nil, fmt.Errorf("%v is not []byte: %w", value, ErrInvalidParquetRecord)
 		}
 
 		var buf bytes.Buffer

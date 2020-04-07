@@ -42,7 +42,7 @@ func FormatToArrow(data []byte, s *schema.IntermediateSchema, recordType string)
 		return FormatCsvToArrow(s, data, TsvDelimiter)
 
 	default:
-		return nil, fmt.Errorf("unsupported record type %s; %w", recordType, ErrUnsupportedRecord)
+		return nil, fmt.Errorf("unsupported record type %s: %w", recordType, ErrUnsupportedRecord)
 	}
 }
 
@@ -67,6 +67,6 @@ func FormatToMap(data []byte, s *schema.IntermediateSchema, recordType string) (
 		return FormatCsvToMap(s, data, TsvDelimiter)
 
 	default:
-		return nil, fmt.Errorf("unsupported record type %s; %w", recordType, ErrUnsupportedRecord)
+		return nil, fmt.Errorf("unsupported record type %s: %w", recordType, ErrUnsupportedRecord)
 	}
 }
