@@ -234,7 +234,7 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 
 func marshalPrimitive(val reflect.Value, info *common.Tag) (interface{}, error) {
 	if val.Type().Kind() == reflect.Interface && val.IsNil() {
-		return nil, fmt.Errorf("invalid input type: %v", val.Type())
+		return nil, fmt.Errorf("invalid input %v: %w", val.Type(), ErrInvalidParquetRecord)
 	}
 
 	pT, cT := types.TypeNameToParquetType(info.Type, info.BaseType)

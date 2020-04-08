@@ -67,7 +67,7 @@ func bqFieldToArrowField(f *bigquery.FieldSchema) (*arrow.Field, error) {
 		}, nil
 	}
 
-	return nil, fmt.Errorf("unsupported field: %v", f)
+	return nil, fmt.Errorf("unsupported field %v: %w", f, ErrUnconvertibleSchema)
 }
 
 func bqModeToNullable(f *bigquery.FieldSchema) bool {

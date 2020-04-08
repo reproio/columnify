@@ -9,8 +9,6 @@ import (
 )
 
 var (
-	ErrUnconvertibleAvroSchema = fmt.Errorf("input avro schema is unable to convert arrow schema")
-
 	avroPrimitivesToArrow = map[avro.PrimitiveType]arrow.DataType{
 		avro.AvroPrimitiveType_Boolean: arrow.FixedWidthTypes.Boolean,
 		avro.AvroPrimitiveType_Int:     arrow.PrimitiveTypes.Uint32,
@@ -67,7 +65,7 @@ func avroFieldToArrowField(f avro.RecordField) (*arrow.Field, error) {
 func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 	if t.PrimitiveType != nil {
 		if t, ok := avroPrimitivesToArrow[*t.PrimitiveType]; !ok {
-			return nil, false, fmt.Errorf("invalid schema conversion at %v", t)
+			return nil, false, fmt.Errorf("unsupported primitive type %v: %w", t, ErrUnconvertibleSchema)
 		} else {
 			return t, false, nil
 		}
@@ -100,7 +98,7 @@ func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 	if t.MapsType != nil {
 		// TODO support map type
 		// NOTE arrow go module has not supported map typpe yet ???
-		return nil, false, fmt.Errorf("map type conversion is unsupported")
+		return nil, false, fmt.Errorf("map type conversion is unsupported: %w", ErrUnconvertibleSchema)
 	}
 
 	if t.UnionType != nil {
@@ -117,7 +115,7 @@ func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 
 	if t.LogicalType != nil {
 		if t, ok := avroLogicalTypeToArrow[t.LogicalType.LogicalType]; !ok {
-			return nil, false, fmt.Errorf("invalid schema conversion at %v", t)
+			return nil, false, fmt.Errorf("unsupported logical type %v: %w", t, ErrUnconvertibleSchema)
 		} else {
 			return t, false, nil
 		}
@@ -125,7 +123,7 @@ func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 
 	// TODO defined types
 
-	return nil, false, fmt.Errorf("%v causes: %w", t, ErrUnconvertibleAvroSchema)
+	return nil, false, fmt.Errorf("unsupported type %v: %w", t, ErrUnconvertibleSchema)
 }
 
 func isNullableField(ut *avro.UnionType) *avro.AvroType {

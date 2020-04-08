@@ -2,15 +2,11 @@ package record
 
 import (
 	"fmt"
-	"log"
-	"reflect"
 
 	"github.com/apache/arrow/go/arrow"
 	"github.com/apache/arrow/go/arrow/array"
 	"github.com/apache/arrow/go/arrow/memory"
 )
-
-var ErrUnconvertibleRecord = fmt.Errorf("input values are not convertible to arrow")
 
 type WrappedRecord struct {
 	Record array.Record
@@ -75,14 +71,13 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 		if builderOk && valueOk {
 			vb.Append(vv)
 		} else {
-			log.Println(reflect.TypeOf(v))
-			return nil, fmt.Errorf("unexpected input: %v as bool value", v)
+			return nil, fmt.Errorf("unexpected input %v as bool: %w", v, ErrUnconvertibleRecord)
 		}
 
 	case arrow.UINT32:
 		vb, builderOk := b.(*array.Uint32Builder)
 		if !builderOk {
-			return nil, fmt.Errorf("unexpected input: %v as uint32 value", v)
+			return nil, fmt.Errorf("builder %v is wrong: %w", v, ErrUnconvertibleRecord)
 		}
 		switch vv := v.(type) {
 		case int:
@@ -108,13 +103,13 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 		case float64:
 			vb.Append(uint32(vv))
 		default:
-			return nil, fmt.Errorf("unexpected input: %v as uint32 value", v)
+			return nil, fmt.Errorf("unexpected input %v as uint32: %w", v, ErrUnconvertibleRecord)
 		}
 
 	case arrow.UINT64:
 		vb, builderOk := b.(*array.Uint64Builder)
 		if !builderOk {
-			return nil, fmt.Errorf("unexpected input: %v as uint64 value", v)
+			return nil, fmt.Errorf("builder %v is wrong: %w", v, ErrUnconvertibleRecord)
 		}
 		switch vv := v.(type) {
 		case int8:
@@ -136,13 +131,13 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 		case float64:
 			vb.Append(uint64(vv))
 		default:
-			return nil, fmt.Errorf("unexpected input: %v as uint64 value", v)
+			return nil, fmt.Errorf("unexpected input %v as uint64: %w", v, ErrUnconvertibleRecord)
 		}
 
 	case arrow.FLOAT32:
 		vb, builderOk := b.(*array.Float32Builder)
 		if !builderOk {
-			return nil, fmt.Errorf("unexpected input: %v as float32 value", v)
+			return nil, fmt.Errorf("builder %v is wrong: %w", v, ErrUnconvertibleRecord)
 		}
 		switch vv := v.(type) {
 		case float32:
@@ -150,7 +145,7 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 		case float64:
 			vb.Append(float32(vv))
 		default:
-			return nil, fmt.Errorf("unexpected input: %v as float32 value", v)
+			return nil, fmt.Errorf("unexpected input %v as float32: %w", v, ErrUnconvertibleRecord)
 		}
 
 	case arrow.FLOAT64:
@@ -159,7 +154,7 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 		if builderOk && valueOk {
 			vb.Append(vv)
 		} else {
-			return nil, fmt.Errorf("unexpected input: %v as float64 value", v)
+			return nil, fmt.Errorf("unexpected input %v as float64: %w", v, ErrUnconvertibleRecord)
 		}
 
 	case arrow.STRING:
@@ -168,13 +163,13 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 		if builderOk && valueOk {
 			vb.Append(vv)
 		} else {
-			return nil, fmt.Errorf("unexpected input: %v as string value", v)
+			return nil, fmt.Errorf("unexpected input %v as string: %w", v, ErrUnconvertibleRecord)
 		}
 
 	case arrow.BINARY:
 		vb, builderOk := b.(*array.BinaryBuilder)
 		if !builderOk {
-			return nil, fmt.Errorf("unexpected input: %v as binary value", v)
+			return nil, fmt.Errorf("builder %v is wrong: %w", v, ErrUnconvertibleRecord)
 		}
 		switch vv := v.(type) {
 		case string:
@@ -182,7 +177,7 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 		case []byte:
 			vb.Append(vv)
 		default:
-			return nil, fmt.Errorf("unexpected input: %v as binary value", v)
+			return nil, fmt.Errorf("unexpected input %v as binary: %w", v, ErrUnconvertibleRecord)
 		}
 
 	case arrow.STRUCT:
@@ -193,7 +188,7 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 				vb.Append(true)
 				vv, valueOk := v.(map[string]interface{})
 				if !valueOk {
-					return nil, fmt.Errorf("unexpected input: %v as struct value", v)
+					return nil, fmt.Errorf("unexpected input %v as struct: %w", v, ErrUnconvertibleRecord)
 				} else if _, err := formatMapToArrowStruct(vb, st, vv); err != nil {
 					return nil, err
 				}
@@ -201,7 +196,7 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 				vb.Append(false)
 			}
 		} else {
-			return nil, fmt.Errorf("unexpected input: %v as struct value", v)
+			return nil, fmt.Errorf("unexpected input %v as struct: %w", v, ErrUnconvertibleRecord)
 		}
 
 	case arrow.LIST:
@@ -212,7 +207,7 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 				vb.Append(true)
 				vv, valueOk := v.([]interface{})
 				if !valueOk {
-					return nil, fmt.Errorf("unexpected input: %v as list value", v)
+					return nil, fmt.Errorf("unexpected input %v as list: %w", v, ErrUnconvertibleRecord)
 				}
 				if _, err := formatMapToArrowList(vb, lt, vv); err != nil {
 					return nil, err
@@ -221,11 +216,11 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, v interface{}) (ar
 				vb.Append(false)
 			}
 		} else {
-			return nil, fmt.Errorf("unexpected input: %v as list value", v)
+			return nil, fmt.Errorf("unexpected input %v as list: %w", v, ErrUnconvertibleRecord)
 		}
 
 	default:
-		return nil, fmt.Errorf("unconvertable type %v cases %w", t.ID(), ErrUnconvertibleRecord)
+		return nil, fmt.Errorf("unconvertable type %v: %w", t.ID(), ErrUnconvertibleRecord)
 	}
 
 	return b, nil

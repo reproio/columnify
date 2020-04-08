@@ -24,7 +24,7 @@ func (f *stdioFile) Write(p []byte) (n int, err error) {
 }
 
 func (f *stdioFile) Seek(offset int64, whence int) (int64, error) {
-	return 0, fmt.Errorf("unsupported yet")
+	return 0, fmt.Errorf("unsupported yet: %w", ErrUnsupportedMethod)
 }
 
 func (f *stdioFile) Close() error {
@@ -32,9 +32,9 @@ func (f *stdioFile) Close() error {
 }
 
 func (f *stdioFile) Open(name string) (source.ParquetFile, error) {
-	return nil, fmt.Errorf("never implemented")
+	return nil, fmt.Errorf("never implemented: %w", ErrUnsupportedMethod)
 }
 
 func (f *stdioFile) Create(name string) (source.ParquetFile, error) {
-	return nil, fmt.Errorf("never implemented")
+	return nil, fmt.Errorf("never implemented: %w", ErrUnsupportedMethod)
 }

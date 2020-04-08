@@ -1,6 +1,7 @@
 package parquet
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/xitongsys/parquet-go/common"
@@ -9,14 +10,20 @@ import (
 	"github.com/xitongsys/parquet-go/schema"
 )
 
+var (
+	ErrInvalidParquetSchema = errors.New("invalid parquet schema")
+	ErrInvalidParquetRecord = errors.New("invalid parquet record")
+	ErrUnsupportedMethod    = errors.New("unsupported method")
+)
+
 // prepareTables returns tables from fields(non record) in schema elements.
 func prepareTables(schemaHandler *schema.SchemaHandler) (map[string]*layout.Table, error) {
 	numSchemaElements := len(schemaHandler.SchemaElements)
 	if len(schemaHandler.Infos) != numSchemaElements {
-		return nil, fmt.Errorf("sizes of SchemaElement and Infos don't match")
+		return nil, fmt.Errorf("sizes of SchemaElement and Infos don't match: %w", ErrInvalidParquetSchema)
 	}
 	if len(schemaHandler.MapIndex) != numSchemaElements {
-		return nil, fmt.Errorf("sizes of SchemaElement and MapIndex don't match")
+		return nil, fmt.Errorf("sizes of SchemaElement and MapIndex don't match: %w", ErrInvalidParquetSchema)
 	}
 
 	tables := make(map[string]*layout.Table)
@@ -40,10 +47,10 @@ func prepareTables(schemaHandler *schema.SchemaHandler) (map[string]*layout.Tabl
 				if int(index) < len(schemaHandler.SchemaElements) {
 					tpe = schemaHandler.SchemaElements[index].GetType()
 				} else {
-					return nil, fmt.Errorf("invalid index %v to schema elements %v ", index, schemaHandler.SchemaElements)
+					return nil, fmt.Errorf("invalid index %v to schema elements %v: %w", index, schemaHandler.SchemaElements, ErrInvalidParquetSchema)
 				}
 			} else {
-				return nil, fmt.Errorf("invalid schema key: %v", pathStr)
+				return nil, fmt.Errorf("invalid schema key %v: %w", pathStr, ErrInvalidParquetSchema)
 			}
 
 			tables[pathStr] = &layout.Table{
