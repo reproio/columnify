@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/apache/arrow/go/arrow"
@@ -433,16 +434,30 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 			),
 			err: nil,
 		},
+
+		// Unsupported field
+		{
+			bqSchema: `
+[
+  {
+    "name": "datetime",
+    "type": "DATETIME",
+    "mode": "REQUIRED"
+  }
+]`,
+			expected: &arrow.Schema{},
+			err:      ErrUnconvertibleSchema,
+		},
 	}
 
 	for _, c := range cases {
 		actual, err := NewSchemaFromBigQuerySchema([]byte(c.bqSchema))
 
-		if err != c.err {
+		if !errors.Is(err, c.err) {
 			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
 		}
 
-		if actual.ArrowSchema.String() != c.expected.String() {
+		if err == nil && actual.ArrowSchema.String() != c.expected.String() {
 			t.Errorf("expected: %v, but actual: %v\n", c.expected, actual)
 		}
 	}

@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/apache/arrow/go/arrow"
@@ -471,16 +472,75 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 			),
 			err: nil,
 		},
+
+		// null primitive type
+		{
+			avroSchema: `
+{
+  "type": "record",
+  "name": "Null",
+  "fields" : [
+    {"name": "null", "type": "null"}
+  ]
+}
+`,
+			expected: &arrow.Schema{},
+			err:      ErrUnconvertibleSchema,
+		},
+
+		// map complex type
+		{
+			avroSchema: `
+{
+  "type": "record",
+  "name": "Map",
+  "fields" : [
+    {
+      "name": "map",
+      "type": {
+        "type": "map",
+        "values": "long"
+      }
+    }
+  ]
+}
+`,
+			expected: &arrow.Schema{},
+			err:      ErrUnconvertibleSchema,
+		},
+
+		// decimal logical type
+		{
+			avroSchema: `
+{
+  "type": "record",
+  "name": "LogicalTypes",
+  "fields" : [
+    {
+      "name": "decimal",
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 4,
+        "scale": 2
+      }
+    }
+  ]
+}
+`,
+			expected: &arrow.Schema{},
+			err:      ErrUnconvertibleSchema,
+		},
 	}
 
 	for _, c := range cases {
 		actual, err := NewSchemaFromAvroSchema([]byte(c.avroSchema))
 
-		if err != c.err {
+		if !errors.Is(err, c.err) {
 			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
 		}
 
-		if actual.ArrowSchema.String() != c.expected.String() {
+		if err == nil && actual.ArrowSchema.String() != c.expected.String() {
 			t.Errorf("expected: %v, but actual: %v\n", c.expected, actual)
 		}
 	}

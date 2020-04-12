@@ -2,9 +2,10 @@ package record
 
 import (
 	"bytes"
-	"github.com/linkedin/goavro/v2"
 	"reflect"
 	"testing"
+
+	"github.com/linkedin/goavro/v2"
 )
 
 func TestFormatAvroToMap(t *testing.T) {

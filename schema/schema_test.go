@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"errors"
 	"testing"
 )
 
@@ -76,20 +77,18 @@ func TestGetSchema(t *testing.T) {
 			err:        nil,
 		},
 
-		// Invalid
-		/*
-			{
-				content:    []byte("invalid"),
-				schemaType: "unknown",
-				err:        nil,
-			},
-		*/
+		// Unknown
+		{
+			content:    []byte("invalid"),
+			schemaType: "unknown",
+			err:        ErrUnsupportedSchema,
+		},
 	}
 
 	for _, c := range cases {
 		_, err := GetSchema(c.content, c.schemaType)
 
-		if err != c.err {
+		if !errors.Is(err, c.err) {
 			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
 		}
 	}

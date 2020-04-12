@@ -1,8 +1,9 @@
 package columnifier
 
 import (
-	"github.com/reproio/columnify/record"
 	"io/ioutil"
+
+	"github.com/reproio/columnify/record"
 
 	"github.com/reproio/columnify/parquet"
 	"github.com/reproio/columnify/schema"
