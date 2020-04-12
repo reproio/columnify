@@ -13,10 +13,10 @@ import (
 )
 
 type parquetColumnifier struct {
-	w       *writer.ParquetWriter
-	schema  *schema.IntermediateSchema
-	rt      string
-	stopped bool
+	w         *writer.ParquetWriter
+	schema    *schema.IntermediateSchema
+	rt        string
+	finalized bool
 }
 
 func NewParquetColumnifier(st string, sf string, rt string, output string) (*parquetColumnifier, error) {
@@ -53,10 +53,10 @@ func NewParquetColumnifier(st string, sf string, rt string, output string) (*par
 	w.Footer.Schema = append(w.Footer.Schema, sh.SchemaElements...)
 
 	return &parquetColumnifier{
-		w:       w,
-		schema:  intermediateSchema,
-		rt:      rt,
-		stopped: false,
+		w:         w,
+		schema:    intermediateSchema,
+		rt:        rt,
+		finalized: false,
 	}, nil
 }
 
@@ -107,18 +107,19 @@ func (c *parquetColumnifier) WriteFromFiles(paths []string) (int, error) {
 	return n, nil
 }
 
-func (c *parquetColumnifier) Flush() error {
+// Finalize flushes buffers and finalize creating a parquet file.
+func (c *parquetColumnifier) Finalize() error {
 	if err := c.w.WriteStop(); err != nil {
 		return err
 	}
-	c.stopped = true
+	c.finalized = true
 
 	return nil
 }
 
 func (c *parquetColumnifier) Close() error {
-	if !c.stopped {
-		err := c.Flush()
+	if !c.finalized {
+		err := c.Finalize()
 		if err != nil {
 			return err
 		}

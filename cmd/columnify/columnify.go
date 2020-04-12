@@ -36,12 +36,17 @@ func main() {
 	}
 	defer func() {
 		if err := c.Close(); err != nil {
-			log.Fatalf("Failed to flush: %v\n", err)
+			log.Fatalf("Failed to close: %v\n", err)
 		}
 	}()
 
 	_, err = c.WriteFromFiles(files)
 	if err != nil {
 		log.Fatalf("Failed to write: %v\n", err)
+	}
+
+	err = c.Finalize()
+	if err != nil {
+		log.Fatalf("Failed to finalize: %v\n", err)
 	}
 }
