@@ -16,9 +16,9 @@ var (
 		bigquery.StringFieldType:    arrow.BinaryTypes.String,
 		bigquery.BytesFieldType:     arrow.BinaryTypes.Binary,
 		bigquery.DateFieldType:      arrow.FixedWidthTypes.Date32,
-		bigquery.DateTimeFieldType:  arrow.FixedWidthTypes.Date64,
 		bigquery.TimeFieldType:      arrow.FixedWidthTypes.Time64us,
 		bigquery.TimestampFieldType: arrow.FixedWidthTypes.Timestamp_us,
+		// bigquery.DateTimeFieldType: Unsupported
 	}
 )
 
@@ -67,7 +67,7 @@ func bqFieldToArrowField(f *bigquery.FieldSchema) (*arrow.Field, error) {
 		}, nil
 	}
 
-	return nil, fmt.Errorf("unsupported field: %v", f)
+	return nil, fmt.Errorf("unsupported field %v: %w", f, ErrUnconvertibleSchema)
 }
 
 func bqModeToNullable(f *bigquery.FieldSchema) bool {

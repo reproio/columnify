@@ -444,7 +444,7 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 				[]arrow.Field{
 					{
 						Name:     "date",
-						Type:     arrow.FixedWidthTypes.Date64,
+						Type:     arrow.FixedWidthTypes.Date32,
 						Nullable: false,
 					},
 					{
