@@ -16,7 +16,6 @@ type Columnifier interface {
 	io.WriteCloser
 
 	WriteFromFiles(paths []string) (int, error)
-	Finalize() error
 }
 
 func NewColumnifier(st string, sf string, rt string, o string) (Columnifier, error) {

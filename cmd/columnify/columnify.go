@@ -44,9 +44,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to write: %v\n", err)
 	}
-
-	err = c.Finalize()
-	if err != nil {
-		log.Fatalf("Failed to finalize: %v\n", err)
-	}
 }

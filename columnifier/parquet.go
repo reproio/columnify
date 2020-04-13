@@ -107,22 +107,9 @@ func (c *parquetColumnifier) WriteFromFiles(paths []string) (int, error) {
 	return n, nil
 }
 
-// Finalize flushes buffers and finalize creating a parquet file.
-func (c *parquetColumnifier) Finalize() error {
+func (c *parquetColumnifier) Close() error {
 	if err := c.w.WriteStop(); err != nil {
 		return err
-	}
-	c.finalized = true
-
-	return nil
-}
-
-func (c *parquetColumnifier) Close() error {
-	if !c.finalized {
-		err := c.Finalize()
-		if err != nil {
-			return err
-		}
 	}
 
 	return c.w.PFile.Close()
