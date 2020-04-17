@@ -12,7 +12,7 @@ fmt:
 
 .PHONY: test
 test:
-	go test -cover ./...
+	go test -race -cover ./...
 
 .PHONY: it
 it: build

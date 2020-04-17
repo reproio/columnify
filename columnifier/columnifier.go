@@ -2,16 +2,6 @@ package columnifier
 
 import "io"
 
-const (
-	schemaTypeAvro     = "avro"
-	schemaTypeBigquery = "bigquery"
-
-	recordTypeCsv   = "csv"
-	recordTypeJsonl = "jsonl"
-	recordTypeLtsv  = "ltsv"
-	recordTypeTsv   = "tsv"
-)
-
 type Columnifier interface {
 	io.WriteCloser
 
