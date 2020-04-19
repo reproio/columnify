@@ -8,7 +8,15 @@ Columnar formatted data is efficient for analytics queries, lightweight and ease
 
 *columnify* is an easy conversion tool for columnar that enables to run single binary written in Go. It also supports some kinds of data format like `JSONL(NewLine delimited JSON)`, `Avro`.
 
-## Usage
+### How to use
+
+### Installation
+
+```sh
+$ GO111MODULE=off go get github.com/reproio/columnify
+```
+
+### Usage
 
 ```sh
 $ ./columnify -h
@@ -67,3 +75,16 @@ $ parquet-tools cat -json out.parquet
 
 - [Apache Avro](https://avro.apache.org/docs/1.8.2/spec.html)
 - [BigQuery Schema](https://cloud.google.com/bigquery/docs/schemas?hl=ja#specifying_a_json_schema_file)
+
+## Integration example
+
+- [fluent-plugin-s3](https://github.com/fluent/fluent-plugin-s3) parquet compressor
+
+  - An example is `examples/fluent-plugin-s3`
+  - It works as a Compressor of fluent-plugin-s3 write parquet file to tmp via chunk data.
+
+## Development
+
+`Columnifier` reads input file(s), converts format based on given parameter, finally writes output files.
+Format conversion is separated by schema / record. The `schema` conversion accepts input schema, then converts it to targer's via Arrow's schema. The `record` conversion is similar to schema's but intermediate is simply `map[string]interface{}`, because Arrow record isn't available as an intermediate.
+`columnify` basically depends on existing modules but it contains additional modules like `avro`, `parquet` to fill insufficient features.

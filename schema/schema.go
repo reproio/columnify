@@ -15,6 +15,7 @@ var (
 	ErrUnconvertibleSchema = errors.New("input schema is unable to convert")
 )
 
+// GetSchema converts input schema intermediate schema.
 func GetSchema(content []byte, schemaType string) (*IntermediateSchema, error) {
 	switch schemaType {
 	case SchemaTypeAvro:

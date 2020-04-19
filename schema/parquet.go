@@ -47,6 +47,7 @@ var (
 	}
 )
 
+// NewSchemaHandlerFromArrow converts intermediate schema to parquet-go schema handler.
 func NewSchemaHandlerFromArrow(s IntermediateSchema) (*schema.SchemaHandler, error) {
 	elems := make([]*parquet.SchemaElement, 0)
 	tags := make([]*common.Tag, 0)

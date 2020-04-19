@@ -1,3 +1,9 @@
+/**
+ * Avro schema unmarshaler parse JSON based schema and extract it as Go values.
+ * It follows Avro 1.8.2 specification.
+ * https://avro.apache.org/docs/1.8.2/spec.html
+ *
+ */
 package avro
 
 import (
@@ -115,6 +121,7 @@ type LogicalType struct {
 
 type DefinedType string // a type name already defined before
 
+// AvroType is an union type of Avro types
 type AvroType struct {
 	PrimitiveType *PrimitiveType
 	RecordType    *RecordType
@@ -127,6 +134,7 @@ type AvroType struct {
 	DefinedType   *DefinedType
 }
 
+// UnmarshalJSON gets actual Avro type(s) recursively.
 func (t *AvroType) UnmarshalJSON(b []byte) error {
 	var pt PrimitiveType
 	if err := json.Unmarshal(b, &pt); err == nil {

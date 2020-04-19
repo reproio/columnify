@@ -12,13 +12,14 @@ import (
 	"github.com/xitongsys/parquet-go/writer"
 )
 
+// Columnifier is a parquet specific Columninifier implementation.
 type parquetColumnifier struct {
-	w         *writer.ParquetWriter
-	schema    *schema.IntermediateSchema
-	rt        string
-	finalized bool
+	w      *writer.ParquetWriter
+	schema *schema.IntermediateSchema
+	rt     string
 }
 
+// NewParquetColumnifier creates a new parquetColumnifier.
 func NewParquetColumnifier(st string, sf string, rt string, output string) (*parquetColumnifier, error) {
 	schemaContent, err := ioutil.ReadFile(sf)
 	if err != nil {
@@ -53,13 +54,13 @@ func NewParquetColumnifier(st string, sf string, rt string, output string) (*par
 	w.Footer.Schema = append(w.Footer.Schema, sh.SchemaElements...)
 
 	return &parquetColumnifier{
-		w:         w,
-		schema:    intermediateSchema,
-		rt:        rt,
-		finalized: false,
+		w:      w,
+		schema: intermediateSchema,
+		rt:     rt,
 	}, nil
 }
 
+// Write reads, converts input binary data and write it to buffer.
 func (c *parquetColumnifier) Write(data []byte) (int, error) {
 	// Intermediate record type is map[string]interface{}
 	c.w.MarshalFunc = parquet.MarshalMap
@@ -93,6 +94,7 @@ func (c *parquetColumnifier) Write(data []byte) (int, error) {
 	return int(afterSize - beforeSize), nil
 }
 
+// WriteFromFiles reads, converts input binary files.
 func (c *parquetColumnifier) WriteFromFiles(paths []string) (int, error) {
 	var n int
 
@@ -109,6 +111,7 @@ func (c *parquetColumnifier) WriteFromFiles(paths []string) (int, error) {
 	return n, nil
 }
 
+// Close stops writing parquet files ant finalize this conversion.
 func (c *parquetColumnifier) Close() error {
 	if err := c.w.WriteStop(); err != nil {
 		return err

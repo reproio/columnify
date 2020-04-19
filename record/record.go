@@ -46,6 +46,7 @@ func FormatToArrow(data []byte, s *schema.IntermediateSchema, recordType string)
 	}
 }
 
+// FormatToMap converts input data to map based data with given schema.
 func FormatToMap(data []byte, s *schema.IntermediateSchema, recordType string) ([]map[string]interface{}, error) {
 	switch recordType {
 	case RecordTypeAvro:
