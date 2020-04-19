@@ -1,3 +1,8 @@
+.PHONY: init
+init:
+	GO111MODULE=off go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+	GO111MODULE=off go get -u github.com/goreleaser/goreleaser
+
 .PHONY: build
 build:
 	go build cmd/columnify/columnify.go
@@ -42,3 +47,8 @@ it: build
 	./columnify -schemaType bigquery -schemaFile examples/schema/array.bq.json -recordType avro examples/record/array.avro > /dev/null
 	./columnify -schemaType bigquery -schemaFile examples/schema/array.bq.json -recordType jsonl examples/record/array.jsonl > /dev/null
 	./columnify -schemaType bigquery -schemaFile examples/schema/array.bq.json -recordType msgpack examples/record/array.msgpack > /dev/null
+
+# Set GITHUB_TOKEN and create release git tag
+.PHONY: release
+release:
+	goreleaser --rm-dist
