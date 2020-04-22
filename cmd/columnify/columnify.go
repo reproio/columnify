@@ -18,6 +18,16 @@ func printUsage() {
 	flag.PrintDefaults()
 }
 
+func columnify(c columnifier.Columnifier, files []string) (err error) {
+	defer func() {
+		err = c.Close()
+	}()
+
+	_, err = c.WriteFromFiles(files)
+
+	return err
+}
+
 func main() {
 	flag.Usage = printUsage
 
@@ -34,14 +44,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to init: %v\n", err)
 	}
-	defer func() {
-		if err := c.Close(); err != nil {
-			log.Fatalf("Failed to close: %v\n", err)
-		}
-	}()
 
-	_, err = c.WriteFromFiles(files)
-	if err != nil {
+	if err := columnify(c, files); err != nil {
 		log.Fatalf("Failed to write: %v\n", err)
 	}
 }
