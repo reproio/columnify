@@ -25,7 +25,7 @@ func columnify(c columnifier.Columnifier, files []string) (err error) {
 
 	_, err = c.WriteFromFiles(files)
 
-	return err
+	return
 }
 
 func main() {
