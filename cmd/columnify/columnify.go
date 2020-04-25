@@ -40,6 +40,11 @@ func main() {
 
 	files := flag.Args()
 
+	if *schemaType == "" || *schemaFile == "" || len(files) == 0 {
+		printUsage()
+		log.Fatalf("Missed required parameter(s)")
+	}
+
 	c, err := columnifier.NewColumnifier(*schemaType, *schemaFile, *recordType, *output)
 	if err != nil {
 		log.Fatalf("Failed to init: %v\n", err)
