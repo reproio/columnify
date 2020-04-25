@@ -102,8 +102,9 @@ func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 	}
 
 	if t.UnionType != nil {
-		if nt := isNullableField(t.UnionType); nt != nil {
-			if nested, _, err := avroTypeToArrowType(*nt); err == nil {
+		// Try to recognize nullable. according to Avro spec, the "null" is usually listed first in union fields
+		if len(*t.UnionType) == 2 && *(*t.UnionType)[0].PrimitiveType == *avro.ToPrimitiveType(avro.AvroPrimitiveType_Null) {
+			if nested, _, err := avroTypeToArrowType((*t.UnionType)[1]); err == nil {
 				return nested, true, nil
 			}
 		}
@@ -124,13 +125,4 @@ func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 	// TODO defined types
 
 	return nil, false, fmt.Errorf("unsupported type %v: %w", t, ErrUnconvertibleSchema)
-}
-
-func isNullableField(ut *avro.UnionType) *avro.AvroType {
-	if len(*ut) == 2 && *(*ut)[0].PrimitiveType == *avro.ToPrimitiveType(avro.AvroPrimitiveType_Null) {
-		// According to Avro spec, the "null" is usually listed first
-		return &(*ut)[1]
-	}
-
-	return nil
 }
