@@ -50,7 +50,9 @@ func NewSchemaFromAvroSchema(schemaContent []byte) (*IntermediateSchema, error) 
 }
 
 func avroFieldToArrowField(f avro.RecordField) (*arrow.Field, error) {
-	t, nullable, err := avroTypeToArrowType(f.Type)
+	tpe, nullable := extractAvroTypeWithNullability(f.Type)
+
+	t, err := avroTypeToArrowType(tpe)
 	if err != nil {
 		return nil, err
 	}
@@ -62,12 +64,12 @@ func avroFieldToArrowField(f avro.RecordField) (*arrow.Field, error) {
 	}, nil
 }
 
-func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
+func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, error) {
 	if t.PrimitiveType != nil {
 		if t, ok := avroPrimitivesToArrow[*t.PrimitiveType]; !ok {
-			return nil, false, fmt.Errorf("unsupported primitive type %v: %w", t, ErrUnconvertibleSchema)
+			return nil, fmt.Errorf("unsupported primitive type %v: %w", t, ErrUnconvertibleSchema)
 		} else {
-			return t, false, nil
+			return t, nil
 		}
 	}
 
@@ -76,61 +78,58 @@ func avroTypeToArrowType(t avro.AvroType) (arrow.DataType, bool, error) {
 		for _, f := range t.RecordType.Fields {
 			af, err := avroFieldToArrowField(f)
 			if err != nil {
-				return nil, false, err
+				return nil, err
 			}
 			fields = append(fields, *af)
 		}
-		return arrow.StructOf(fields...), false, nil
+		return arrow.StructOf(fields...), nil
 	}
 
 	if t.EnumsType != nil {
-		return arrow.BinaryTypes.String, false, nil
+		return arrow.BinaryTypes.String, nil
 	}
 
 	if t.ArrayType != nil {
-		itemType, _, err := avroTypeToArrowType(t.ArrayType.Items)
+		itemType, err := avroTypeToArrowType(t.ArrayType.Items)
 		if err != nil {
-			return nil, false, err
+			return nil, err
 		}
-		return arrow.ListOf(itemType), false, nil
+		return arrow.ListOf(itemType), nil
 	}
 
 	if t.MapsType != nil {
 		// TODO support map type
 		// NOTE arrow go module has not supported map typpe yet ???
-		return nil, false, fmt.Errorf("map type conversion is unsupported: %w", ErrUnconvertibleSchema)
+		return nil, fmt.Errorf("map type conversion is unsupported: %w", ErrUnconvertibleSchema)
 	}
 
-	if t.UnionType != nil {
-		if nt := isNullableField(t.UnionType); nt != nil {
-			if nested, _, err := avroTypeToArrowType(*nt); err == nil {
-				return nested, true, nil
-			}
-		}
-	}
+	// TODO support union type except ["null", "type"] nullable pattern
 
 	if t.FixedType != nil {
-		return arrow.BinaryTypes.Binary, false, nil
+		return arrow.BinaryTypes.Binary, nil
 	}
 
 	if t.LogicalType != nil {
 		if t, ok := avroLogicalTypeToArrow[t.LogicalType.LogicalType]; !ok {
-			return nil, false, fmt.Errorf("unsupported logical type %v: %w", t, ErrUnconvertibleSchema)
+			return nil, fmt.Errorf("unsupported logical type %v: %w", t, ErrUnconvertibleSchema)
 		} else {
-			return t, false, nil
+			return t, nil
 		}
 	}
 
 	// TODO defined types
 
-	return nil, false, fmt.Errorf("unsupported type %v: %w", t, ErrUnconvertibleSchema)
+	return nil, fmt.Errorf("unsupported type %v: %w", t, ErrUnconvertibleSchema)
 }
 
-func isNullableField(ut *avro.UnionType) *avro.AvroType {
-	if len(*ut) == 2 && *(*ut)[0].PrimitiveType == *avro.ToPrimitiveType(avro.AvroPrimitiveType_Null) {
+// extractAvroTypeWithNullability extracts union type or others to avro type with nullable flag.
+func extractAvroTypeWithNullability(t avro.AvroType) (avro.AvroType, bool) {
+	if t.UnionType != nil {
 		// According to Avro spec, the "null" is usually listed first
-		return &(*ut)[1]
+		if len(*t.UnionType) == 2 && *(*t.UnionType)[0].PrimitiveType == *avro.ToPrimitiveType(avro.AvroPrimitiveType_Null) {
+			return (*t.UnionType)[1], true
+		}
 	}
 
-	return nil
+	return t, false
 }
