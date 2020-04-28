@@ -2,7 +2,10 @@ package schema
 
 import (
 	"errors"
+	"reflect"
 	"testing"
+
+	"github.com/reproio/columnify/avro"
 
 	"github.com/apache/arrow/go/arrow"
 )
@@ -542,6 +545,55 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 
 		if err == nil && actual.ArrowSchema.String() != c.expected.String() {
 			t.Errorf("expected: %v, but actual: %v\n", c.expected, actual)
+		}
+	}
+}
+
+func TestExtractAvroTypeWithNullability(t *testing.T) {
+	cases := []struct {
+		t                avro.AvroType
+		expectedType     avro.AvroType
+		expectedNullable bool
+	}{
+		// required
+		{
+			t: avro.AvroType{
+				PrimitiveType: avro.ToPrimitiveType(avro.AvroPrimitiveType_String),
+			},
+			expectedType: avro.AvroType{
+				PrimitiveType: avro.ToPrimitiveType(avro.AvroPrimitiveType_String),
+			},
+			expectedNullable: false,
+		},
+
+		// nullable
+		{
+			t: avro.AvroType{
+				UnionType: &avro.UnionType{
+					avro.AvroType{
+						PrimitiveType: avro.ToPrimitiveType(avro.AvroPrimitiveType_Null),
+					},
+					avro.AvroType{
+						PrimitiveType: avro.ToPrimitiveType(avro.AvroPrimitiveType_String),
+					},
+				},
+			},
+			expectedType: avro.AvroType{
+				PrimitiveType: avro.ToPrimitiveType(avro.AvroPrimitiveType_String),
+			},
+			expectedNullable: true,
+		},
+	}
+
+	for _, c := range cases {
+		tpe, nullable := extractAvroTypeWithNullability(c.t)
+
+		if !reflect.DeepEqual(c.expectedType, tpe) {
+			t.Errorf("expected: %v, but actual: %v", c.expectedType, tpe)
+		}
+
+		if c.expectedNullable != nullable {
+			t.Errorf("expected: %v, but actual: %v", c.expectedNullable, nullable)
 		}
 	}
 }
