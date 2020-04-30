@@ -20,7 +20,7 @@ type parquetColumnifier struct {
 }
 
 // NewParquetColumnifier creates a new parquetColumnifier.
-func NewParquetColumnifier(st string, sf string, rt string, output string) (*parquetColumnifier, error) {
+func NewParquetColumnifier(st string, sf string, rt string, output string, config Config) (*parquetColumnifier, error) {
 	schemaContent, err := ioutil.ReadFile(sf)
 	if err != nil {
 		return nil, err
@@ -52,6 +52,10 @@ func NewParquetColumnifier(st string, sf string, rt string, output string) (*par
 	}
 	w.SchemaHandler = sh
 	w.Footer.Schema = append(w.Footer.Schema, sh.SchemaElements...)
+
+	w.PageSize = config.Parquet.PageSize
+	w.RowGroupSize = config.Parquet.RowGroupSize
+	w.CompressionType = config.Parquet.CompressionCodec
 
 	return &parquetColumnifier{
 		w:      w,

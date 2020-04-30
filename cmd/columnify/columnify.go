@@ -36,6 +36,11 @@ func main() {
 	recordType := flag.String("recordType", "jsonl", "record data format type, [avro|csv|jsonl|ltsv|msgpack|tsv]")
 	output := flag.String("output", "", "path to output file; default: stdout")
 
+	// parquet specific options
+	parquetPageSize := flag.Int64("parquetPageSize", 8*1024, "parquet file page size, default: 8kB")
+	parquetRowGroupSize := flag.Int64("parquetRowGroupSize", 128*1024*1024, "parquet file row group size, default: 128MB")
+	parquetCompressionCodec := flag.String("parquetCompressionCodec", "SNAPPY", "parquet compression codec, default: SNAPPY")
+
 	flag.Parse()
 
 	files := flag.Args()
@@ -45,7 +50,12 @@ func main() {
 		log.Fatalf("Missed required parameter(s)")
 	}
 
-	c, err := columnifier.NewColumnifier(*schemaType, *schemaFile, *recordType, *output)
+	config, err := columnifier.NewConfig(*parquetPageSize, *parquetRowGroupSize, *parquetCompressionCodec)
+	if err != nil {
+		log.Fatalf("Failed to init: %v\n", err)
+	}
+
+	c, err := columnifier.NewColumnifier(*schemaType, *schemaFile, *recordType, *output, *config)
 	if err != nil {
 		log.Fatalf("Failed to init: %v\n", err)
 	}

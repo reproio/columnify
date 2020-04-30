@@ -10,6 +10,6 @@ type Columnifier interface {
 }
 
 // NewColumnifier creates a new Columnifier.
-func NewColumnifier(st string, sf string, rt string, o string) (Columnifier, error) {
-	return NewParquetColumnifier(st, sf, rt, o)
+func NewColumnifier(st string, sf string, rt string, o string, config Config) (Columnifier, error) {
+	return NewParquetColumnifier(st, sf, rt, o, config)
 }
