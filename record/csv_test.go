@@ -1,6 +1,7 @@
 package record
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
@@ -151,12 +152,35 @@ true	2	2	2.2	2.2	bar	bar`),
 			},
 			err: nil,
 		},
+
+		// Not csv
+		{
+			schema: schema.NewIntermediateSchema(
+				arrow.NewSchema([]arrow.Field{}, nil),
+				"primitives",
+			),
+			input:    []byte("not-valid-csv"),
+			expected: nil,
+			err:      ErrUnconvertibleRecord,
+		},
+
+		// Not tsv
+		{
+			schema: schema.NewIntermediateSchema(
+				arrow.NewSchema([]arrow.Field{}, nil),
+				"primitives",
+			),
+			input:     []byte("not-valid-tsv"),
+			delimiter: TsvDelimiter,
+			expected:  nil,
+			err:       ErrUnconvertibleRecord,
+		},
 	}
 
 	for _, c := range cases {
 		actual, err := FormatCsvToMap(c.schema, c.input, c.delimiter)
 
-		if err != c.err {
+		if !errors.Is(err, c.err) {
 			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
 		}
 

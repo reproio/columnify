@@ -2,6 +2,7 @@ package record
 
 import (
 	"bytes"
+	"errors"
 	"reflect"
 	"testing"
 
@@ -85,12 +86,19 @@ func TestFormatAvroToMap(t *testing.T) {
 			},
 			err: nil,
 		},
+
+		// Not avro
+		{
+			input:    []byte("not-valid-avro"),
+			expected: nil,
+			err:      ErrUnconvertibleRecord,
+		},
 	}
 
 	for _, c := range cases {
 		actual, err := FormatAvroToMap(c.input)
 
-		if err != c.err {
+		if !errors.Is(err, c.err) {
 			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
 		}
 

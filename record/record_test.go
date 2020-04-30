@@ -7,6 +7,32 @@ import (
 	"github.com/reproio/columnify/schema"
 )
 
+func TestFormatToArrow(t *testing.T) {
+	cases := []struct {
+		input      []byte
+		schema     *schema.IntermediateSchema
+		recordType string
+		err        error
+	}{
+		// TODO valid cases
+
+		{
+			input:      nil,
+			schema:     nil,
+			recordType: "Unknown",
+			err:        ErrUnsupportedRecord,
+		},
+	}
+
+	for _, c := range cases {
+		_, err := FormatToArrow(c.input, c.schema, c.recordType)
+
+		if !errors.Is(err, c.err) {
+			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
+		}
+	}
+}
+
 func TestFormatToMap(t *testing.T) {
 	cases := []struct {
 		input      []byte

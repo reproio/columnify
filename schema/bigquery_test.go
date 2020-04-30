@@ -448,6 +448,40 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 			expected: &arrow.Schema{},
 			err:      ErrUnconvertibleSchema,
 		},
+
+		// Unsupported field in record
+		{
+			bqSchema: `
+[
+  {
+    "name":   "record",
+    "type":   "RECORD",
+    "mode":   "REQUIRED",
+    "fields": [
+      {
+        "name": "boolean",
+		"type": "DATETIME",
+        "mode": "REQUIRED"
+      }
+    ]
+  }
+]`,
+			expected: &arrow.Schema{},
+			err:      ErrUnconvertibleSchema,
+		},
+
+		// Invalid schema JSON
+		{
+			bqSchema: `
+[
+  {
+    "k1": "v1",
+    "k2": "v2"
+  }
+]`,
+			expected: &arrow.Schema{},
+			err:      ErrInvalidSchema,
+		},
 	}
 
 	for _, c := range cases {

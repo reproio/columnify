@@ -1,6 +1,7 @@
 package record
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 )
@@ -37,12 +38,19 @@ boolean:true	int:2	long:2	float:2.2	double:2.2	bytes:bar	string:bar`),
 			},
 			err: nil,
 		},
+
+		// Not LTSV
+		{
+			input:    []byte("not-valid-ltsv"),
+			expected: nil,
+			err:      ErrUnconvertibleRecord,
+		},
 	}
 
 	for _, c := range cases {
 		actual, err := FormatLtsvToMap(c.input)
 
-		if err != c.err {
+		if !errors.Is(err, c.err) {
 			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
 		}
 

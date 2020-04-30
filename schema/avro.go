@@ -34,7 +34,7 @@ var (
 func NewSchemaFromAvroSchema(schemaContent []byte) (*IntermediateSchema, error) {
 	var rt avro.RecordType
 	if err := json.Unmarshal(schemaContent, &rt); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("schema is wrong %v: %w", err, ErrInvalidSchema)
 	}
 
 	fields := make([]arrow.Field, 0)
