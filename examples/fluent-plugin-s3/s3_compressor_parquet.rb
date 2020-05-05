@@ -23,7 +23,7 @@ module Fluent::Plugin
         check_command("columnify", "-h")
 
         if @compress.parquet_compression_codec.include?(:lzo, :brotli, :lz4)
-          raise Fluent::ConfiError, "unsupported compression codec: #{@compress.parquet_compression_codec}"
+          raise Fluent::ConfigError, "unsupported compression codec: #{@compress.parquet_compression_codec}"
         end
 
         @parquet_compression_codec = @compress.parquet_compression_codec.to_s.upcase
@@ -47,7 +47,7 @@ module Fluent::Plugin
         path = if chunk_is_file
                  chunk.path
                else
-                 w = Temfile.new("chunk-parquet-tmp")
+                 w = Tempfile.new("chunk-parquet-tmp")
                  w.binmode
                  chunk.write_to(w)
                  w.close
