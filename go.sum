@@ -26,8 +26,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171 h1:nwdeQV2pNjaTv3os4N4/bKDqv0PxW/9DoEAdtW6sY9o=
 github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171/go.mod h1:LBP+tS9C2iiUoR7AGPaZYY+kjXgB5eZxZKbSEBL9UFw=
-github.com/apache/arrow/go/arrow v0.0.0-20200227150411-3d81e4e76945 h1:36H+D+KuuYzz59uwF9qElOGWtsbFkIw9LvyzRX4aLvU=
-github.com/apache/arrow/go/arrow v0.0.0-20200227150411-3d81e4e76945/go.mod h1:QNYViu/X0HXDHw7m3KXzWSVXIbfUvJqBFe6Gj8/pYA0=
+github.com/apache/arrow/go/arrow v0.0.0-20200504153628-d13e8f3ed647 h1:wGcHSHIBp0+NEMyXG2N0878wAl5J3yOFDU5RZECDSj8=
+github.com/apache/arrow/go/arrow v0.0.0-20200504153628-d13e8f3ed647/go.mod h1:QNYViu/X0HXDHw7m3KXzWSVXIbfUvJqBFe6Gj8/pYA0=
 github.com/apache/thrift v0.0.0-20181112125854-24918abba929 h1:ubPe2yRkS6A/X37s0TVGfuN42NV2h0BlzWj0X76RoUw=
 github.com/apache/thrift v0.0.0-20181112125854-24918abba929/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
