@@ -1,3 +1,5 @@
+require "open3"
+
 module Fluent::Plugin
   class S3Output
     class ParquetCompressor < Compressor
@@ -22,7 +24,7 @@ module Fluent::Plugin
         super
         check_command("columnify", "-h")
 
-        if @compress.parquet_compression_codec.include?(:lzo, :brotli, :lz4)
+        if [:lzo, :brotli, :lz4].include?@compress.parquet_compression_codec
           raise Fluent::ConfigError, "unsupported compression codec: #{@compress.parquet_compression_codec}"
         end
 
@@ -53,8 +55,10 @@ module Fluent::Plugin
                  w.close
                  w.path
                end
-        res = columnify(path, tmp.path)
-        raise "failed to execute columnify command. status = #{$?}" unless res
+        stdout, stderr, status = columnify(path, tmp.path)
+        unless status.success?
+          raise "failed to execute columnify command. stdout=#{stdout} stderr=#{stderr} status=#{status.inspect}"
+        end
       ensure
         unless chunk_is_file
           w.close(true) rescue nil
@@ -64,15 +68,15 @@ module Fluent::Plugin
       private
 
       def columnify(src_path, dst_path)
-        system("columnify",
-               "-parquetCompressionCodec", @parquet_compression_codec,
-               "-parquetPageSize", @compress.parquet_page_size.to_s,
-               "-parquetRowGroupSize", @compress.parquet_row_group_size.to_s,
-               "-recordType", @record_type.to_s,
-               "-schemaType", @compress.schema_type.to_s,
-               "-schemaFile", @compress.schema_file,
-               "-output", dst_path,
-               src_path)
+        Open3.capture3("columnify",
+                       "-parquetCompressionCodec", @parquet_compression_codec,
+                       "-parquetPageSize", @compress.parquet_page_size.to_s,
+                       "-parquetRowGroupSize", @compress.parquet_row_group_size.to_s,
+                       "-recordType", @record_type.to_s,
+                       "-schemaType", @compress.schema_type.to_s,
+                       "-schemaFile", @compress.schema_file,
+                       "-output", dst_path,
+                       src_path)
       end
     end
   end
