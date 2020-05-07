@@ -22,7 +22,7 @@ module Fluent::Plugin
         super
         check_command("columnify", "-h")
 
-        if @compress.parquet_compression_codec.include?(:lzo, :brotli, :lz4)
+        if [:lzo, :brotli, :lz4].include?@compress.parquet_compression_codec
           raise Fluent::ConfigError, "unsupported compression codec: #{@compress.parquet_compression_codec}"
         end
 
