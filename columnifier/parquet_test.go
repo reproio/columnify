@@ -136,13 +136,17 @@ func TestWriteClose(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(sf)
+	t.Cleanup(func() {
+		_ = os.RemoveAll(sf)
+	})
 
 	rf, err := prepareRecordFiles()
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(rf)
+	t.Cleanup(func() {
+		_ = os.RemoveAll(rf)
+	})
 
 	cases := []struct {
 		st     string
@@ -186,26 +190,26 @@ func TestWriteClose(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		func() {
-			out, err := ioutil.TempFile("", "out.parquet")
-			if err != nil {
-				t.Fatal(err)
-			}
-			defer os.Remove(out.Name())
+		out, err := ioutil.TempFile("", "out.parquet")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			_ = os.Remove(out.Name())
+		})
 
-			columnifier, err := NewParquetColumnifier(c.st, c.sf, c.rt, out.Name(), c.config)
-			if err != nil {
-				t.Fatal(err)
-			}
+		columnifier, err := NewParquetColumnifier(c.st, c.sf, c.rt, out.Name(), c.config)
+		if err != nil {
+			t.Fatal(err)
+		}
 
-			_, err = columnifier.WriteFromFiles([]string{c.input})
-			if err == nil {
-				err = columnifier.Close()
-			}
+		_, err = columnifier.WriteFromFiles([]string{c.input})
+		if err == nil {
+			err = columnifier.Close()
+		}
 
-			if err != nil != c.isErr {
-				t.Errorf("expected %v, but actual %v", c.isErr, err)
-			}
-		}()
+		if err != nil != c.isErr {
+			t.Errorf("expected %v, but actual %v", c.isErr, err)
+		}
 	}
 }
