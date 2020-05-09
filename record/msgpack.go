@@ -19,7 +19,7 @@ func FormatMsgpackToMap(data []byte) ([]map[string]interface{}, error) {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return nil, fmt.Errorf("msgpack parse error %v: %w", err, ErrUnconvertibleRecord)
+			return nil, err
 		}
 
 		m, mapOk := arr.(map[string]interface{})

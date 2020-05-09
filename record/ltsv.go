@@ -1,7 +1,6 @@
 package record
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -19,7 +18,7 @@ func FormatLtsvToMap(data []byte) ([]map[string]interface{}, error) {
 
 		err := ltsv.Unmarshal([]byte(l), &v)
 		if err != nil {
-			return nil, fmt.Errorf("ltsv parse error %v: %w", err, ErrUnconvertibleRecord)
+			return nil, err
 		}
 
 		m := make(map[string]interface{}, 0)

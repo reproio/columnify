@@ -1,7 +1,6 @@
 package record
 
 import (
-	"errors"
 	"reflect"
 	"testing"
 )
@@ -10,7 +9,7 @@ func TestFormatLtsvToMap(t *testing.T) {
 	cases := []struct {
 		input    []byte
 		expected []map[string]interface{}
-		err      error
+		isErr    bool
 	}{
 		// Primitives
 		{
@@ -36,22 +35,22 @@ boolean:true	int:2	long:2	float:2.2	double:2.2	bytes:bar	string:bar`),
 					"string":  "bar",
 				},
 			},
-			err: nil,
+			isErr: false,
 		},
 
 		// Not LTSV
 		{
 			input:    []byte("not-valid-ltsv"),
 			expected: nil,
-			err:      ErrUnconvertibleRecord,
+			isErr:    true,
 		},
 	}
 
 	for _, c := range cases {
 		actual, err := FormatLtsvToMap(c.input)
 
-		if !errors.Is(err, c.err) {
-			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
+		if err != nil != c.isErr {
+			t.Errorf("expected: %v, but actual: %v\n", c.isErr, err)
 		}
 
 		if !reflect.DeepEqual(actual, c.expected) {

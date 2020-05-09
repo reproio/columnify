@@ -1,7 +1,6 @@
 package record
 
 import (
-	"errors"
 	"reflect"
 	"testing"
 
@@ -15,7 +14,7 @@ func TestFormatCsvToMap(t *testing.T) {
 		input     []byte
 		delimiter delimiter
 		expected  []map[string]interface{}
-		err       error
+		isErr     bool
 	}{
 		// csv; Primitives
 		{
@@ -82,7 +81,7 @@ true,2,2,2.2,2.2,"bar","bar"`),
 					"string":  "bar",
 				},
 			},
-			err: nil,
+			isErr: false,
 		},
 
 		// tsv; Primitives
@@ -150,7 +149,7 @@ true	2	2	2.2	2.2	bar	bar`),
 					"string":  "bar",
 				},
 			},
-			err: nil,
+			isErr: false,
 		},
 
 		// Not csv
@@ -161,7 +160,7 @@ true	2	2	2.2	2.2	bar	bar`),
 			),
 			input:    []byte("not-valid-csv"),
 			expected: nil,
-			err:      ErrUnconvertibleRecord,
+			isErr:    true,
 		},
 
 		// Not tsv
@@ -173,15 +172,15 @@ true	2	2	2.2	2.2	bar	bar`),
 			input:     []byte("not-valid-tsv"),
 			delimiter: TsvDelimiter,
 			expected:  nil,
-			err:       ErrUnconvertibleRecord,
+			isErr:     true,
 		},
 	}
 
 	for _, c := range cases {
 		actual, err := FormatCsvToMap(c.schema, c.input, c.delimiter)
 
-		if !errors.Is(err, c.err) {
-			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
+		if err != nil != c.isErr {
+			t.Errorf("expected: %v, but actual: %v\n", c.isErr, err)
 		}
 
 		if !reflect.DeepEqual(actual, c.expected) {

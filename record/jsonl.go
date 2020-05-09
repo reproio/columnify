@@ -2,7 +2,6 @@ package record
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/reproio/columnify/schema"
@@ -20,7 +19,7 @@ func FormatJsonlToMap(data []byte) ([]map[string]interface{}, error) {
 
 		var e map[string]interface{}
 		if err := json.Unmarshal([]byte(l), &e); err != nil {
-			return nil, fmt.Errorf("jsonl parse error %v: %w", err, ErrUnconvertibleRecord)
+			return nil, err
 		}
 
 		records = append(records, e)

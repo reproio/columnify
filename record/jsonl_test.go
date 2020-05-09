@@ -1,7 +1,6 @@
 package record
 
 import (
-	"errors"
 	"reflect"
 	"testing"
 )
@@ -10,7 +9,7 @@ func TestFormatJsonlToMap(t *testing.T) {
 	cases := []struct {
 		input    []byte
 		expected []map[string]interface{}
-		err      error
+		isErr    bool
 	}{
 		// Primitives
 		{
@@ -38,22 +37,22 @@ func TestFormatJsonlToMap(t *testing.T) {
 					"string":  "bar",
 				},
 			},
-			err: nil,
+			isErr: false,
 		},
 
 		// Not JSONL
 		{
 			input:    []byte("not-valid-json"),
 			expected: nil,
-			err:      ErrUnconvertibleRecord,
+			isErr:    true,
 		},
 	}
 
 	for _, c := range cases {
 		actual, err := FormatJsonlToMap(c.input)
 
-		if !errors.Is(err, c.err) {
-			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
+		if err != nil != c.isErr {
+			t.Errorf("expected: %v, but actual: %v\n", c.isErr, err)
 		}
 
 		if !reflect.DeepEqual(actual, c.expected) {
