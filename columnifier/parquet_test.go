@@ -10,68 +10,7 @@ import (
 	"github.com/xitongsys/parquet-go/parquet"
 )
 
-// prepareSchemaFiles create a new schema file as a temp file. Caller needs to remove the file.
-func prepareSchemaFiles() (string, error) {
-	f, err := ioutil.TempFile("", "schema.avsc")
-	if err != nil {
-		return "", err
-	}
-
-	_, err = f.Write([]byte(`
-{
-  "type": "record",
-  "name": "Primitives",
-  "fields" : [
-    {"name": "boolean", "type": "boolean"},
-    {"name": "int",     "type": "int"},
-    {"name": "long",    "type": "long"},
-    {"name": "float",   "type": "float"},
-    {"name": "double",  "type": "double"},
-    {"name": "bytes",   "type": "bytes"},
-    {"name": "string",  "type": "string"}
-  ]
-}
-`))
-	if err != nil {
-		return "", err
-	}
-
-	err = f.Close()
-	if err != nil {
-		return "", err
-	}
-
-	return f.Name(), nil
-}
-
-// prepareRecordFiles create a new record file as a temp file. Caller needs to remove the file.
-func prepareRecordFiles() (string, error) {
-	f, err := ioutil.TempFile("", "record.json")
-	if err != nil {
-		return "", err
-	}
-
-	_, err = f.Write([]byte(`{"boolean": false, "int": 1, "long": 1, "float": 1.1, "double": 1.1, "bytes": "foo", "string": "foo"}
-{"boolean": true, "int": 2, "long": 2, "float": 2.2, "double": 2.2, "bytes": "bar", "string": "bar"}
-`))
-	if err != nil {
-		return "", err
-	}
-
-	err = f.Close()
-	if err != nil {
-		return "", err
-	}
-
-	return f.Name(), nil
-}
-
 func TestNewParquetColumnifier(t *testing.T) {
-	sf, err := prepareSchemaFiles()
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.Remove(sf)
 
 	cases := []struct {
 		st     string
@@ -84,7 +23,7 @@ func TestNewParquetColumnifier(t *testing.T) {
 		// Inalid schema type
 		{
 			st:     "unknown",
-			sf:     sf,
+			sf:     "../testdata/primitives.avsc",
 			rt:     record.RecordTypeJsonl,
 			output: "",
 			config: Config{},
@@ -104,7 +43,7 @@ func TestNewParquetColumnifier(t *testing.T) {
 		// Invalid output
 		{
 			st:     schema.SchemaTypeAvro,
-			sf:     sf,
+			sf:     "../testdata/primitives.avsc",
 			rt:     record.RecordTypeJsonl,
 			output: "/tmp/nonexistence/invalid.record",
 			config: Config{},
@@ -114,7 +53,7 @@ func TestNewParquetColumnifier(t *testing.T) {
 		// Valid
 		{
 			st:     schema.SchemaTypeAvro,
-			sf:     sf,
+			sf:     "../testdata/primitives.avsc",
 			rt:     record.RecordTypeJsonl,
 			output: "",
 			config: Config{},
@@ -132,22 +71,6 @@ func TestNewParquetColumnifier(t *testing.T) {
 }
 
 func TestWriteClose(t *testing.T) {
-	sf, err := prepareSchemaFiles()
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() {
-		_ = os.RemoveAll(sf)
-	})
-
-	rf, err := prepareRecordFiles()
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() {
-		_ = os.RemoveAll(rf)
-	})
-
 	cases := []struct {
 		st     string
 		sf     string
@@ -159,7 +82,7 @@ func TestWriteClose(t *testing.T) {
 		// Invalid record type
 		{
 			st: schema.SchemaTypeAvro,
-			sf: sf,
+			sf: "../testdata/primitives.avsc",
 			rt: "unknown",
 			config: Config{
 				Parquet: Parquet{
@@ -168,14 +91,14 @@ func TestWriteClose(t *testing.T) {
 					CompressionCodec: parquet.CompressionCodec_SNAPPY,
 				},
 			},
-			input: rf,
+			input: "../testdata/primitives.jsonl",
 			isErr: true,
 		},
 
 		// Valid
 		{
 			st: schema.SchemaTypeAvro,
-			sf: sf,
+			sf: "../testdata/primitives.avsc",
 			rt: record.RecordTypeJsonl,
 			config: Config{
 				Parquet: Parquet{
@@ -184,7 +107,7 @@ func TestWriteClose(t *testing.T) {
 					CompressionCodec: parquet.CompressionCodec_SNAPPY,
 				},
 			},
-			input: rf,
+			input: "../testdata/primitives.jsonl",
 			isErr: false,
 		},
 	}
