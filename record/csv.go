@@ -48,7 +48,6 @@ func FormatCsvToMap(s *schema.IntermediateSchema, data []byte, delimiter delimit
 		if err == io.EOF {
 			break
 		}
-
 		if err != nil {
 			return nil, err
 		}

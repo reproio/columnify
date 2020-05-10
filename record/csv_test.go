@@ -14,7 +14,7 @@ func TestFormatCsvToMap(t *testing.T) {
 		input     []byte
 		delimiter delimiter
 		expected  []map[string]interface{}
-		err       error
+		isErr     bool
 	}{
 		// csv; Primitives
 		{
@@ -81,7 +81,7 @@ true,2,2,2.2,2.2,"bar","bar"`),
 					"string":  "bar",
 				},
 			},
-			err: nil,
+			isErr: false,
 		},
 
 		// tsv; Primitives
@@ -149,15 +149,38 @@ true	2	2	2.2	2.2	bar	bar`),
 					"string":  "bar",
 				},
 			},
-			err: nil,
+			isErr: false,
+		},
+
+		// Not csv
+		{
+			schema: schema.NewIntermediateSchema(
+				arrow.NewSchema([]arrow.Field{}, nil),
+				"primitives",
+			),
+			input:    []byte("not-valid-csv"),
+			expected: nil,
+			isErr:    true,
+		},
+
+		// Not tsv
+		{
+			schema: schema.NewIntermediateSchema(
+				arrow.NewSchema([]arrow.Field{}, nil),
+				"primitives",
+			),
+			input:     []byte("not-valid-tsv"),
+			delimiter: TsvDelimiter,
+			expected:  nil,
+			isErr:     true,
 		},
 	}
 
 	for _, c := range cases {
 		actual, err := FormatCsvToMap(c.schema, c.input, c.delimiter)
 
-		if err != c.err {
-			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
+		if err != nil != c.isErr {
+			t.Errorf("expected: %v, but actual: %v\n", c.isErr, err)
 		}
 
 		if !reflect.DeepEqual(actual, c.expected) {

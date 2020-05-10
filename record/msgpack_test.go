@@ -2,6 +2,7 @@ package record
 
 import (
 	"bytes"
+	"errors"
 	"reflect"
 	"testing"
 )
@@ -12,6 +13,7 @@ func TestFormatMsgpackToMap(t *testing.T) {
 		expected []map[string]interface{}
 		err      error
 	}{
+		// Primitives
 		{
 			// examples/record/primitives.msgpack
 			input: bytes.Join([][]byte{
@@ -48,12 +50,19 @@ func TestFormatMsgpackToMap(t *testing.T) {
 			},
 			err: nil,
 		},
+
+		// Not map type
+		{
+			input:    []byte("\xa7compact"),
+			expected: nil,
+			err:      ErrUnconvertibleRecord,
+		},
 	}
 
 	for _, c := range cases {
 		actual, err := FormatMsgpackToMap(c.input)
 
-		if err != c.err {
+		if !errors.Is(err, c.err) {
 			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
 		}
 

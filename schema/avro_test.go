@@ -534,6 +534,79 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 			expected: &arrow.Schema{},
 			err:      ErrUnconvertibleSchema,
 		},
+
+		// Unsupported type
+		{
+			avroSchema: `
+{
+  "type": "record",
+  "name": "UnsupportedTypes",
+  "fields" : [
+    {
+      "name": "invalid",
+      "type": "Undefined"
+    }
+  ]
+}
+`,
+			expected: &arrow.Schema{},
+			err:      ErrUnconvertibleSchema,
+		},
+
+		// Unsupported type in record
+		{
+			avroSchema: `
+{
+  "type": "record",
+  "name": "UnsupportedTypes",
+  "fields" : [
+    {
+      "name": "record",
+      "type": {
+        "type": "record",
+        "name": "Level1",
+        "fields" : [
+          {
+            "name": "invalid",
+            "type": "Undefined"
+          }
+        ]
+      }
+    }
+  ]
+}
+`,
+			expected: &arrow.Schema{},
+			err:      ErrUnconvertibleSchema,
+		},
+
+		// Unsupported type in array
+		{
+			avroSchema: `
+{
+  "type": "record",
+  "name": "UnsupportedTypes",
+  "fields" : [
+    {
+      "name": "array",
+      "type": {
+        "type": "array",
+        "items":  "Undefined"
+      }
+    }
+  ]
+}
+`,
+			expected: &arrow.Schema{},
+			err:      ErrUnconvertibleSchema,
+		},
+
+		// Invalid schema
+		{
+			avroSchema: "invalid schema",
+			expected:   &arrow.Schema{},
+			err:        ErrInvalidSchema,
+		},
 	}
 
 	for _, c := range cases {

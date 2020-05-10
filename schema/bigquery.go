@@ -25,7 +25,7 @@ var (
 func NewSchemaFromBigQuerySchema(schemaContent []byte) (*IntermediateSchema, error) {
 	s, err := bigquery.SchemaFromJSON(schemaContent)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("schema is wrong %v: %w", err, ErrInvalidSchema)
 	}
 
 	fields := make([]arrow.Field, 0)
