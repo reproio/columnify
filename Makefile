@@ -15,9 +15,11 @@ clean:
 fmt:
 	gofmt -w **/*.go
 
+# TODO Enable -race after we resolve data race in parquet-go
+# ref. https://github.com/xitongsys/parquet-go/issues/256
 .PHONY: test
 test:
-	go test -race -cover ./...
+	go test -cover ./...
 
 .PHONY: it
 it: build
