@@ -6,7 +6,6 @@ import (
 
 	"github.com/xitongsys/parquet-go/common"
 	"github.com/xitongsys/parquet-go/layout"
-	"github.com/xitongsys/parquet-go/parquet"
 	"github.com/xitongsys/parquet-go/schema"
 )
 
@@ -42,23 +41,12 @@ func prepareTables(schemaHandler *schema.SchemaHandler) (map[string]*layout.Tabl
 				return nil, err
 			}
 
-			var tpe parquet.Type
-			if index, ok := schemaHandler.MapIndex[pathStr]; ok {
-				if int(index) < len(schemaHandler.SchemaElements) {
-					tpe = schemaHandler.SchemaElements[index].GetType()
-				} else {
-					return nil, fmt.Errorf("invalid index %v to schema elements %v: %w", index, schemaHandler.SchemaElements, ErrInvalidParquetSchema)
-				}
-			} else {
-				return nil, fmt.Errorf("invalid schema key %v: %w", pathStr, ErrInvalidParquetSchema)
-			}
-
 			tables[pathStr] = &layout.Table{
 				Path:               path,
 				MaxDefinitionLevel: maxDefinitionLevel,
 				MaxRepetitionLevel: maxRepetitionLevel,
 				RepetitionType:     e.GetRepetitionType(),
-				Type:               tpe,
+				Schema:             schemaHandler.SchemaElements[schemaHandler.MapIndex[pathStr]],
 				Info:               schemaHandler.Infos[i],
 			}
 		}

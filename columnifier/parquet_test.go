@@ -95,6 +95,22 @@ func TestWriteClose(t *testing.T) {
 			isErr: true,
 		},
 
+		// Mismatch schema & record
+		{
+			st: schema.SchemaTypeAvro,
+			sf: "../testdata/mismatch.avsc",
+			rt: record.RecordTypeJsonl,
+			config: Config{
+				Parquet: Parquet{
+					PageSize:         8 * 1024,
+					RowGroupSize:     128 * 1024 * 1024,
+					CompressionCodec: parquet.CompressionCodec_SNAPPY,
+				},
+			},
+			input: "../testdata/primitives.jsonl",
+			isErr: true,
+		},
+
 		// Valid
 		{
 			st: schema.SchemaTypeAvro,

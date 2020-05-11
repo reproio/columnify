@@ -1,0 +1,7 @@
+{
+  "type": "record",
+  "name": "Mismatch",
+  "fields" : [
+    {"name": "f", "type": "bytes"}
+  ]
+}
