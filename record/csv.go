@@ -56,7 +56,7 @@ func FormatCsvToMap(s *schema.IntermediateSchema, data []byte, delimiter delimit
 			return nil, fmt.Errorf("incompleted value %v: %w", values, ErrUnconvertibleRecord)
 		}
 
-		e := make(map[string]interface{}, 0)
+		e := make(map[string]interface{})
 		for i, v := range values {
 			// bool
 			if v != "0" && v != "1" {

@@ -48,7 +48,7 @@ func TestStdioFileRead(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if bytes.Compare(data, buf) != 0 {
+	if !bytes.Equal(data, buf) {
 		t.Errorf("read data does not match written data: write %v, but read %v", data, buf)
 	}
 }
@@ -74,7 +74,7 @@ func TestStdioFileWrite(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if bytes.Compare(data, written) != 0 {
+	if !bytes.Equal(data, written) {
 		t.Errorf("read data does not match written data: write %v, but read %v", data, written)
 	}
 }

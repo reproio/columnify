@@ -106,7 +106,7 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 						//ExName to InName
 						keysMap[common.StringToVariableName(key.String())] = i
 					}
-					for key, _ := range node.PathMap.Children {
+					for key := range node.PathMap.Children {
 						ki, ok := keysMap[key]
 
 						if ok && node.Val.MapIndex(keys[ki]).Elem().IsValid() { // non-null

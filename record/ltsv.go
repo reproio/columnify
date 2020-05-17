@@ -21,7 +21,7 @@ func FormatLtsvToMap(data []byte) ([]map[string]interface{}, error) {
 			return nil, err
 		}
 
-		m := make(map[string]interface{}, 0)
+		m := make(map[string]interface{})
 		for k, v := range v {
 			// bool
 			if v != "0" && v != "1" {
