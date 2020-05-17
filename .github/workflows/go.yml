@@ -31,10 +31,14 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v .
+      run: make build
 
     - name: golangci-lint
       uses: actions-contrib/golangci-lint@v1
+      env:
+        GOROOT: ""
+      with:
+        args: "run ./..."
         
     - name: Test
       run: make test
