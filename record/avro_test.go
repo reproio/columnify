@@ -36,6 +36,9 @@ func TestFormatAvroToMap(t *testing.T) {
 }
 `,
 				})
+				if err != nil {
+					t.Fatal(err)
+				}
 
 				err = r.Append([]map[string]interface{}{
 					{
