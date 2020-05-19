@@ -42,24 +42,23 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 
 			pathStr := node.PathMap.Path
 
-			var info *common.Tag
-			if i, ok := schemaHandler.MapIndex[pathStr]; ok {
-				info = schemaHandler.Infos[i]
-			} else {
-				//no schema item will be ignored
+			schemaIndex, ok := schemaHandler.MapIndex[pathStr]
+			//no schemaElement item will be ignored
+			if !ok {
 				continue
 			}
+			schemaElement := schemaHandler.SchemaElements[schemaIndex]
 
 			switch node.Val.Type().Kind() {
 			case reflect.Map:
 				keys := node.Val.MapKeys()
 
-				if info.Type == "MAP" { //real map
+				if schemaElement.GetConvertedType() == parquet.ConvertedType_MAP { //real map
 					pathStr = pathStr + ".Key_value"
 					if len(keys) <= 0 {
 						for key, table := range res {
-							if len(key) >= len(node.PathMap.Path) &&
-								key[:len(node.PathMap.Path)] == node.PathMap.Path {
+							if strings.HasPrefix(key, node.PathMap.Path) &&
+								(len(key) == len(node.PathMap.Path) || key[len(node.PathMap.Path)] == '.') {
 								table.Values = append(table.Values, nil)
 								table.DefinitionLevels = append(table.DefinitionLevels, node.DL)
 								table.RepetitionLevels = append(table.RepetitionLevels, node.RL)
@@ -89,8 +88,8 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 						newNode.DL = node.DL + 1
 						newPathStr := newNode.PathMap.Path // check again
 						newSchemaIndex := schemaHandler.MapIndex[newPathStr]
-						newInfo := schemaHandler.Infos[newSchemaIndex]
-						if newInfo.RepetitionType == parquet.FieldRepetitionType_OPTIONAL { //map value only be :optional or required
+						newSchema := schemaHandler.SchemaElements[newSchemaIndex]
+						if newSchema.GetRepetitionType() == parquet.FieldRepetitionType_OPTIONAL { //map value only be :optional or required
 							newNode.DL++
 						}
 
@@ -105,9 +104,9 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 					keysMap := make(map[string]int)
 					for i, key := range keys {
 						//ExName to InName
-						keysMap[common.HeadToUpper(key.String())] = i
+						keysMap[common.StringToVariableName(key.String())] = i
 					}
-					for key, _ := range node.PathMap.Children {
+					for key := range node.PathMap.Children {
 						ki, ok := keysMap[key]
 
 						if ok && node.Val.MapIndex(keys[ki]).Elem().IsValid() { // non-null
@@ -118,8 +117,8 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 							newNode.DL = node.DL
 							newPathStr := newNode.PathMap.Path
 							newSchemaIndex := schemaHandler.MapIndex[newPathStr]
-							newInfo := schemaHandler.Infos[newSchemaIndex]
-							if newInfo.RepetitionType == parquet.FieldRepetitionType_OPTIONAL {
+							newSchema := schemaHandler.SchemaElements[newSchemaIndex]
+							if newSchema.GetRepetitionType() == parquet.FieldRepetitionType_OPTIONAL {
 								newNode.DL++
 							}
 							stack = append(stack, newNode)
@@ -142,12 +141,12 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 			case reflect.Slice:
 				ln := node.Val.Len()
 
-				if info.Type == "LIST" { //real LIST
+				if schemaElement.GetConvertedType() == parquet.ConvertedType_LIST { //real LIST
 					pathStr = pathStr + ".List" + ".Element"
 					if ln <= 0 {
 						for key, table := range res {
-							if len(key) >= len(node.PathMap.Path) &&
-								key[:len(node.PathMap.Path)] == node.PathMap.Path {
+							if strings.HasPrefix(key, node.PathMap.Path) &&
+								(len(key) == len(node.PathMap.Path) || key[len(node.PathMap.Path)] == '.') {
 								table.Values = append(table.Values, nil)
 								table.DefinitionLevels = append(table.DefinitionLevels, node.DL)
 								table.RepetitionLevels = append(table.RepetitionLevels, node.RL)
@@ -169,16 +168,16 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 
 						newPathStr := newNode.PathMap.Path
 						newSchemaIndex := schemaHandler.MapIndex[newPathStr]
-						newInfo := schemaHandler.Infos[newSchemaIndex]
-						if newInfo.RepetitionType == parquet.FieldRepetitionType_OPTIONAL { //element of LIST can only be optional or required
+						newSchema := schemaHandler.SchemaElements[newSchemaIndex]
+						if newSchema.GetRepetitionType() == parquet.FieldRepetitionType_OPTIONAL { //element of LIST can only be optional or required
 							newNode.DL++
 						}
 
 						stack = append(stack, newNode)
 					}
 
-				} else if info.Type == "BYTE_ARRAY" || info.Type == "FIXED_LEN_BYTE_ARRAY" { // byte array; its a primitive type
-					v, err := marshalPrimitive(node.Val, info)
+				} else if schemaElement.GetType() == parquet.Type_BYTE_ARRAY || schemaElement.GetType() == parquet.Type_FIXED_LEN_BYTE_ARRAY { // byte array; its a primitive type
+					v, err := marshalPrimitive(node.Val, schemaElement)
 					if err != nil {
 						return nil, err
 					}
@@ -191,8 +190,8 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 				} else { //Repeated
 					if ln <= 0 {
 						for key, table := range res {
-							if len(key) >= len(node.PathMap.Path) &&
-								key[:len(node.PathMap.Path)] == node.PathMap.Path {
+							if strings.HasPrefix(key, node.PathMap.Path) &&
+								(len(key) == len(node.PathMap.Path) || key[len(node.PathMap.Path)] == '.') {
 								table.Values = append(table.Values, nil)
 								table.DefinitionLevels = append(table.DefinitionLevels, node.DL)
 								table.RepetitionLevels = append(table.RepetitionLevels, node.RL)
@@ -216,7 +215,7 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 				}
 
 			default: // else; should be primitive types
-				v, err := marshalPrimitive(node.Val, info)
+				v, err := marshalPrimitive(node.Val, schemaElement)
 				if err != nil {
 					return nil, err
 				}
@@ -232,12 +231,12 @@ func MarshalMap(sources []interface{}, bgn int, end int, schemaHandler *schema.S
 	return &res, nil
 }
 
-func marshalPrimitive(val reflect.Value, info *common.Tag) (interface{}, error) {
+func marshalPrimitive(val reflect.Value, schema *parquet.SchemaElement) (interface{}, error) {
 	if val.Type().Kind() == reflect.Interface && val.IsNil() {
 		return nil, fmt.Errorf("invalid input %v: %w", val.Type(), ErrInvalidParquetRecord)
 	}
 
-	pT, cT := types.TypeNameToParquetType(info.Type, info.BaseType)
+	pT, cT := schema.Type, schema.ConvertedType
 
 	var s string
 	if (*pT == parquet.Type_BYTE_ARRAY || *pT == parquet.Type_FIXED_LEN_BYTE_ARRAY) && cT == nil && val.Kind() == reflect.Slice { // raw binary
@@ -253,5 +252,5 @@ func marshalPrimitive(val reflect.Value, info *common.Tag) (interface{}, error) 
 		s = fmt.Sprintf("%v", val)
 	}
 
-	return types.StrToParquetType(s, pT, cT, int(info.Length), int(info.Scale)), nil
+	return types.StrToParquetType(s, pT, cT, int(schema.GetTypeLength()), int(schema.GetScale())), nil
 }
