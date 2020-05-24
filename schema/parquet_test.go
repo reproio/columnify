@@ -455,6 +455,60 @@ func TestNewSchemaHandlerFromArrow(t *testing.T) {
 			},
 			err: nil,
 		},
+
+		// nullables
+		{
+			intermediate: NewIntermediateSchema(
+				arrow.NewSchema(
+					[]arrow.Field{
+						{
+							Name:     "string",
+							Type:     arrow.BinaryTypes.String,
+							Nullable: true,
+						},
+						{
+							Name: "record",
+							Type: arrow.StructOf(
+								[]arrow.Field{
+									{
+										Name:     "string",
+										Type:     arrow.BinaryTypes.String,
+										Nullable: true,
+									},
+								}...,
+							),
+							Nullable: true,
+						},
+					}, nil),
+				"nullables"),
+			expected: schema.SchemaHandler{
+				SchemaElements: []*parquet.SchemaElement{
+					{
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_REQUIRED),
+						Name:           "nullables",
+						NumChildren:    int32ToPtr(2),
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_BYTE_ARRAY),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_OPTIONAL),
+						ConvertedType:  parquet.ConvertedTypePtr(parquet.ConvertedType_UTF8),
+						Name:           "string",
+					},
+					{
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_OPTIONAL),
+						Name:           "record",
+						NumChildren:    int32ToPtr(1),
+					},
+					{
+						Type:           parquet.TypePtr(parquet.Type_BYTE_ARRAY),
+						RepetitionType: parquet.FieldRepetitionTypePtr(parquet.FieldRepetitionType_OPTIONAL),
+						ConvertedType:  parquet.ConvertedTypePtr(parquet.ConvertedType_UTF8),
+						Name:           "string",
+					},
+				},
+			},
+			err: nil,
+		},
 	}
 
 	for _, c := range cases {

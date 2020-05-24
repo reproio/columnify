@@ -557,6 +557,57 @@ func TestMarshalMap(t *testing.T) {
 			},
 			err: nil,
 		},
+
+		// Nullables
+		{
+			input: []interface{}{
+				map[string]interface{}{
+					"string": "root1",
+					"record": map[string]interface{}{
+						"string": "leaf1",
+					},
+				},
+				map[string]interface{}{},
+			},
+			bgn: 0,
+			end: 2,
+			schema: schema.NewIntermediateSchema(
+				arrow.NewSchema(
+					[]arrow.Field{
+						{
+							Name:     "string",
+							Type:     arrow.BinaryTypes.String,
+							Nullable: true,
+						},
+						{
+							Name: "record",
+							Type: arrow.StructOf(
+								[]arrow.Field{
+									{
+										Name:     "string",
+										Type:     arrow.BinaryTypes.String,
+										Nullable: true,
+									},
+								}...,
+							),
+							Nullable: true,
+						},
+					}, nil),
+				"Nullables"),
+			expect: &map[string]*layout.Table{
+				"Nullables.String": {
+					Values:           []interface{}{"root1", nil},
+					DefinitionLevels: []int32{1, 0},
+					RepetitionLevels: []int32{0, 0},
+				},
+				"Nullables.Record.String": {
+					Values:           []interface{}{"leaf1", nil},
+					DefinitionLevels: []int32{2, 0},
+					RepetitionLevels: []int32{0, 0},
+				},
+			},
+			err: nil,
+		},
 	}
 
 	for _, c := range cases {
