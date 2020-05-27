@@ -23,32 +23,48 @@ test:
 
 .PHONY: it
 it: build
-	./columnify -schemaType avro -schemaFile examples/schema/primitives.avsc -recordType avro examples/record/primitives.avro > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/primitives.avsc -recordType csv examples/record/primitives.csv > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/primitives.avsc -recordType jsonl examples/record/primitives.jsonl > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/primitives.avsc -recordType ltsv examples/record/primitives.ltsv > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/primitives.avsc -recordType msgpack examples/record/primitives.msgpack > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/primitives.avsc -recordType tsv examples/record/primitives.tsv > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/nested.avsc -recordType avro examples/record/nested.avro > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/nested.avsc -recordType jsonl examples/record/nested.jsonl > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/nested.avsc -recordType msgpack examples/record/nested.msgpack > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/array.avsc -recordType avro examples/record/array.avro > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/array.avsc -recordType jsonl examples/record/array.jsonl > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/array.avsc -recordType msgpack examples/record/array.msgpack > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/complicated.avsc -recordType avro examples/record/complicated.avro > /dev/null
-	./columnify -schemaType avro -schemaFile examples/schema/complicated.avsc -recordType jsonl examples/record/complicated.json > /dev/null
-	./columnify -schemaType bigquery -schemaFile examples/schema/primitives.bq.json -recordType avro examples/record/primitives.avro > /dev/null
-	./columnify -schemaType bigquery -schemaFile examples/schema/primitives.bq.json -recordType csv examples/record/primitives.csv > /dev/null
-	./columnify -schemaType bigquery -schemaFile examples/schema/primitives.bq.json -recordType jsonl examples/record/primitives.jsonl > /dev/null
-	./columnify -schemaType bigquery -schemaFile examples/schema/primitives.bq.json -recordType ltsv examples/record/primitives.ltsv > /dev/null
-	./columnify -schemaType bigquery -schemaFile examples/schema/primitives.bq.json -recordType msgpack examples/record/primitives.msgpack > /dev/null
-	./columnify -schemaType bigquery -schemaFile examples/schema/primitives.bq.json -recordType tsv examples/record/primitives.tsv > /dev/null
-	./columnify -schemaType bigquery -schemaFile examples/schema/nested.bq.json -recordType avro examples/record/nested.avro > /dev/null
-	./columnify -schemaType bigquery -schemaFile examples/schema/nested.bq.json -recordType jsonl examples/record/nested.jsonl > /dev/null
-	./columnify -schemaType bigquery -schemaFile examples/schema/nested.bq.json -recordType msgpack examples/record/nested.msgpack > /dev/null
-	./columnify -schemaType bigquery -schemaFile examples/schema/array.bq.json -recordType avro examples/record/array.avro > /dev/null
-	./columnify -schemaType bigquery -schemaFile examples/schema/array.bq.json -recordType jsonl examples/record/array.jsonl > /dev/null
-	./columnify -schemaType bigquery -schemaFile examples/schema/array.bq.json -recordType msgpack examples/record/array.msgpack > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/primitives.avsc -recordType avro testdata/record/primitives.avro > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/primitives.avsc -recordType csv testdata/record/primitives.csv > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/primitives.avsc -recordType jsonl testdata/record/primitives.jsonl > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/primitives.avsc -recordType ltsv testdata/record/primitives.ltsv > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/primitives.avsc -recordType msgpack testdata/record/primitives.msgpack > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/primitives.avsc -recordType tsv testdata/record/primitives.tsv > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/nullables.avsc -recordType avro testdata/record/nullables.avro > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/nullables.avsc -recordType jsonl testdata/record/nullables.jsonl > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/nullables.avsc -recordType msgpack testdata/record/nullables.msgpack > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/logicals.avsc -recordType avro testdata/record/logicals.avro > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/logicals.avsc -recordType csv testdata/record/logicals.csv > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/logicals.avsc -recordType jsonl testdata/record/logicals.jsonl > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/logicals.avsc -recordType ltsv testdata/record/logicals.ltsv > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/logicals.avsc -recordType msgpack testdata/record/logicals.msgpack > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/logicals.avsc -recordType tsv testdata/record/logicals.tsv > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/nested.avsc -recordType avro testdata/record/nested.avro > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/nested.avsc -recordType jsonl testdata/record/nested.jsonl > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/nested.avsc -recordType msgpack testdata/record/nested.msgpack > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/array.avsc -recordType avro testdata/record/array.avro > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/array.avsc -recordType jsonl testdata/record/array.jsonl > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/array.avsc -recordType msgpack testdata/record/array.msgpack > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/logicals.avsc -recordType jsonl testdata/record/logicals.jsonl > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/logicals.avsc -recordType avro testdata/record/logicals.avro > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/logicals.avsc -recordType msgpack testdata/record/logicals.msgpack > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/nullable_complex.avsc -recordType avro testdata/record/nullable_complex.avro > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/nullable_complex.avsc -recordType jsonl testdata/record/nullable_complex.jsonl > /dev/null
+	./columnify -schemaType avro -schemaFile testdata/schema/nullable_complex.avsc -recordType msgpack testdata/record/nullable_complex.msgpack > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/primitives.bq.json -recordType avro testdata/record/primitives.avro > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/primitives.bq.json -recordType csv testdata/record/primitives.csv > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/primitives.bq.json -recordType jsonl testdata/record/primitives.jsonl > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/primitives.bq.json -recordType ltsv testdata/record/primitives.ltsv > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/primitives.bq.json -recordType msgpack testdata/record/primitives.msgpack > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/primitives.bq.json -recordType tsv testdata/record/primitives.tsv > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/nullables.bq.json -recordType avro testdata/record/nullables.avro > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/nullables.bq.json -recordType jsonl testdata/record/nullables.jsonl > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/nullables.bq.json -recordType msgpack testdata/record/nullables.msgpack > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/nested.bq.json -recordType avro testdata/record/nested.avro > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/nested.bq.json -recordType jsonl testdata/record/nested.jsonl > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/nested.bq.json -recordType msgpack testdata/record/nested.msgpack > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/array.bq.json -recordType avro testdata/record/array.avro > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/array.bq.json -recordType jsonl testdata/record/array.jsonl > /dev/null
+	./columnify -schemaType bigquery -schemaFile testdata/schema/array.bq.json -recordType msgpack testdata/record/array.msgpack > /dev/null
 
 # Set GITHUB_TOKEN and create release git tag
 .PHONY: release

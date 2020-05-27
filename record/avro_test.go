@@ -8,6 +8,33 @@ import (
 	"github.com/linkedin/goavro/v2"
 )
 
+func TestFlattenAvroUnion(t *testing.T) {
+	input := map[string]interface{}{
+		"primitive": 42,
+		"nested-single": map[string]interface{}{
+			"string": "test",
+		},
+		"nested-multiple": map[string]interface{}{
+			"int":    42,
+			"string": "test",
+		},
+	}
+	expected := map[string]interface{}{
+		"primitive":     42,
+		"nested-single": "test",
+		"nested-multiple": map[string]interface{}{
+			"int":    42,
+			"string": "test",
+		},
+	}
+
+	actual := flattenAvroUnion(input)
+
+	if !reflect.DeepEqual(actual, expected) {
+		t.Errorf("expected: %v, but actual: %v\n", expected, actual)
+	}
+}
+
 func TestFormatAvroToMap(t *testing.T) {
 	cases := []struct {
 		input    []byte

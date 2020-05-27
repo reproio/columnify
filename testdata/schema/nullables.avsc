@@ -1,0 +1,41 @@
+{
+  "type": "record",
+  "name": "Nullables",
+  "fields" : [
+    {
+      "name": "boolean",
+      "type": ["null", "boolean"],
+      "default": null
+    },
+    {
+      "name": "int",
+      "type": ["null", "int"],
+      "default": null
+    },
+    {
+      "name": "long",
+      "type": ["null", "long"],
+      "default": null
+    },
+    {
+      "name": "float",
+      "type": ["null", "float"],
+      "default": null
+    },
+    {
+      "name": "double",
+      "type": ["null", "double"],
+      "default": null
+    },
+    {
+      "name": "bytes",
+      "type": ["null", "bytes"],
+      "default": null
+    },
+    {
+      "name": "string",
+      "type": ["null", "string"],
+      "default": null
+    }
+  ]
+}
