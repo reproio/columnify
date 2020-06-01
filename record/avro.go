@@ -3,6 +3,7 @@ package record
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/reproio/columnify/schema"
 
 	"github.com/linkedin/goavro/v2"

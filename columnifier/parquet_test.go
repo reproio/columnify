@@ -3,11 +3,12 @@ package columnifier
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/xitongsys/parquet-go-source/local"
-	"github.com/xitongsys/parquet-go/reader"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/xitongsys/parquet-go-source/local"
+	"github.com/xitongsys/parquet-go/reader"
 
 	"github.com/reproio/columnify/record"
 	"github.com/reproio/columnify/schema"

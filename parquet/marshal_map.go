@@ -2,6 +2,7 @@ package parquet
 
 import (
 	"encoding/json"
+
 	"github.com/xitongsys/parquet-go/layout"
 	"github.com/xitongsys/parquet-go/marshal"
 	"github.com/xitongsys/parquet-go/schema"
