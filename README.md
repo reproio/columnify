@@ -83,6 +83,14 @@ $ parquet-tools cat -json out.parquet
   - An example is `examples/fluent-plugin-s3`
   - It works as a Compressor of fluent-plugin-s3 write parquet file to tmp via chunk data.
 
+## Limilations
+
+Currently it has some limitations from schema/record types.
+
+- Some logical types like Decimal are unsupported.
+- If using `-recordType = avro`, it doesn't support a nested record has only 1 sub field.
+- If using `-recordType = avro`, it converts bytes fields to base64 encoded value implicitly.
+
 ## Development
 
 `Columnifier` reads input file(s), converts format based on given parameter, finally writes output files.
