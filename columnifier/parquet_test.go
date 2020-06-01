@@ -75,7 +75,7 @@ func TestNewParquetColumnifier(t *testing.T) {
 		// Inalid schema type
 		{
 			st:     "unknown",
-			sf:     "../testdata/schema/primitives.avsc",
+			sf:     "testdata/schema/primitives.avsc",
 			rt:     record.RecordTypeJsonl,
 			output: "",
 			config: Config{},
@@ -95,7 +95,7 @@ func TestNewParquetColumnifier(t *testing.T) {
 		// Invalid output
 		{
 			st:     schema.SchemaTypeAvro,
-			sf:     "../testdata/schema/primitives.avsc",
+			sf:     "testdata/schema/primitives.avsc",
 			rt:     record.RecordTypeJsonl,
 			output: "/tmp/nonexistence/invalid.record",
 			config: Config{},
@@ -105,7 +105,7 @@ func TestNewParquetColumnifier(t *testing.T) {
 		// Valid
 		{
 			st:     schema.SchemaTypeAvro,
-			sf:     "../testdata/schema/primitives.avsc",
+			sf:     "testdata/schema/primitives.avsc",
 			rt:     record.RecordTypeJsonl,
 			output: "",
 			config: Config{},
@@ -133,308 +133,308 @@ func TestWriteClose(t *testing.T) {
 		// primitives; Avro schema, Avro record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/primitives.avsc",
+			sf:       "testdata/schema/primitives.avsc",
 			rt:       record.RecordTypeAvro,
-			input:    "../testdata/record/primitives.avro",
-			expected: "../testdata/parquet/primitives_with_bytes.parquet",
+			input:    "testdata/record/primitives.avro",
+			expected: "testdata/parquet/primitives_with_bytes.parquet",
 		},
 		// primitives; Avro schema, CSV record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/primitives.avsc",
+			sf:       "testdata/schema/primitives.avsc",
 			rt:       record.RecordTypeCsv,
-			input:    "../testdata/record/primitives.csv",
-			expected: "../testdata/parquet/primitives.parquet",
+			input:    "testdata/record/primitives.csv",
+			expected: "testdata/parquet/primitives.parquet",
 		},
 		// primitives; Avro schema, JSONL record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/primitives.avsc",
+			sf:       "testdata/schema/primitives.avsc",
 			rt:       record.RecordTypeJsonl,
-			input:    "../testdata/record/primitives.jsonl",
-			expected: "../testdata/parquet/primitives.parquet",
+			input:    "testdata/record/primitives.jsonl",
+			expected: "testdata/parquet/primitives.parquet",
 		},
 		// primitives; Avro schema, LTSV record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/primitives.avsc",
+			sf:       "testdata/schema/primitives.avsc",
 			rt:       record.RecordTypeLtsv,
-			input:    "../testdata/record/primitives.ltsv",
-			expected: "../testdata/parquet/primitives.parquet",
+			input:    "testdata/record/primitives.ltsv",
+			expected: "testdata/parquet/primitives.parquet",
 		},
 		// primitives; Avro schema, MessagePack record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/primitives.avsc",
+			sf:       "testdata/schema/primitives.avsc",
 			rt:       record.RecordTypeMsgpack,
-			input:    "../testdata/record/primitives.msgpack",
-			expected: "../testdata/parquet/primitives.parquet",
+			input:    "testdata/record/primitives.msgpack",
+			expected: "testdata/parquet/primitives.parquet",
 		},
 		// primitives; Avro schema, TSV record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/primitives.avsc",
+			sf:       "testdata/schema/primitives.avsc",
 			rt:       record.RecordTypeTsv,
-			input:    "../testdata/record/primitives.tsv",
-			expected: "../testdata/parquet/primitives.parquet",
+			input:    "testdata/record/primitives.tsv",
+			expected: "testdata/parquet/primitives.parquet",
 		},
 		// nullables; Avro schema, Avro record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/nullables.avsc",
+			sf:       "testdata/schema/nullables.avsc",
 			rt:       record.RecordTypeAvro,
-			input:    "../testdata/record/nullables.avro",
-			expected: "../testdata/parquet/nullables_with_bytes.parquet",
+			input:    "testdata/record/nullables.avro",
+			expected: "testdata/parquet/nullables_with_bytes.parquet",
 		},
 		// nullables; Avro schema, JSONL record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/nullables.avsc",
+			sf:       "testdata/schema/nullables.avsc",
 			rt:       record.RecordTypeJsonl,
-			input:    "../testdata/record/nullables.jsonl",
-			expected: "../testdata/parquet/nullables.parquet",
+			input:    "testdata/record/nullables.jsonl",
+			expected: "testdata/parquet/nullables.parquet",
 		},
 		// nullables; Avro schema, MessagePack record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/nullables.avsc",
+			sf:       "testdata/schema/nullables.avsc",
 			rt:       record.RecordTypeMsgpack,
-			input:    "../testdata/record/nullables.msgpack",
-			expected: "../testdata/parquet/nullables.parquet",
+			input:    "testdata/record/nullables.msgpack",
+			expected: "testdata/parquet/nullables.parquet",
 		},
 		// TODO logicals; Avro schema, Avro record
 		// logicals; Avro schema, CSV record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/logicals.avsc",
+			sf:       "testdata/schema/logicals.avsc",
 			rt:       record.RecordTypeCsv,
-			input:    "../testdata/record/logicals.csv",
-			expected: "../testdata/parquet/logicals.parquet",
+			input:    "testdata/record/logicals.csv",
+			expected: "testdata/parquet/logicals.parquet",
 		},
 		// logicals; Avro schema, JSONL record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/logicals.avsc",
+			sf:       "testdata/schema/logicals.avsc",
 			rt:       record.RecordTypeJsonl,
-			input:    "../testdata/record/logicals.jsonl",
-			expected: "../testdata/parquet/logicals.parquet",
+			input:    "testdata/record/logicals.jsonl",
+			expected: "testdata/parquet/logicals.parquet",
 		},
 		// logicals; Avro schema, LTSV record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/logicals.avsc",
+			sf:       "testdata/schema/logicals.avsc",
 			rt:       record.RecordTypeLtsv,
-			input:    "../testdata/record/logicals.ltsv",
-			expected: "../testdata/parquet/logicals.parquet",
+			input:    "testdata/record/logicals.ltsv",
+			expected: "testdata/parquet/logicals.parquet",
 		},
 		// logicals; Avro schema, MessagePack record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/logicals.avsc",
+			sf:       "testdata/schema/logicals.avsc",
 			rt:       record.RecordTypeMsgpack,
-			input:    "../testdata/record/logicals.msgpack",
-			expected: "../testdata/parquet/logicals.parquet",
+			input:    "testdata/record/logicals.msgpack",
+			expected: "testdata/parquet/logicals.parquet",
 		},
 		// logicals; Avro schema, TSV record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/logicals.avsc",
+			sf:       "testdata/schema/logicals.avsc",
 			rt:       record.RecordTypeTsv,
-			input:    "../testdata/record/logicals.tsv",
-			expected: "../testdata/parquet/logicals.parquet",
+			input:    "testdata/record/logicals.tsv",
+			expected: "testdata/parquet/logicals.parquet",
 		},
 		// nested; Avro schema, Avro record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/nested.avsc",
+			sf:       "testdata/schema/nested.avsc",
 			rt:       record.RecordTypeAvro,
-			input:    "../testdata/record/nested.avro",
-			expected: "../testdata/parquet/nested_with_bytes.parquet",
+			input:    "testdata/record/nested.avro",
+			expected: "testdata/parquet/nested_with_bytes.parquet",
 		},
 		// nested; Avro schema, JSONL record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/nested.avsc",
+			sf:       "testdata/schema/nested.avsc",
 			rt:       record.RecordTypeJsonl,
-			input:    "../testdata/record/nested.jsonl",
-			expected: "../testdata/parquet/nested.parquet",
+			input:    "testdata/record/nested.jsonl",
+			expected: "testdata/parquet/nested.parquet",
 		},
 		// nested; Avro schema, MessagePack record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/nested.avsc",
+			sf:       "testdata/schema/nested.avsc",
 			rt:       record.RecordTypeMsgpack,
-			input:    "../testdata/record/nested.msgpack",
-			expected: "../testdata/parquet/nested.parquet",
+			input:    "testdata/record/nested.msgpack",
+			expected: "testdata/parquet/nested.parquet",
 		},
 		// array; Avro schema, Avro record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/array.avsc",
+			sf:       "testdata/schema/array.avsc",
 			rt:       record.RecordTypeAvro,
-			input:    "../testdata/record/array.avro",
-			expected: "../testdata/parquet/array_with_bytes.parquet",
+			input:    "testdata/record/array.avro",
+			expected: "testdata/parquet/array_with_bytes.parquet",
 		},
 		// array; Avro schema, JSONL record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/array.avsc",
+			sf:       "testdata/schema/array.avsc",
 			rt:       record.RecordTypeJsonl,
-			input:    "../testdata/record/array.jsonl",
-			expected: "../testdata/parquet/array.parquet",
+			input:    "testdata/record/array.jsonl",
+			expected: "testdata/parquet/array.parquet",
 		},
 		// array; Avro schema, MessagePack record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/array.avsc",
+			sf:       "testdata/schema/array.avsc",
 			rt:       record.RecordTypeMsgpack,
-			input:    "../testdata/record/array.msgpack",
-			expected: "../testdata/parquet/array.parquet",
+			input:    "testdata/record/array.msgpack",
+			expected: "testdata/parquet/array.parquet",
 		},
 		// nullable/complex; Avro schema, Avro record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/nullable_complex.avsc",
+			sf:       "testdata/schema/nullable_complex.avsc",
 			rt:       record.RecordTypeAvro,
-			input:    "../testdata/record/nullable_complex.avro",
-			expected: "../testdata/parquet/nullable_complex_with_bytes.parquet",
+			input:    "testdata/record/nullable_complex.avro",
+			expected: "testdata/parquet/nullable_complex_with_bytes.parquet",
 		},
 		// nullable/complex; Avro schema, JSONL record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/nullable_complex.avsc",
+			sf:       "testdata/schema/nullable_complex.avsc",
 			rt:       record.RecordTypeJsonl,
-			input:    "../testdata/record/nullable_complex.jsonl",
-			expected: "../testdata/parquet/nullable_complex.parquet",
+			input:    "testdata/record/nullable_complex.jsonl",
+			expected: "testdata/parquet/nullable_complex.parquet",
 		},
 		// nullable/complex; Avro schema, JSONL record
 		{
 			st:       schema.SchemaTypeAvro,
-			sf:       "../testdata/schema/nullable_complex.avsc",
+			sf:       "testdata/schema/nullable_complex.avsc",
 			rt:       record.RecordTypeMsgpack,
-			input:    "../testdata/record/nullable_complex.msgpack",
-			expected: "../testdata/parquet/nullable_complex.parquet",
+			input:    "testdata/record/nullable_complex.msgpack",
+			expected: "testdata/parquet/nullable_complex.parquet",
 		},
 
 		// primitives; BigQuery schema, Avro record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/primitives.bq.json",
+			sf:       "testdata/schema/primitives.bq.json",
 			rt:       record.RecordTypeAvro,
-			input:    "../testdata/record/primitives.avro",
-			expected: "../testdata/parquet/primitives_with_bytes.parquet",
+			input:    "testdata/record/primitives.avro",
+			expected: "testdata/parquet/primitives_with_bytes.parquet",
 		},
 		// primitives; BigQuery schema, CSV record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/primitives.bq.json",
+			sf:       "testdata/schema/primitives.bq.json",
 			rt:       record.RecordTypeCsv,
-			input:    "../testdata/record/primitives.csv",
-			expected: "../testdata/parquet/primitives.parquet",
+			input:    "testdata/record/primitives.csv",
+			expected: "testdata/parquet/primitives.parquet",
 		},
 		// primitives; BigQuery schema, JSONL record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/primitives.bq.json",
+			sf:       "testdata/schema/primitives.bq.json",
 			rt:       record.RecordTypeJsonl,
-			input:    "../testdata/record/primitives.jsonl",
-			expected: "../testdata/parquet/primitives.parquet",
+			input:    "testdata/record/primitives.jsonl",
+			expected: "testdata/parquet/primitives.parquet",
 		},
 		// primitives; BigQuery schema, LTSV record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/primitives.bq.json",
+			sf:       "testdata/schema/primitives.bq.json",
 			rt:       record.RecordTypeLtsv,
-			input:    "../testdata/record/primitives.ltsv",
-			expected: "../testdata/parquet/primitives.parquet",
+			input:    "testdata/record/primitives.ltsv",
+			expected: "testdata/parquet/primitives.parquet",
 		},
 		// primitives; BigQuery schema, MessagePack record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/primitives.bq.json",
+			sf:       "testdata/schema/primitives.bq.json",
 			rt:       record.RecordTypeMsgpack,
-			input:    "../testdata/record/primitives.msgpack",
-			expected: "../testdata/parquet/primitives.parquet",
+			input:    "testdata/record/primitives.msgpack",
+			expected: "testdata/parquet/primitives.parquet",
 		},
 		// primitives; BigQuery schema, TSV record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/primitives.bq.json",
+			sf:       "testdata/schema/primitives.bq.json",
 			rt:       record.RecordTypeTsv,
-			input:    "../testdata/record/primitives.tsv",
-			expected: "../testdata/parquet/primitives.parquet",
+			input:    "testdata/record/primitives.tsv",
+			expected: "testdata/parquet/primitives.parquet",
 		},
 		// nullables; Avro schema, Avro record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/nullables.bq.json",
+			sf:       "testdata/schema/nullables.bq.json",
 			rt:       record.RecordTypeAvro,
-			input:    "../testdata/record/nullables.avro",
-			expected: "../testdata/parquet/nullables_with_bytes.parquet",
+			input:    "testdata/record/nullables.avro",
+			expected: "testdata/parquet/nullables_with_bytes.parquet",
 		},
 		// nullables; BigQuery schema, JSONL record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/nullables.bq.json",
+			sf:       "testdata/schema/nullables.bq.json",
 			rt:       record.RecordTypeJsonl,
-			input:    "../testdata/record/nullables.jsonl",
-			expected: "../testdata/parquet/nullables.parquet",
+			input:    "testdata/record/nullables.jsonl",
+			expected: "testdata/parquet/nullables.parquet",
 		},
 		// nullables; BigQuery schema, MessagePack record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/nullables.bq.json",
+			sf:       "testdata/schema/nullables.bq.json",
 			rt:       record.RecordTypeMsgpack,
-			input:    "../testdata/record/nullables.msgpack",
-			expected: "../testdata/parquet/nullables.parquet",
+			input:    "testdata/record/nullables.msgpack",
+			expected: "testdata/parquet/nullables.parquet",
 		},
 		// nested; BigQuery schema, Avro record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/nested.bq.json",
+			sf:       "testdata/schema/nested.bq.json",
 			rt:       record.RecordTypeAvro,
-			input:    "../testdata/record/nested.avro",
-			expected: "../testdata/parquet/nested_with_bytes.parquet",
+			input:    "testdata/record/nested.avro",
+			expected: "testdata/parquet/nested_with_bytes.parquet",
 		},
 		// nested; BigQuery schema, JSONL record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/nested.bq.json",
+			sf:       "testdata/schema/nested.bq.json",
 			rt:       record.RecordTypeJsonl,
-			input:    "../testdata/record/nested.jsonl",
-			expected: "../testdata/parquet/nested.parquet",
+			input:    "testdata/record/nested.jsonl",
+			expected: "testdata/parquet/nested.parquet",
 		},
 		// nested; BigQuery schema, MessagePack record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/nested.bq.json",
+			sf:       "testdata/schema/nested.bq.json",
 			rt:       record.RecordTypeMsgpack,
-			input:    "../testdata/record/nested.msgpack",
-			expected: "../testdata/parquet/nested.parquet",
+			input:    "testdata/record/nested.msgpack",
+			expected: "testdata/parquet/nested.parquet",
 		},
 		// array; BigQuery schema, Avro record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/array.bq.json",
+			sf:       "testdata/schema/array.bq.json",
 			rt:       record.RecordTypeAvro,
-			input:    "../testdata/record/array.avro",
-			expected: "../testdata/parquet/array_with_bytes.parquet",
+			input:    "testdata/record/array.avro",
+			expected: "testdata/parquet/array_with_bytes.parquet",
 		},
 		// array; BigQuery schema, JSONL record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/array.bq.json",
+			sf:       "testdata/schema/array.bq.json",
 			rt:       record.RecordTypeJsonl,
-			input:    "../testdata/record/array.jsonl",
-			expected: "../testdata/parquet/array.parquet",
+			input:    "testdata/record/array.jsonl",
+			expected: "testdata/parquet/array.parquet",
 		},
 		// array; BigQuery schema, MessagePack record
 		{
 			st:       schema.SchemaTypeBigquery,
-			sf:       "../testdata/schema/array.bq.json",
+			sf:       "testdata/schema/array.bq.json",
 			rt:       record.RecordTypeMsgpack,
-			input:    "../testdata/record/array.msgpack",
-			expected: "../testdata/parquet/array.parquet",
+			input:    "testdata/record/array.msgpack",
+			expected: "testdata/parquet/array.parquet",
 		},
 	}
 
@@ -476,17 +476,17 @@ func TestWriteClose_Errors(t *testing.T) {
 		// Invalid record type
 		{
 			st:    schema.SchemaTypeAvro,
-			sf:    "../testdata/schema/primitives.avsc",
+			sf:    "testdata/schema/primitives.avsc",
 			rt:    "unknown",
-			input: "../testdata/record/primitives.jsonl",
+			input: "testdata/record/primitives.jsonl",
 		},
 
 		// Mismatch schema & record
 		{
 			st:    schema.SchemaTypeAvro,
-			sf:    "../testdata/schema/mismatch.avsc",
+			sf:    "testdata/schema/mismatch.avsc",
 			rt:    record.RecordTypeJsonl,
-			input: "../testdata/record/primitives.jsonl",
+			input: "testdata/record/primitives.jsonl",
 		},
 	}
 
