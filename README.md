@@ -1,5 +1,8 @@
 # columnify
 
+![Go](https://github.com/reproio/columnify/workflows/Go/badge.svg)
+![goreleaser](https://github.com/reproio/columnify/workflows/goreleaser/badge.svg)
+
 Make record oriented data to columnar format.
 
 ## Synopsis
@@ -88,3 +91,7 @@ $ parquet-tools cat -json out.parquet
 `Columnifier` reads input file(s), converts format based on given parameter, finally writes output files.
 Format conversion is separated by schema / record. The `schema` conversion accepts input schema, then converts it to targer's via Arrow's schema. The `record` conversion is similar to schema's but intermediate is simply `map[string]interface{}`, because Arrow record isn't available as an intermediate.
 `columnify` basically depends on existing modules but it contains additional modules like `avro`, `parquet` to fill insufficient features.
+
+## Release
+
+[goreleaser](https://github.com/goreleaser/goreleaser) is integrated in GitHub Actions. It's triggerd on creating a new tag. Create a new release with semvar tag(`vx.y.z`) on this GitHub repo, then you get archives for some environments attached on the release.
