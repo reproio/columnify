@@ -9,6 +9,30 @@ import (
 	"github.com/linkedin/goavro/v2"
 )
 
+// flattenAvroUnion flattens nested map type has only 1 element.
+func flattenAvroUnion(in map[string]interface{}) map[string]interface{} {
+	out := make(map[string]interface{})
+
+	for k, v := range in {
+		if m, ok := v.(map[string]interface{}); ok {
+			// Flatten because Avro-JSON representation has redundant nested map type.
+			// see also https://github.com/linkedin/goavro#translating-from-go-to-avro-data
+			if len(m) == 1 {
+				for _, vv := range m {
+					out[k] = vv
+					break
+				}
+			} else {
+				out[k] = flattenAvroUnion(m)
+			}
+		} else {
+			out[k] = v
+		}
+	}
+
+	return out
+}
+
 func FormatAvroToMap(data []byte) ([]map[string]interface{}, error) {
 	r, err := goavro.NewOCFReader(bytes.NewReader(data))
 	if err != nil {
@@ -25,7 +49,8 @@ func FormatAvroToMap(data []byte) ([]map[string]interface{}, error) {
 		if !mapOk {
 			return nil, fmt.Errorf("invalid value %v: %w", v, ErrUnconvertibleRecord)
 		}
-		maps = append(maps, m)
+		flatten := flattenAvroUnion(m)
+		maps = append(maps, flatten)
 	}
 
 	return maps, nil

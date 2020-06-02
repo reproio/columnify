@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "Logicals",
+  "fields" : [
+    {
+      "name": "date",
+      "type": {"type": "int", "logicalType": "date"}
+    },
+    {
+      "name": "timemillis",
+      "type": {"type": "int", "logicalType": "time-millis"}
+    },
+    {
+      "name": "timemicros",
+      "type": {"type": "long", "logicalType": "time-micros"}
+    },
+    {
+      "name": "timestampmillis",
+      "type": { "type": "long", "logicalType": "timestamp-millis"}
+    },
+    {
+      "name": "timestampmicros",
+      "type": {"type": "long", "logicalType": "timestamp-micros"}
+    }
+  ]
+}

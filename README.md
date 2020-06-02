@@ -41,7 +41,7 @@ $ cat examples/record/primitives.jsonl
 {"boolean": false, "int": 1, "long": 1, "float": 1.1, "double": 1.1, "bytes": "foo", "string": "foo"}
 {"boolean": true, "int": 2, "long": 2, "float": 2.2, "double": 2.2, "bytes": "bar", "string": "bar"}
 
-$ ./columnify -schemaType avro -schemaFile examples/schema/primitives.avsc -recordType jsonl examples/record/primitives.jsonl > out.parquet
+$ ./columnify -schemaType avro -schemaFile examples/primitives.avsc -recordType jsonl examples/primitives.jsonl > out.parquet
 
 $ parquet-tools schema out.parquet
 message Primitives {
@@ -85,6 +85,14 @@ $ parquet-tools cat -json out.parquet
 
   - An example is `examples/fluent-plugin-s3`
   - It works as a Compressor of fluent-plugin-s3 write parquet file to tmp via chunk data.
+
+## Limilations
+
+Currently it has some limitations from schema/record types.
+
+- Some logical types like Decimal are unsupported.
+- If using `-recordType = avro`, it doesn't support a nested record has only 1 sub field.
+- If using `-recordType = avro`, it converts bytes fields to base64 encoded value implicitly.
 
 ## Development
 
