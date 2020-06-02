@@ -308,7 +308,7 @@ func TestWriteClose(t *testing.T) {
 			input:    "testdata/record/nullable_complex.jsonl",
 			expected: "testdata/parquet/nullable_complex.parquet",
 		},
-		// nullable/complex; Avro schema, JSONL record
+		// nullable/complex; Avro schema, MessagePack record
 		{
 			st:       schema.SchemaTypeAvro,
 			sf:       "testdata/schema/nullable_complex.avsc",
