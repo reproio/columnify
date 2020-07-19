@@ -13,8 +13,8 @@ import (
 var (
 	arrowToParquetPrimitiveType = map[arrow.DataType]string{
 		arrow.FixedWidthTypes.Boolean: "BOOLEAN",
-		arrow.PrimitiveTypes.Uint32:   "INT32",
-		arrow.PrimitiveTypes.Uint64:   "INT64",
+		arrow.PrimitiveTypes.Int32:    "INT32",
+		arrow.PrimitiveTypes.Int64:    "INT64",
 		arrow.PrimitiveTypes.Float32:  "FLOAT",
 		arrow.PrimitiveTypes.Float64:  "DOUBLE",
 		arrow.BinaryTypes.Binary:      "BYTE_ARRAY",

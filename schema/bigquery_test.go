@@ -64,12 +64,12 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 					},
 					{
 						Name:     "int",
-						Type:     arrow.PrimitiveTypes.Uint64,
+						Type:     arrow.PrimitiveTypes.Int64,
 						Nullable: false,
 					},
 					{
 						Name:     "long",
-						Type:     arrow.PrimitiveTypes.Uint64,
+						Type:     arrow.PrimitiveTypes.Int64,
 						Nullable: false,
 					},
 					{
@@ -189,12 +189,12 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 					},
 					{
 						Name:     "int",
-						Type:     arrow.PrimitiveTypes.Uint64,
+						Type:     arrow.PrimitiveTypes.Int64,
 						Nullable: false,
 					},
 					{
 						Name:     "long",
-						Type:     arrow.PrimitiveTypes.Uint64,
+						Type:     arrow.PrimitiveTypes.Int64,
 						Nullable: false,
 					},
 					{
@@ -228,12 +228,12 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 								},
 								{
 									Name:     "int",
-									Type:     arrow.PrimitiveTypes.Uint64,
+									Type:     arrow.PrimitiveTypes.Int64,
 									Nullable: false,
 								},
 								{
 									Name:     "long",
-									Type:     arrow.PrimitiveTypes.Uint64,
+									Type:     arrow.PrimitiveTypes.Int64,
 									Nullable: false,
 								},
 								{
@@ -357,12 +357,12 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 					},
 					{
 						Name:     "int",
-						Type:     arrow.PrimitiveTypes.Uint64,
+						Type:     arrow.PrimitiveTypes.Int64,
 						Nullable: false,
 					},
 					{
 						Name:     "long",
-						Type:     arrow.PrimitiveTypes.Uint64,
+						Type:     arrow.PrimitiveTypes.Int64,
 						Nullable: false,
 					},
 					{
@@ -397,12 +397,12 @@ func TestNewArrowSchemaFromBigquerySchema(t *testing.T) {
 									},
 									{
 										Name:     "int",
-										Type:     arrow.PrimitiveTypes.Uint64,
+										Type:     arrow.PrimitiveTypes.Int64,
 										Nullable: false,
 									},
 									{
 										Name:     "long",
-										Type:     arrow.PrimitiveTypes.Uint64,
+										Type:     arrow.PrimitiveTypes.Int64,
 										Nullable: false,
 									},
 									{

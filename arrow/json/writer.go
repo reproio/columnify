@@ -243,6 +243,61 @@ func convertToGo(data *array.Data) ([]interface{}, error) {
 			}
 		}
 
+	case arrow.DATE32:
+		arr := array.NewDate32Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.DATE64:
+		arr := array.NewDate64Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.TIME32:
+		arr := array.NewTime32Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.TIME64:
+		arr := array.NewTime64Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.TIMESTAMP:
+		arr := array.NewTimestampData(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
 	case arrow.STRUCT:
 		arr := array.NewStructData(data)
 		defer arr.Release()

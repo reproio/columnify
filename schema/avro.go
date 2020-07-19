@@ -11,8 +11,8 @@ import (
 var (
 	avroPrimitivesToArrow = map[avro.PrimitiveType]arrow.DataType{
 		avro.AvroPrimitiveType_Boolean: arrow.FixedWidthTypes.Boolean,
-		avro.AvroPrimitiveType_Int:     arrow.PrimitiveTypes.Uint32,
-		avro.AvroPrimitiveType_Long:    arrow.PrimitiveTypes.Uint64,
+		avro.AvroPrimitiveType_Int:     arrow.PrimitiveTypes.Int32,
+		avro.AvroPrimitiveType_Long:    arrow.PrimitiveTypes.Int64,
 		avro.AvroPrimitiveType_Float:   arrow.PrimitiveTypes.Float32,
 		avro.AvroPrimitiveType_Double:  arrow.PrimitiveTypes.Float64,
 		avro.AvroPrimitiveType_String:  arrow.BinaryTypes.String,

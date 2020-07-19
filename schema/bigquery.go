@@ -10,14 +10,14 @@ import (
 var (
 	bqPrimitivesToArrow = map[bigquery.FieldType]arrow.DataType{
 		bigquery.BooleanFieldType:   arrow.FixedWidthTypes.Boolean,
-		bigquery.IntegerFieldType:   arrow.PrimitiveTypes.Uint64,
+		bigquery.IntegerFieldType:   arrow.PrimitiveTypes.Int64,
 		bigquery.FloatFieldType:     arrow.PrimitiveTypes.Float64,
-		bigquery.NumericFieldType:   arrow.PrimitiveTypes.Uint64,
 		bigquery.StringFieldType:    arrow.BinaryTypes.String,
 		bigquery.BytesFieldType:     arrow.BinaryTypes.Binary,
 		bigquery.DateFieldType:      arrow.FixedWidthTypes.Date32,
 		bigquery.TimeFieldType:      arrow.FixedWidthTypes.Time64us,
 		bigquery.TimestampFieldType: arrow.FixedWidthTypes.Timestamp_us,
+		// bigquery.NumericFieldType: Unsupported
 		// bigquery.DateTimeFieldType: Unsupported
 	}
 )

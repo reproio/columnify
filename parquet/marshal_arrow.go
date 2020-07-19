@@ -77,8 +77,8 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, rl)
 		}
 
-	case arrow.UINT32:
-		values := array.NewUint32Data(data)
+	case arrow.INT32:
+		values := array.NewInt32Data(data)
 		for i := 0; i < values.Len(); i++ {
 			v, deltaDl, err := arrowPrimitiveToDataPageSource(values.Value(i), values.IsValid(i), info)
 			if err != nil {
@@ -89,8 +89,8 @@ func marshalArrowData(data *array.Data, tables map[string]*layout.Table, sh *sch
 			tables[pathStr].RepetitionLevels = append(tables[pathStr].RepetitionLevels, rl)
 		}
 
-	case arrow.UINT64:
-		values := array.NewUint64Data(data)
+	case arrow.INT64:
+		values := array.NewInt64Data(data)
 		for i := 0; i < values.Len(); i++ {
 			v, deltaDl, err := arrowPrimitiveToDataPageSource(values.Value(i), values.IsValid(i), info)
 			if err != nil {

@@ -1,9 +1,11 @@
 package columnifier
 
 import (
-	"io/ioutil"
-
+	"bytes"
+	"github.com/reproio/columnify/arrow/json"
 	"github.com/reproio/columnify/record"
+	"github.com/xitongsys/parquet-go/marshal"
+	"io/ioutil"
 
 	"github.com/reproio/columnify/parquet"
 	"github.com/reproio/columnify/schema"
@@ -66,17 +68,28 @@ func NewParquetColumnifier(st string, sf string, rt string, output string, confi
 
 // Write reads, converts input binary data and write it to buffer.
 func (c *parquetColumnifier) Write(data []byte) (int, error) {
-	// Intermediate record type is map[string]interface{}
-	c.w.MarshalFunc = parquet.MarshalMap
-	records, err := record.FormatToMap(data, c.schema, c.rt)
+	// Intermediate record type is json string
+	c.w.MarshalFunc = marshal.MarshalJSON
+	records, err := record.FormatToArrow(data, c.schema, c.rt)
 	if err != nil {
 		return -1, err
 	}
 
 	beforeSize := c.w.Size
-	for _, r := range records {
-		if err := c.w.Write(r); err != nil {
+	for i := int64(0); i < records.Record.NumRows(); i++ {
+		s := records.Record.NewSlice(i, i+1)
+		defer s.Release()
+
+		buf := &bytes.Buffer{}
+		w := json.NewWriter(buf, records.Record.Schema())
+		if err := w.Write(s); err != nil {
 			return -1, err
+		}
+
+		if buf.Len() > 2 {
+			if err := c.w.Write(buf.String()[1 : buf.Len()-1]); err != nil {
+				return -1, err
+			}
 		}
 	}
 	afterSize := c.w.Size

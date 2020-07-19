@@ -29,12 +29,12 @@ func TestNewSchemaHandlerFromArrow(t *testing.T) {
 						},
 						{
 							Name:     "int",
-							Type:     arrow.PrimitiveTypes.Uint32,
+							Type:     arrow.PrimitiveTypes.Int32,
 							Nullable: false,
 						},
 						{
 							Name:     "long",
-							Type:     arrow.PrimitiveTypes.Uint64,
+							Type:     arrow.PrimitiveTypes.Int64,
 							Nullable: false,
 						},
 						{
@@ -119,12 +119,12 @@ func TestNewSchemaHandlerFromArrow(t *testing.T) {
 						},
 						{
 							Name:     "int",
-							Type:     arrow.PrimitiveTypes.Uint32,
+							Type:     arrow.PrimitiveTypes.Int32,
 							Nullable: false,
 						},
 						{
 							Name:     "long",
-							Type:     arrow.PrimitiveTypes.Uint64,
+							Type:     arrow.PrimitiveTypes.Int64,
 							Nullable: false,
 						},
 						{
@@ -158,12 +158,12 @@ func TestNewSchemaHandlerFromArrow(t *testing.T) {
 									},
 									{
 										Name:     "int",
-										Type:     arrow.PrimitiveTypes.Uint32,
+										Type:     arrow.PrimitiveTypes.Int32,
 										Nullable: false,
 									},
 									{
 										Name:     "long",
-										Type:     arrow.PrimitiveTypes.Uint64,
+										Type:     arrow.PrimitiveTypes.Int64,
 										Nullable: false,
 									},
 									{
@@ -293,12 +293,12 @@ func TestNewSchemaHandlerFromArrow(t *testing.T) {
 						},
 						{
 							Name:     "int",
-							Type:     arrow.PrimitiveTypes.Uint32,
+							Type:     arrow.PrimitiveTypes.Int32,
 							Nullable: false,
 						},
 						{
 							Name:     "long",
-							Type:     arrow.PrimitiveTypes.Uint64,
+							Type:     arrow.PrimitiveTypes.Int64,
 							Nullable: false,
 						},
 						{
@@ -333,12 +333,12 @@ func TestNewSchemaHandlerFromArrow(t *testing.T) {
 										},
 										{
 											Name:     "int",
-											Type:     arrow.PrimitiveTypes.Uint32,
+											Type:     arrow.PrimitiveTypes.Int32,
 											Nullable: false,
 										},
 										{
 											Name:     "long",
-											Type:     arrow.PrimitiveTypes.Uint64,
+											Type:     arrow.PrimitiveTypes.Int64,
 											Nullable: false,
 										},
 										{

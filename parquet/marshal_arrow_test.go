@@ -27,8 +27,8 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 				b := array.NewRecordBuilder(pool, s.ArrowSchema)
 
 				b.Field(0).(*array.BooleanBuilder).AppendValues([]bool{false, true}, []bool{true, true})
-				b.Field(1).(*array.Uint32Builder).AppendValues([]uint32{1, 2}, []bool{true, true})
-				b.Field(2).(*array.Uint64Builder).AppendValues([]uint64{1, 2}, []bool{true, true})
+				b.Field(1).(*array.Int32Builder).AppendValues([]int32{1, 2}, []bool{true, true})
+				b.Field(2).(*array.Int64Builder).AppendValues([]int64{1, 2}, []bool{true, true})
 				b.Field(3).(*array.Float32Builder).AppendValues([]float32{1.1, 2.2}, []bool{true, true})
 				b.Field(4).(*array.Float64Builder).AppendValues([]float64{1.1, 2.2}, []bool{true, true})
 				b.Field(5).(*array.BinaryBuilder).AppendValues([][]byte{[]byte("foo"), []byte("bar")}, []bool{true, true})
@@ -46,12 +46,12 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 						},
 						{
 							Name:     "int",
-							Type:     arrow.PrimitiveTypes.Uint32,
+							Type:     arrow.PrimitiveTypes.Int32,
 							Nullable: false,
 						},
 						{
 							Name:     "long",
-							Type:     arrow.PrimitiveTypes.Uint64,
+							Type:     arrow.PrimitiveTypes.Int64,
 							Nullable: false,
 						},
 						{
@@ -123,8 +123,8 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 				b := array.NewRecordBuilder(pool, s.ArrowSchema)
 
 				b.Field(0).(*array.BooleanBuilder).AppendValues([]bool{false, true}, []bool{true, true})
-				b.Field(1).(*array.Uint32Builder).AppendValues([]uint32{1, 2}, []bool{true, true})
-				b.Field(2).(*array.Uint64Builder).AppendValues([]uint64{1, 2}, []bool{true, true})
+				b.Field(1).(*array.Int32Builder).AppendValues([]int32{1, 2}, []bool{true, true})
+				b.Field(2).(*array.Int64Builder).AppendValues([]int64{1, 2}, []bool{true, true})
 				b.Field(3).(*array.Float32Builder).AppendValues([]float32{1.1, 2.2}, []bool{true, true})
 				b.Field(4).(*array.Float64Builder).AppendValues([]float64{1.1, 2.2}, []bool{true, true})
 				b.Field(5).(*array.BinaryBuilder).AppendValues([][]byte{[]byte("foo"), []byte("bar")}, []bool{true, true})
@@ -132,8 +132,8 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 				sb := b.Field(7).(*array.StructBuilder)
 				sb.AppendValues([]bool{true, true})
 				sb.FieldBuilder(0).(*array.BooleanBuilder).AppendValues([]bool{false, true}, []bool{true, true})
-				sb.FieldBuilder(1).(*array.Uint32Builder).AppendValues([]uint32{1, 2}, []bool{true, true})
-				sb.FieldBuilder(2).(*array.Uint64Builder).AppendValues([]uint64{1, 2}, []bool{true, true})
+				sb.FieldBuilder(1).(*array.Int32Builder).AppendValues([]int32{1, 2}, []bool{true, true})
+				sb.FieldBuilder(2).(*array.Int64Builder).AppendValues([]int64{1, 2}, []bool{true, true})
 				sb.FieldBuilder(3).(*array.Float32Builder).AppendValues([]float32{1.1, 2.2}, []bool{true, true})
 				sb.FieldBuilder(4).(*array.Float64Builder).AppendValues([]float64{1.1, 2.2}, []bool{true, true})
 				sb.FieldBuilder(5).(*array.BinaryBuilder).AppendValues([][]byte{[]byte("foo"), []byte("bar")}, []bool{true, true})
@@ -151,12 +151,12 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 						},
 						{
 							Name:     "int",
-							Type:     arrow.PrimitiveTypes.Uint32,
+							Type:     arrow.PrimitiveTypes.Int32,
 							Nullable: false,
 						},
 						{
 							Name:     "long",
-							Type:     arrow.PrimitiveTypes.Uint64,
+							Type:     arrow.PrimitiveTypes.Int64,
 							Nullable: false,
 						},
 						{
@@ -190,12 +190,12 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 									},
 									{
 										Name:     "int",
-										Type:     arrow.PrimitiveTypes.Uint32,
+										Type:     arrow.PrimitiveTypes.Int32,
 										Nullable: false,
 									},
 									{
 										Name:     "long",
-										Type:     arrow.PrimitiveTypes.Uint64,
+										Type:     arrow.PrimitiveTypes.Int64,
 										Nullable: false,
 									},
 									{
@@ -307,8 +307,8 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 				b := array.NewRecordBuilder(pool, s.ArrowSchema)
 
 				b.Field(0).(*array.BooleanBuilder).AppendValues([]bool{false, true}, []bool{true, true})
-				b.Field(1).(*array.Uint32Builder).AppendValues([]uint32{1, 2}, []bool{true, true})
-				b.Field(2).(*array.Uint64Builder).AppendValues([]uint64{1, 2}, []bool{true, true})
+				b.Field(1).(*array.Int32Builder).AppendValues([]int32{1, 2}, []bool{true, true})
+				b.Field(2).(*array.Int64Builder).AppendValues([]int64{1, 2}, []bool{true, true})
 				b.Field(3).(*array.Float32Builder).AppendValues([]float32{1.1, 2.2}, []bool{true, true})
 				b.Field(4).(*array.Float64Builder).AppendValues([]float64{1.1, 2.2}, []bool{true, true})
 				b.Field(5).(*array.BinaryBuilder).AppendValues([][]byte{[]byte("foo"), []byte("bar")}, []bool{true, true})
@@ -318,8 +318,8 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 				lb.Append(true)
 				sb.AppendValues([]bool{true, true})
 				sb.FieldBuilder(0).(*array.BooleanBuilder).AppendValues([]bool{false, true}, []bool{true, true})
-				sb.FieldBuilder(1).(*array.Uint32Builder).AppendValues([]uint32{1, 2}, []bool{true, true})
-				sb.FieldBuilder(2).(*array.Uint64Builder).AppendValues([]uint64{1, 2}, []bool{true, true})
+				sb.FieldBuilder(1).(*array.Int32Builder).AppendValues([]int32{1, 2}, []bool{true, true})
+				sb.FieldBuilder(2).(*array.Int64Builder).AppendValues([]int64{1, 2}, []bool{true, true})
 				sb.FieldBuilder(3).(*array.Float32Builder).AppendValues([]float32{1.1, 2.2}, []bool{true, true})
 				sb.FieldBuilder(4).(*array.Float64Builder).AppendValues([]float64{1.1, 2.2}, []bool{true, true})
 				sb.FieldBuilder(5).(*array.BinaryBuilder).AppendValues([][]byte{[]byte("foo"), []byte("bar")}, []bool{true, true})
@@ -327,8 +327,8 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 				lb.Append(true)
 				sb.AppendValues([]bool{true, true})
 				sb.FieldBuilder(0).(*array.BooleanBuilder).AppendValues([]bool{false, true}, []bool{true, true})
-				sb.FieldBuilder(1).(*array.Uint32Builder).AppendValues([]uint32{1, 2}, []bool{true, true})
-				sb.FieldBuilder(2).(*array.Uint64Builder).AppendValues([]uint64{1, 2}, []bool{true, true})
+				sb.FieldBuilder(1).(*array.Int32Builder).AppendValues([]int32{1, 2}, []bool{true, true})
+				sb.FieldBuilder(2).(*array.Int64Builder).AppendValues([]int64{1, 2}, []bool{true, true})
 				sb.FieldBuilder(3).(*array.Float32Builder).AppendValues([]float32{1.1, 2.2}, []bool{true, true})
 				sb.FieldBuilder(4).(*array.Float64Builder).AppendValues([]float64{1.1, 2.2}, []bool{true, true})
 				sb.FieldBuilder(5).(*array.BinaryBuilder).AppendValues([][]byte{[]byte("foo"), []byte("bar")}, []bool{true, true})
@@ -346,12 +346,12 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 						},
 						{
 							Name:     "int",
-							Type:     arrow.PrimitiveTypes.Uint32,
+							Type:     arrow.PrimitiveTypes.Int32,
 							Nullable: false,
 						},
 						{
 							Name:     "long",
-							Type:     arrow.PrimitiveTypes.Uint64,
+							Type:     arrow.PrimitiveTypes.Int64,
 							Nullable: false,
 						},
 						{
@@ -386,12 +386,12 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 										},
 										{
 											Name:     "int",
-											Type:     arrow.PrimitiveTypes.Uint32,
+											Type:     arrow.PrimitiveTypes.Int32,
 											Nullable: false,
 										},
 										{
 											Name:     "long",
-											Type:     arrow.PrimitiveTypes.Uint64,
+											Type:     arrow.PrimitiveTypes.Int64,
 											Nullable: false,
 										},
 										{
