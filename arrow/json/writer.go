@@ -48,259 +48,16 @@ func (e *Encoder) Write(record array.Record) error {
 	}
 
 	for i, col := range record.Columns() {
-		if err := writeData(col.Data(), &recs, []string{e.schema.Field(i).Name}); err != nil {
+		values, err := convertToGo(col.Data())
+		if err != nil {
 			return err
+		}
+		for j, v := range values {
+			recs[j][e.schema.Field(i).Name] = v
 		}
 	}
 
 	return e.e.Encode(recs)
-}
-
-func writeData(data *array.Data, recs *[]map[string]interface{}, names []string) error {
-	switch data.DataType().ID() {
-	case arrow.BOOL:
-		arr := array.NewBooleanData(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.INT8:
-		arr := array.NewInt8Data(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.INT16:
-		arr := array.NewInt16Data(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.INT32:
-		arr := array.NewInt32Data(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.INT64:
-		arr := array.NewInt64Data(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.UINT8:
-		arr := array.NewUint8Data(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.UINT16:
-		arr := array.NewUint16Data(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.UINT32:
-		arr := array.NewUint32Data(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.UINT64:
-		arr := array.NewUint64Data(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.FLOAT32:
-		arr := array.NewFloat32Data(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.FLOAT64:
-		arr := array.NewFloat64Data(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.STRING:
-		arr := array.NewStringData(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.BINARY:
-		arr := array.NewBinaryData(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				if err := deepSet(&(*recs)[i], names, arr.Value(i)); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-
-	case arrow.STRUCT:
-		arr := array.NewStructData(data)
-		defer arr.Release()
-		st, stOk := arr.DataType().(*arrow.StructType)
-		if !stOk {
-			return fmt.Errorf("unsupported data type %v: %w", arr.DataType(), ErrUnsupportedType)
-		}
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsNull(i) {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-		for i := 0; i < arr.NumField(); i++ {
-			n := st.Field(i).Name
-			f := arr.Field(i)
-			if err := writeData(f.Data(), recs, append(names, n)); err != nil {
-				return err
-			}
-		}
-
-	/*
-	case arrow.LIST:
-		arr := array.NewListData(data)
-		defer arr.Release()
-		for i := 0; i < arr.Len(); i++ {
-			if arr.IsValid(i) {
-				o := i + arr.Offset()
-				bgn := int64(arr.Offsets()[o])
-				end := int64(arr.Offsets()[o+1])
-				slice := array.NewSlice(arr.ListValues(), bgn, end)
-				if err := writeData(slice.Data(), recs, names); err != nil {
-					return err
-				}
-			} else {
-				if err := deepSet(&(*recs)[i], names, nil); err != nil {
-					return err
-				}
-			}
-		}
-	*/
-
-	default:
-		return ErrUnsupportedType
-	}
-
-	return nil
 }
 
 func deepSet(recv *map[string]interface{}, keys []string, value interface{}) error {
@@ -336,4 +93,204 @@ func deepSet(recv *map[string]interface{}, keys []string, value interface{}) err
 	}
 
 	return nil
+}
+
+// convertToGo converts Arrow values to Go typed values.
+func convertToGo(data *array.Data) ([]interface{}, error) {
+	recs := make([]interface{}, 0, data.Len())
+
+	switch data.DataType().ID() {
+	case arrow.BOOL:
+		arr := array.NewBooleanData(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.INT8:
+		arr := array.NewInt8Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.INT16:
+		arr := array.NewInt16Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.INT32:
+		arr := array.NewInt32Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.INT64:
+		arr := array.NewInt64Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.UINT8:
+		arr := array.NewUint8Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.UINT16:
+		arr := array.NewUint16Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.UINT32:
+		arr := array.NewUint32Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.UINT64:
+		arr := array.NewUint64Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.FLOAT32:
+		arr := array.NewFloat32Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.FLOAT64:
+		arr := array.NewFloat64Data(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.STRING:
+		arr := array.NewStringData(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.BINARY:
+		arr := array.NewBinaryData(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, arr.Value(i))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+
+	case arrow.STRUCT:
+		arr := array.NewStructData(data)
+		defer arr.Release()
+		st, stOk := arr.DataType().(*arrow.StructType)
+		if !stOk {
+			return nil, fmt.Errorf("unsupported data type %v: %w", arr.DataType(), ErrUnsupportedType)
+		}
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				recs = append(recs, make(map[string]interface{}, arr.NumField()))
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+		for i := 0; i < arr.NumField(); i++ {
+			values, err := convertToGo(arr.Field(i).Data())
+			if err != nil {
+				return nil, err
+			}
+			for j, v := range values {
+				if arr.IsValid(j) {
+					if r, ok := recs[j].(map[string]interface{}); ok {
+						r[st.Field(i).Name] = v
+					}
+				}
+			}
+		}
+
+	case arrow.LIST:
+		arr := array.NewListData(data)
+		defer arr.Release()
+		for i := 0; i < arr.Len(); i++ {
+			if arr.IsValid(i) {
+				o := i + arr.Offset()
+				bgn := int64(arr.Offsets()[o])
+				end := int64(arr.Offsets()[o+1])
+				slice := array.NewSlice(arr.ListValues(), bgn, end)
+				defer slice.Release()
+				values, err := convertToGo(slice.Data())
+				if err != nil {
+					return nil, err
+				}
+				recs = append(recs, values)
+			} else {
+				recs = append(recs, nil)
+			}
+		}
+	}
+
+	return recs, nil
 }
