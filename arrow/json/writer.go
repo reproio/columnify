@@ -60,41 +60,6 @@ func (e *Encoder) Write(record array.Record) error {
 	return e.e.Encode(recs)
 }
 
-func deepSet(recv *map[string]interface{}, keys []string, value interface{}) error {
-	cur := *recv
-	numKeys := len(keys)
-
-	if numKeys > 1 {
-		for _, k := range keys[:numKeys-1] {
-			sub, subOk := cur[k]
-			if !subOk {
-				cur[k] = map[string]interface{}{}
-				sub = cur[k]
-			}
-
-			typed, typedOk := sub.(map[string]interface{})
-			if !typedOk {
-				// do nothing with considering to explicitly set nil ... is it really ok?
-				return nil
-			}
-			cur = typed
-		}
-	}
-
-	k := keys[numKeys-1]
-	if vv, ok := cur[k]; ok {
-		if arr, arrOk := vv.([]interface{}); arrOk {
-			cur[k] = append(arr, value)
-		} else {
-			cur[k] = []interface{}{vv, value}
-		}
-	} else {
-		cur[k] = value
-	}
-
-	return nil
-}
-
 // convertToGo converts Arrow values to Go typed values.
 func convertToGo(data *array.Data) ([]interface{}, error) {
 	recs := make([]interface{}, 0, data.Len())
