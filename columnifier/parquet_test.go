@@ -188,25 +188,21 @@ func TestWriteClose(t *testing.T) {
 			expected: "testdata/parquet/nullables.parquet",
 		},
 		// nullables; Avro schema, JSONL record
-		/*
-			{
-				st:       schema.SchemaTypeAvro,
-				sf:       "testdata/schema/nullables.avsc",
-				rt:       record.RecordTypeJsonl,
-				input:    "testdata/record/nullables.jsonl",
-				expected: "testdata/parquet/nullables.parquet",
-			},
-		*/
+		{
+			st:       schema.SchemaTypeAvro,
+			sf:       "testdata/schema/nullables.avsc",
+			rt:       record.RecordTypeJsonl,
+			input:    "testdata/record/nullables.jsonl",
+			expected: "testdata/parquet/nullables.parquet",
+		},
 		// nullables; Avro schema, MessagePack record
-		/*
-			{
-				st:       schema.SchemaTypeAvro,
-				sf:       "testdata/schema/nullables.avsc",
-				rt:       record.RecordTypeMsgpack,
-				input:    "testdata/record/nullables.msgpack",
-				expected: "testdata/parquet/nullables.parquet",
-			},
-		*/
+		{
+			st:       schema.SchemaTypeAvro,
+			sf:       "testdata/schema/nullables.avsc",
+			rt:       record.RecordTypeMsgpack,
+			input:    "testdata/record/nullables.msgpack",
+			expected: "testdata/parquet/nullables.parquet",
+		},
 		// logicals; Avro schema, Avro record
 		{
 			st:       schema.SchemaTypeAvro,
@@ -312,27 +308,21 @@ func TestWriteClose(t *testing.T) {
 			expected: "testdata/parquet/nullable_complex.parquet",
 		},
 		// nullable/complex; Avro schema, JSONL record
-		// TODO handle some invalid type handling like long
-		/*
-			{
-				st:       schema.SchemaTypeAvro,
-				sf:       "testdata/schema/nullable_complex.avsc",
-				rt:       record.RecordTypeJsonl,
-				input:    "testdata/record/nullable_complex.jsonl",
-				expected: "testdata/parquet/nullable_complex.parquet",
-			},
-		*/
+		{
+			st:       schema.SchemaTypeAvro,
+			sf:       "testdata/schema/nullable_complex.avsc",
+			rt:       record.RecordTypeJsonl,
+			input:    "testdata/record/nullable_complex.jsonl",
+			expected: "testdata/parquet/nullable_complex.parquet",
+		},
 		// nullable/complex; Avro schema, MessagePack record
-		// TODO handle some invalid type handling like long
-		/*
-			{
-				st:       schema.SchemaTypeAvro,
-				sf:       "testdata/schema/nullable_complex.avsc",
-				rt:       record.RecordTypeMsgpack,
-				input:    "testdata/record/nullable_complex.msgpack",
-				expected: "testdata/parquet/nullable_complex.parquet",
-			},
-		*/
+		{
+			st:       schema.SchemaTypeAvro,
+			sf:       "testdata/schema/nullable_complex.avsc",
+			rt:       record.RecordTypeMsgpack,
+			input:    "testdata/record/nullable_complex.msgpack",
+			expected: "testdata/parquet/nullable_complex.parquet",
+		},
 
 		// primitives; BigQuery schema, Avro record
 		{
@@ -391,27 +381,21 @@ func TestWriteClose(t *testing.T) {
 			expected: "testdata/parquet/nullables.parquet",
 		},
 		// nullables; BigQuery schema, JSONL record
-		// TODO handle some invalid type handling like long
-		/*
-			{
-				st:       schema.SchemaTypeBigquery,
-				sf:       "testdata/schema/nullables.bq.json",
-				rt:       record.RecordTypeJsonl,
-				input:    "testdata/record/nullables.jsonl",
-				expected: "testdata/parquet/nullables.parquet",
-			},
-		*/
+		{
+			st:       schema.SchemaTypeBigquery,
+			sf:       "testdata/schema/nullables.bq.json",
+			rt:       record.RecordTypeJsonl,
+			input:    "testdata/record/nullables.jsonl",
+			expected: "testdata/parquet/nullables.parquet",
+		},
 		// nullables; BigQuery schema, MessagePack record
-		// TODO handle some invalid type handling like long
-		/*
-			{
-				st:       schema.SchemaTypeBigquery,
-				sf:       "testdata/schema/nullables.bq.json",
-				rt:       record.RecordTypeMsgpack,
-				input:    "testdata/record/nullables.msgpack",
-				expected: "testdata/parquet/nullables.parquet",
-			},
-		*/
+		{
+			st:       schema.SchemaTypeBigquery,
+			sf:       "testdata/schema/nullables.bq.json",
+			rt:       record.RecordTypeMsgpack,
+			input:    "testdata/record/nullables.msgpack",
+			expected: "testdata/parquet/nullables.parquet",
+		},
 		// nested; BigQuery schema, Avro record
 		{
 			st:       schema.SchemaTypeBigquery,
