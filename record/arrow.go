@@ -25,8 +25,10 @@ func formatMapToArrowRecord(b *array.RecordBuilder, m map[string]interface{}) (*
 			if _, err := formatMapToArrowField(b.Field(i), f.Type, f.Nullable, v); err != nil {
 				return nil, err
 			}
-		} else {
+		} else if f.Nullable {
 			b.Field(i).AppendNull()
+		} else {
+			return nil, fmt.Errorf("unconvertable type %v: %w", f.Type, ErrUnconvertibleRecord)
 		}
 	}
 
@@ -39,8 +41,10 @@ func formatMapToArrowStruct(b *array.StructBuilder, s *arrow.StructType, m map[s
 			if _, err := formatMapToArrowField(b.FieldBuilder(i), f.Type, f.Nullable, v); err != nil {
 				return nil, err
 			}
-		} else {
+		} else if f.Nullable {
 			b.FieldBuilder(i).AppendNull()
+		} else {
+			return nil, fmt.Errorf("unconvertable type %v: %w", f.Type, ErrUnconvertibleRecord)
 		}
 
 	}
@@ -441,16 +445,12 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, nullable bool, v i
 		vb, builderOk := b.(*array.StructBuilder)
 		st, structOk := t.(*arrow.StructType)
 		if builderOk && structOk {
-			if v != nil {
-				vb.Append(true)
-				vv, valueOk := v.(map[string]interface{})
-				if !valueOk {
-					return nil, fmt.Errorf("unexpected input %v as struct: %w", v, ErrUnconvertibleRecord)
-				} else if _, err := formatMapToArrowStruct(vb, st, vv); err != nil {
-					return nil, err
-				}
-			} else {
-				vb.Append(false)
+			vb.Append(true)
+			vv, valueOk := v.(map[string]interface{})
+			if !valueOk {
+				return nil, fmt.Errorf("unexpected input %v as struct: %w", v, ErrUnconvertibleRecord)
+			} else if _, err := formatMapToArrowStruct(vb, st, vv); err != nil {
+				return nil, err
 			}
 		} else {
 			return nil, fmt.Errorf("unexpected input %v as struct: %w", v, ErrUnconvertibleRecord)
@@ -460,17 +460,13 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, nullable bool, v i
 		vb, builderOk := b.(*array.ListBuilder)
 		lt, listOk := t.(*arrow.ListType)
 		if builderOk && listOk {
-			if v != nil {
-				vb.Append(true)
-				vv, valueOk := v.([]interface{})
-				if !valueOk {
-					return nil, fmt.Errorf("unexpected input %v as list: %w", v, ErrUnconvertibleRecord)
-				}
-				if _, err := formatMapToArrowList(vb, lt, vv); err != nil {
-					return nil, err
-				}
-			} else {
-				vb.Append(false)
+			vb.Append(true)
+			vv, valueOk := v.([]interface{})
+			if !valueOk {
+				return nil, fmt.Errorf("unexpected input %v as list: %w", v, ErrUnconvertibleRecord)
+			}
+			if _, err := formatMapToArrowList(vb, lt, vv); err != nil {
+				return nil, err
 			}
 		} else {
 			return nil, fmt.Errorf("unexpected input %v as list: %w", v, ErrUnconvertibleRecord)
