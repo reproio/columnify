@@ -20,7 +20,12 @@ func printUsage() {
 
 func columnify(c columnifier.Columnifier, files []string) (err error) {
 	defer func() {
-		err = c.Close()
+		err2 := c.Close()
+
+		// Don't overwrite existing errors
+		if err == nil {
+			err = err2
+		}
 	}()
 
 	_, err = c.WriteFromFiles(files)
