@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/apache/arrow/go/arrow/array"
+	"github.com/apache/arrow/go/arrow/memory"
 	"github.com/reproio/columnify/schema"
 
 	"github.com/linkedin/goavro/v2"
@@ -57,10 +59,30 @@ func FormatAvroToMap(data []byte) ([]map[string]interface{}, error) {
 }
 
 func FormatAvroToArrow(s *schema.IntermediateSchema, data []byte) (*WrappedRecord, error) {
-	maps, err := FormatAvroToMap(data)
+	pool := memory.NewGoAllocator()
+	b := array.NewRecordBuilder(pool, s.ArrowSchema)
+	defer b.Release()
+
+	r, err := goavro.NewOCFReader(bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
 
-	return formatMapToArrowRecord(s.ArrowSchema, maps)
+	for r.Scan() {
+		v, err := r.Read()
+		if err != nil {
+			return nil, err
+		}
+
+		m, mapOk := v.(map[string]interface{})
+		if !mapOk {
+			return nil, fmt.Errorf("invalid value %v: %w", v, ErrUnconvertibleRecord)
+		}
+
+		if _, err = formatMapToArrowRecord(b, flattenAvroUnion(m)); err != nil {
+			return nil, err
+		}
+	}
+
+	return NewWrappedRecord(b), nil
 }

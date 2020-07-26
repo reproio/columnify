@@ -2,10 +2,11 @@ package columnifier
 
 import (
 	"bytes"
+	"io/ioutil"
+
 	"github.com/reproio/columnify/arrow/json"
 	"github.com/reproio/columnify/record"
 	"github.com/xitongsys/parquet-go/marshal"
-	"io/ioutil"
 
 	"github.com/reproio/columnify/parquet"
 	"github.com/reproio/columnify/schema"

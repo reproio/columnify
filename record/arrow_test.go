@@ -430,17 +430,23 @@ func TestNewArrowSchemaFromAvroSchema(t *testing.T) {
 		},
 	}
 
+	pool := memory.NewGoAllocator()
 	for _, c := range cases {
 		expectedRecord := c.expected(c.schema)
 
-		actual, err := formatMapToArrowRecord(c.schema.ArrowSchema, c.input)
+		b := array.NewRecordBuilder(pool, c.schema.ArrowSchema)
+		defer b.Release()
 
-		if err != c.err {
-			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
+		for _, v := range c.input {
+			_, err := formatMapToArrowRecord(b, v)
+			if err != c.err {
+				t.Errorf("expected: %v, but actual: %v\n", c.err, err)
+			}
 		}
 
-		if !reflect.DeepEqual(actual, expectedRecord) {
-			t.Errorf("values:  expected: %v, but actual: %v\n", expectedRecord, actual)
+		r := NewWrappedRecord(b)
+		if !reflect.DeepEqual(r, expectedRecord) {
+			t.Errorf("values:  expected: %v, but actual: %v\n", expectedRecord, r)
 		}
 	}
 }

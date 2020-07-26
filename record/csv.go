@@ -7,6 +7,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/apache/arrow/go/arrow/array"
+	"github.com/apache/arrow/go/arrow/memory"
+
 	"github.com/reproio/columnify/schema"
 )
 
@@ -89,10 +92,62 @@ func FormatCsvToMap(s *schema.IntermediateSchema, data []byte, delimiter delimit
 }
 
 func FormatCsvToArrow(s *schema.IntermediateSchema, data []byte, delimiter delimiter) (*WrappedRecord, error) {
-	maps, err := FormatCsvToMap(s, data, delimiter)
+	pool := memory.NewGoAllocator()
+	b := array.NewRecordBuilder(pool, s.ArrowSchema)
+	defer b.Release()
+
+	names, err := getFieldNamesFromSchema(s)
 	if err != nil {
 		return nil, err
 	}
 
-	return formatMapToArrowRecord(s.ArrowSchema, maps)
+	reader := csv.NewReader(strings.NewReader(string(data)))
+	reader.Comma = rune(delimiter)
+
+	numFields := len(names)
+	for {
+		values, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		if numFields != len(values) {
+			return nil, fmt.Errorf("incompleted value %v: %w", values, ErrUnconvertibleRecord)
+		}
+
+		e := make(map[string]interface{})
+		for i, v := range values {
+			// bool
+			if v != "0" && v != "1" {
+				if vv, err := strconv.ParseBool(v); err == nil {
+					e[names[i]] = vv
+					continue
+				}
+			}
+
+			// int
+			if vv, err := strconv.ParseInt(v, 10, 64); err == nil {
+				e[names[i]] = vv
+				continue
+			}
+
+			// float
+			if vv, err := strconv.ParseFloat(v, 64); err == nil {
+				e[names[i]] = vv
+				continue
+			}
+
+			// others; to string
+			e[names[i]] = v
+		}
+
+		if _, err := formatMapToArrowRecord(b, e); err != nil {
+			return nil, err
+		}
+	}
+
+	return NewWrappedRecord(b), nil
 }

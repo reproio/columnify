@@ -2,11 +2,11 @@ package record
 
 import (
 	"fmt"
-	"github.com/apache/arrow/go/arrow"
-	"github.com/apache/arrow/go/arrow/array"
-	"github.com/apache/arrow/go/arrow/memory"
 	"strconv"
 	"time"
+
+	"github.com/apache/arrow/go/arrow"
+	"github.com/apache/arrow/go/arrow/array"
 )
 
 type WrappedRecord struct {
@@ -19,24 +19,18 @@ func NewWrappedRecord(b *array.RecordBuilder) *WrappedRecord {
 	}
 }
 
-func formatMapToArrowRecord(s *arrow.Schema, maps []map[string]interface{}) (*WrappedRecord, error) {
-	pool := memory.NewGoAllocator()
-	b := array.NewRecordBuilder(pool, s)
-	defer b.Release()
-
-	for _, m := range maps {
-		for i, f := range s.Fields() {
-			if v, ok := m[f.Name]; ok {
-				if _, err := formatMapToArrowField(b.Field(i), f.Type, f.Nullable, v); err != nil {
-					return nil, err
-				}
-			} else {
-				b.Field(i).AppendNull()
+func formatMapToArrowRecord(b *array.RecordBuilder, m map[string]interface{}) (*array.RecordBuilder, error) {
+	for i, f := range b.Schema().Fields() {
+		if v, ok := m[f.Name]; ok {
+			if _, err := formatMapToArrowField(b.Field(i), f.Type, f.Nullable, v); err != nil {
+				return nil, err
 			}
+		} else {
+			b.Field(i).AppendNull()
 		}
 	}
 
-	return NewWrappedRecord(b), nil
+	return b, nil
 }
 
 func formatMapToArrowStruct(b *array.StructBuilder, s *arrow.StructType, m map[string]interface{}) (*array.StructBuilder, error) {

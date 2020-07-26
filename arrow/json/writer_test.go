@@ -211,15 +211,15 @@ func TestToGo(t *testing.T) {
 		// uint8 TODO support this case
 		// []uint8 will be converted base64-ed string
 		/*
-		{
-			data: func() *array.Data {
-				b := array.NewUint8Builder(pool)
-				b.AppendValues([]uint8{0, 1, 2}, nil)
-				return b.NewUint8Array().Data()
-			}(),
-			expected: []uint8{0, 1, 2},
-			err:      nil,
-		},
+			{
+				data: func() *array.Data {
+					b := array.NewUint8Builder(pool)
+					b.AppendValues([]uint8{0, 1, 2}, nil)
+					return b.NewUint8Array().Data()
+				}(),
+				expected: []uint8{0, 1, 2},
+				err:      nil,
+			},
 		*/
 
 		// uint16
