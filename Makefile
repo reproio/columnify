@@ -19,7 +19,7 @@ fmt:
 # ref. https://github.com/xitongsys/parquet-go/issues/256
 .PHONY: test
 test:
-	go test -cover ./...
+	go test -cover -coverprofile=cover.out ./...
 
 .PHONY: it
 it: build
