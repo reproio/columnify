@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/reproio/columnify/columnifier"
 )
@@ -20,7 +21,14 @@ func printUsage() {
 
 func columnify(c columnifier.Columnifier, files []string) (err error) {
 	defer func() {
-		err = c.Close()
+		if cerr := c.Close(); cerr != nil {
+			if err == nil {
+				err = cerr
+			} else {
+				// Don't overwrite existing errors
+				_, _ = fmt.Fprintf(os.Stderr, "Failed to close columnifier: %v", cerr)
+			}
+		}
 	}()
 
 	_, err = c.WriteFromFiles(files)
