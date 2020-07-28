@@ -43,3 +43,8 @@ jobs:
 
     - name: Integration test
       run: make it
+
+    - uses: codecov/codecov-action@v1
+      with:
+        file: ./cover.out
+        flags: unittests
