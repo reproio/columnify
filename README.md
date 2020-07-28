@@ -2,6 +2,7 @@
 
 ![Go](https://github.com/reproio/columnify/workflows/Go/badge.svg)
 ![goreleaser](https://github.com/reproio/columnify/workflows/goreleaser/badge.svg)
+[![codecov](https://codecov.io/gh/reproio/columnify/branch/master/graph/badge.svg)](https://codecov.io/gh/reproio/columnify)
 
 Make record oriented data to columnar format.
 
