@@ -7,9 +7,12 @@ import (
 	"os"
 	"testing"
 
+	"github.com/xitongsys/parquet-go/writer"
+
 	"github.com/xitongsys/parquet-go-source/local"
 	"github.com/xitongsys/parquet-go/reader"
 
+	columnifyParquet "github.com/reproio/columnify/parquet"
 	"github.com/reproio/columnify/record"
 	"github.com/reproio/columnify/schema"
 	"github.com/xitongsys/parquet-go/parquet"
@@ -520,6 +523,59 @@ func TestWriteClose_Errors(t *testing.T) {
 
 		if err == nil {
 			t.Errorf("expected error occurs, but actual it's nil")
+		}
+	}
+}
+
+func BenchmarkWriteClose(b *testing.B) {
+	// primitives; Avro schema, JSONL record
+	st := schema.SchemaTypeAvro
+	sf := "testdata/schema/primitives.avsc"
+	rt := record.RecordTypeJsonl
+	input := "testdata/record/primitives.jsonl"
+
+	schemaContent, err := ioutil.ReadFile(sf)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	intermediateSchema, err := schema.GetSchema(schemaContent, st)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	sh, err := schema.NewSchemaHandlerFromArrow(*intermediateSchema)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	fw := columnifyParquet.NewDiscard()
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		w, err := writer.NewParquetWriter(fw, nil, 1)
+		if err != nil {
+			b.Fatal(err)
+		}
+		w.SchemaHandler = sh
+		w.Footer.Schema = append(w.Footer.Schema, sh.SchemaElements...)
+
+		columnifier := &parquetColumnifier{
+			w:      w,
+			schema: intermediateSchema,
+			rt:     rt,
+		}
+		b.Cleanup(func() {
+			columnifier.Close()
+		})
+
+		_, err = columnifier.WriteFromFiles([]string{input})
+		if err == nil {
+			err = columnifier.Close()
+		}
+		if err != nil {
+			b.Errorf("expected error occurs, but actual it's nil")
 		}
 	}
 }

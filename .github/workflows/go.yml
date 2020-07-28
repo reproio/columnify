@@ -43,3 +43,9 @@ jobs:
 
     - name: Integration test
       run: make it
+
+    - name: Benchmark
+      run: |
+        make bench
+        go tool pprof -top cpu.out
+        go tool pprof -top mem.out
