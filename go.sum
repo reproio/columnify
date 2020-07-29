@@ -28,6 +28,8 @@ github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171 h1:nwdeQV2pNjaTv3os
 github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171/go.mod h1:LBP+tS9C2iiUoR7AGPaZYY+kjXgB5eZxZKbSEBL9UFw=
 github.com/apache/arrow/go/arrow v0.0.0-20200504153628-d13e8f3ed647 h1:wGcHSHIBp0+NEMyXG2N0878wAl5J3yOFDU5RZECDSj8=
 github.com/apache/arrow/go/arrow v0.0.0-20200504153628-d13e8f3ed647/go.mod h1:QNYViu/X0HXDHw7m3KXzWSVXIbfUvJqBFe6Gj8/pYA0=
+github.com/apache/arrow/go/arrow v0.0.0-20200721111830-aa51b5a60623 h1:S+5uMnRlLTFeZNP/HEezoamVyI0bcnvtIN/2ONf6VyU=
+github.com/apache/arrow/go/arrow v0.0.0-20200721111830-aa51b5a60623/go.mod h1:QNYViu/X0HXDHw7m3KXzWSVXIbfUvJqBFe6Gj8/pYA0=
 github.com/apache/thrift v0.0.0-20181112125854-24918abba929 h1:ubPe2yRkS6A/X37s0TVGfuN42NV2h0BlzWj0X76RoUw=
 github.com/apache/thrift v0.0.0-20181112125854-24918abba929/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=

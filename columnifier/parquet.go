@@ -1,9 +1,12 @@
 package columnifier
 
 import (
+	"bytes"
 	"io/ioutil"
 
+	"github.com/reproio/columnify/arrow/json"
 	"github.com/reproio/columnify/record"
+	"github.com/xitongsys/parquet-go/marshal"
 
 	"github.com/reproio/columnify/parquet"
 	"github.com/reproio/columnify/schema"
@@ -66,34 +69,31 @@ func NewParquetColumnifier(st string, sf string, rt string, output string, confi
 
 // Write reads, converts input binary data and write it to buffer.
 func (c *parquetColumnifier) Write(data []byte) (int, error) {
-	// Intermediate record type is map[string]interface{}
-	c.w.MarshalFunc = parquet.MarshalMap
-	records, err := record.FormatToMap(data, c.schema, c.rt)
+	// Intermediate record type is json string
+	c.w.MarshalFunc = marshal.MarshalJSON
+	records, err := record.FormatToArrow(data, c.schema, c.rt)
 	if err != nil {
 		return -1, err
 	}
 
 	beforeSize := c.w.Size
-	for _, r := range records {
-		if err := c.w.Write(r); err != nil {
+	for i := int64(0); i < records.Record.NumRows(); i++ {
+		s := records.Record.NewSlice(i, i+1)
+		defer s.Release()
+
+		buf := &bytes.Buffer{}
+		w := json.NewWriter(buf, records.Record.Schema())
+		if err := w.Write(s); err != nil {
 			return -1, err
+		}
+
+		if buf.Len() > 2 {
+			if err := c.w.Write(buf.String()[1 : buf.Len()-1]); err != nil {
+				return -1, err
+			}
 		}
 	}
 	afterSize := c.w.Size
-
-	// Intermediate record type is wrapped Apache Arrow record
-	// It requires Arrow Golang implementation more logical type supports
-	// ref. https://github.com/apache/arrow/blob/9c9dc2012266442d0848e4af0cf52874bc4db151/go/arrow/array/builder.go#L211
-	/*
-		c.w.MarshalFunc = parquet.MarshalArrow
-		records, err := record.FormatToArrow(data, c.schema, c.rt)
-		if err != nil {
-			return err
-		}
-		if err := c.w.Write(&records); err != nil {
-			return err
-		}
-	*/
 
 	return int(afterSize - beforeSize), nil
 }

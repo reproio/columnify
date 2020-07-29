@@ -7,9 +7,12 @@ import (
 	"os"
 	"testing"
 
+	"github.com/xitongsys/parquet-go/writer"
+
 	"github.com/xitongsys/parquet-go-source/local"
 	"github.com/xitongsys/parquet-go/reader"
 
+	columnifyParquet "github.com/reproio/columnify/parquet"
 	"github.com/reproio/columnify/record"
 	"github.com/reproio/columnify/schema"
 	"github.com/xitongsys/parquet-go/parquet"
@@ -137,7 +140,7 @@ func TestWriteClose(t *testing.T) {
 			sf:       "testdata/schema/primitives.avsc",
 			rt:       record.RecordTypeAvro,
 			input:    "testdata/record/primitives.avro",
-			expected: "testdata/parquet/primitives_with_bytes.parquet",
+			expected: "testdata/parquet/primitives.parquet",
 		},
 		// primitives; Avro schema, CSV record
 		{
@@ -185,7 +188,7 @@ func TestWriteClose(t *testing.T) {
 			sf:       "testdata/schema/nullables.avsc",
 			rt:       record.RecordTypeAvro,
 			input:    "testdata/record/nullables.avro",
-			expected: "testdata/parquet/nullables_with_bytes.parquet",
+			expected: "testdata/parquet/nullables.parquet",
 		},
 		// nullables; Avro schema, JSONL record
 		{
@@ -203,7 +206,14 @@ func TestWriteClose(t *testing.T) {
 			input:    "testdata/record/nullables.msgpack",
 			expected: "testdata/parquet/nullables.parquet",
 		},
-		// TODO logicals; Avro schema, Avro record
+		// logicals; Avro schema, Avro record
+		{
+			st:       schema.SchemaTypeAvro,
+			sf:       "testdata/schema/logicals.avsc",
+			rt:       record.RecordTypeAvro,
+			input:    "testdata/record/logicals.avro",
+			expected: "testdata/parquet/logicals.parquet",
+		},
 		// logicals; Avro schema, CSV record
 		{
 			st:       schema.SchemaTypeAvro,
@@ -250,7 +260,7 @@ func TestWriteClose(t *testing.T) {
 			sf:       "testdata/schema/nested.avsc",
 			rt:       record.RecordTypeAvro,
 			input:    "testdata/record/nested.avro",
-			expected: "testdata/parquet/nested_with_bytes.parquet",
+			expected: "testdata/parquet/nested.parquet",
 		},
 		// nested; Avro schema, JSONL record
 		{
@@ -274,7 +284,7 @@ func TestWriteClose(t *testing.T) {
 			sf:       "testdata/schema/array.avsc",
 			rt:       record.RecordTypeAvro,
 			input:    "testdata/record/array.avro",
-			expected: "testdata/parquet/array_with_bytes.parquet",
+			expected: "testdata/parquet/array.parquet",
 		},
 		// array; Avro schema, JSONL record
 		{
@@ -298,7 +308,7 @@ func TestWriteClose(t *testing.T) {
 			sf:       "testdata/schema/nullable_complex.avsc",
 			rt:       record.RecordTypeAvro,
 			input:    "testdata/record/nullable_complex.avro",
-			expected: "testdata/parquet/nullable_complex_with_bytes.parquet",
+			expected: "testdata/parquet/nullable_complex.parquet",
 		},
 		// nullable/complex; Avro schema, JSONL record
 		{
@@ -323,7 +333,7 @@ func TestWriteClose(t *testing.T) {
 			sf:       "testdata/schema/primitives.bq.json",
 			rt:       record.RecordTypeAvro,
 			input:    "testdata/record/primitives.avro",
-			expected: "testdata/parquet/primitives_with_bytes.parquet",
+			expected: "testdata/parquet/primitives.parquet",
 		},
 		// primitives; BigQuery schema, CSV record
 		{
@@ -371,7 +381,7 @@ func TestWriteClose(t *testing.T) {
 			sf:       "testdata/schema/nullables.bq.json",
 			rt:       record.RecordTypeAvro,
 			input:    "testdata/record/nullables.avro",
-			expected: "testdata/parquet/nullables_with_bytes.parquet",
+			expected: "testdata/parquet/nullables.parquet",
 		},
 		// nullables; BigQuery schema, JSONL record
 		{
@@ -395,7 +405,7 @@ func TestWriteClose(t *testing.T) {
 			sf:       "testdata/schema/nested.bq.json",
 			rt:       record.RecordTypeAvro,
 			input:    "testdata/record/nested.avro",
-			expected: "testdata/parquet/nested_with_bytes.parquet",
+			expected: "testdata/parquet/nested.parquet",
 		},
 		// nested; BigQuery schema, JSONL record
 		{
@@ -419,7 +429,7 @@ func TestWriteClose(t *testing.T) {
 			sf:       "testdata/schema/array.bq.json",
 			rt:       record.RecordTypeAvro,
 			input:    "testdata/record/array.avro",
-			expected: "testdata/parquet/array_with_bytes.parquet",
+			expected: "testdata/parquet/array.parquet",
 		},
 		// array; BigQuery schema, JSONL record
 		{
@@ -460,6 +470,7 @@ func TestWriteClose(t *testing.T) {
 		}
 		if err != nil {
 			t.Errorf("expected success, but actual %v", err)
+			continue
 		}
 
 		// Check written file
@@ -512,6 +523,59 @@ func TestWriteClose_Errors(t *testing.T) {
 
 		if err == nil {
 			t.Errorf("expected error occurs, but actual it's nil")
+		}
+	}
+}
+
+func BenchmarkWriteClose(b *testing.B) {
+	// primitives; Avro schema, JSONL record
+	st := schema.SchemaTypeAvro
+	sf := "testdata/schema/primitives.avsc"
+	rt := record.RecordTypeJsonl
+	input := "testdata/record/primitives.jsonl"
+
+	schemaContent, err := ioutil.ReadFile(sf)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	intermediateSchema, err := schema.GetSchema(schemaContent, st)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	sh, err := schema.NewSchemaHandlerFromArrow(*intermediateSchema)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	fw := columnifyParquet.NewDiscard()
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		w, err := writer.NewParquetWriter(fw, nil, 1)
+		if err != nil {
+			b.Fatal(err)
+		}
+		w.SchemaHandler = sh
+		w.Footer.Schema = append(w.Footer.Schema, sh.SchemaElements...)
+
+		columnifier := &parquetColumnifier{
+			w:      w,
+			schema: intermediateSchema,
+			rt:     rt,
+		}
+		b.Cleanup(func() {
+			columnifier.Close()
+		})
+
+		_, err = columnifier.WriteFromFiles([]string{input})
+		if err == nil {
+			err = columnifier.Close()
+		}
+		if err != nil {
+			b.Errorf("expected error occurs, but actual it's nil")
 		}
 	}
 }

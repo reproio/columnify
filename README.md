@@ -91,15 +91,16 @@ $ parquet-tools cat -json out.parquet
 
 Currently it has some limitations from schema/record types.
 
-- Some logical types like Decimal are unsupported.
+- Some logical types like `Decimal` are unsupported.
 - If using `-recordType = avro`, it doesn't support a nested record has only 1 sub field.
 - If using `-recordType = avro`, it converts bytes fields to base64 encoded value implicitly.
+- The supported values have limitations with considering to record types, e.g. if you use `jsonl`, it might not be able to handle a large value.
 
 ## Development
 
 `Columnifier` reads input file(s), converts format based on given parameter, finally writes output files.
-Format conversion is separated by schema / record. The `schema` conversion accepts input schema, then converts it to targer's via Arrow's schema. The `record` conversion is similar to schema's but intermediate is simply `map[string]interface{}`, because Arrow record isn't available as an intermediate.
-`columnify` basically depends on existing modules but it contains additional modules like `avro`, `parquet` to fill insufficient features.
+Format conversion is separated by schema / record. The `schema` conversion accepts input schema, then converts it to targets via Arrow's schema. And also the `record` conversion uses Arrow's Record as the intermediate data representation.
+`columnify` basically depends on existing modules but it contains additional modules like `arrow`, `avro`, `parquet` to fill insufficient features.
 
 ## Release
 

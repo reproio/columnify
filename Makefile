@@ -66,6 +66,11 @@ it: build
 	./columnify -schemaType bigquery -schemaFile columnifier/testdata/schema/array.bq.json -recordType jsonl columnifier/testdata/record/array.jsonl > /dev/null
 	./columnify -schemaType bigquery -schemaFile columnifier/testdata/schema/array.bq.json -recordType msgpack columnifier/testdata/record/array.msgpack > /dev/null
 
+# NOTE A large number of -benchtime or default value occurs too long testing time
+.PHONY: bench
+bench:
+	go test -bench . -v ./columnifier -benchtime 100000x -benchmem -cpuprofile cpu.out -memprofile mem.out
+
 # Set GITHUB_TOKEN and create release git tag
 .PHONY: release
 release:
