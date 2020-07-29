@@ -110,6 +110,12 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, nullable bool, v i
 			vb.Append(int32(vv))
 		case float64:
 			vb.Append(int32(vv))
+		case string:
+			vvv, err := strconv.ParseInt(vv, 10, 32)
+			if err != nil {
+				return nil, err
+			}
+			vb.Append(int32(vvv))
 		default:
 			return nil, fmt.Errorf("unexpected input %v typed %v as int32: %w", v, reflect.TypeOf(v), ErrUnconvertibleRecord)
 		}
@@ -142,6 +148,12 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, nullable bool, v i
 			vb.Append(int64(vv))
 		case float64:
 			vb.Append(int64(vv))
+		case string:
+			vvv, err := strconv.ParseInt(vv, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			vb.Append(vvv)
 		default:
 			return nil, fmt.Errorf("unexpected input %v typed %v as int64: %w", v, reflect.TypeOf(v), ErrUnconvertibleRecord)
 		}
@@ -174,6 +186,12 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, nullable bool, v i
 			vb.Append(uint32(vv))
 		case float64:
 			vb.Append(uint32(vv))
+		case string:
+			vvv, err := strconv.ParseUint(vv, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			vb.Append(uint32(vvv))
 		default:
 			return nil, fmt.Errorf("unexpected input %v typed %v as uint32: %w", v, reflect.TypeOf(v), ErrUnconvertibleRecord)
 		}
@@ -202,6 +220,12 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, nullable bool, v i
 			vb.Append(uint64(vv))
 		case float64:
 			vb.Append(uint64(vv))
+		case string:
+			vvv, err := strconv.ParseUint(vv, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			vb.Append(vvv)
 		default:
 			return nil, fmt.Errorf("unexpected input %v typed %v as uint64: %w", v, reflect.TypeOf(v), ErrUnconvertibleRecord)
 		}
@@ -216,6 +240,12 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, nullable bool, v i
 			vb.Append(vv)
 		case float64:
 			vb.Append(float32(vv))
+		case string:
+			vvv, err := strconv.ParseFloat(vv, 32)
+			if err != nil {
+				return nil, err
+			}
+			vb.Append(float32(vvv))
 		default:
 			return nil, fmt.Errorf("unexpected input %v typed %v as float32: %w", v, reflect.TypeOf(v), ErrUnconvertibleRecord)
 		}
@@ -229,19 +259,28 @@ func formatMapToArrowField(b array.Builder, t arrow.DataType, nullable bool, v i
 		case float32:
 			f64, err := strconv.ParseFloat(fmt.Sprint(vv), 64)
 			if err != nil {
-				return nil, fmt.Errorf("invalid input %v: %w", vv, ErrUnconvertibleRecord)
+				return nil, err
 			}
 			vb.Append(f64)
 		case float64:
 			vb.Append(vv)
+		case string:
+			vvv, err := strconv.ParseFloat(vv, 64)
+			if err != nil {
+				return nil, err
+			}
+			vb.Append(vvv)
 		default:
 			return nil, fmt.Errorf("unexpected input %v typed %v as float64: %w", v, reflect.TypeOf(v), ErrUnconvertibleRecord)
 		}
 
 	case arrow.STRING:
 		vb, builderOk := b.(*array.StringBuilder)
+		if !builderOk {
+			return nil, fmt.Errorf("builder %v is wrong: %w", v, ErrUnconvertibleRecord)
+		}
 		vv, valueOk := v.(string)
-		if builderOk && valueOk {
+		if valueOk {
 			vb.Append(vv)
 		} else {
 			return nil, fmt.Errorf("unexpected input %v typed %v as string: %w", v, reflect.TypeOf(v), ErrUnconvertibleRecord)
