@@ -1,11 +1,13 @@
 package record
 
 import (
+	"bytes"
+	"io"
 	"reflect"
 	"testing"
 )
 
-func TestFormatJsonlToMap(t *testing.T) {
+func TestJsonlInnerDecoder_Decode(t *testing.T) {
 	cases := []struct {
 		input    []byte
 		expected []map[string]interface{}
@@ -43,16 +45,29 @@ func TestFormatJsonlToMap(t *testing.T) {
 		// Not JSONL
 		{
 			input:    []byte("not-valid-json"),
-			expected: nil,
+			expected: []map[string]interface{}{},
 			isErr:    true,
 		},
 	}
 
 	for _, c := range cases {
-		actual, err := FormatJsonlToMap(c.input)
+		buf := bytes.NewReader(c.input)
+		d := newJsonlInnerDecoder(buf)
 
-		if err != nil != c.isErr {
+		actual := make([]map[string]interface{}, 0)
+		var err error
+		for {
+			var v map[string]interface{}
+			err = d.Decode(&v)
+			if err != nil {
+				break
+			}
+			actual = append(actual, v)
+		}
+
+		if (err != nil && err != io.EOF) != c.isErr {
 			t.Errorf("expected: %v, but actual: %v\n", c.isErr, err)
+			continue
 		}
 
 		if !reflect.DeepEqual(actual, c.expected) {

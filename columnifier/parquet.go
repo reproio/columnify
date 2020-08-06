@@ -1,13 +1,16 @@
 package columnifier
 
 import (
+	"io"
 	"io/ioutil"
+	"os"
 
 	"github.com/reproio/columnify/record"
 
 	"github.com/reproio/columnify/parquet"
 	"github.com/reproio/columnify/schema"
 	"github.com/xitongsys/parquet-go-source/local"
+	"github.com/xitongsys/parquet-go/marshal"
 	parquetSource "github.com/xitongsys/parquet-go/source"
 	"github.com/xitongsys/parquet-go/writer"
 )
@@ -65,17 +68,27 @@ func NewParquetColumnifier(st string, sf string, rt string, output string, confi
 }
 
 // Write reads, converts input binary data and write it to buffer.
-func (c *parquetColumnifier) Write(data []byte) (int, error) {
+func (c *parquetColumnifier) WriteFromReader(reader io.Reader) (int, error) {
 	// Intermediate record type is map[string]interface{}
-	c.w.MarshalFunc = parquet.MarshalMap
-	records, err := record.FormatToMap(data, c.schema, c.rt)
+	c.w.MarshalFunc = marshal.MarshalJSON
+	decoder, err := record.NewJsonDecoder(reader, c.schema, c.rt)
 	if err != nil {
 		return -1, err
 	}
 
 	beforeSize := c.w.Size
-	for _, r := range records {
-		if err := c.w.Write(r); err != nil {
+	for {
+		var v string
+		err = decoder.Decode(&v)
+		if err != nil {
+			if err == io.EOF {
+				break
+			} else {
+				return -1, err
+			}
+		}
+
+		if err := c.w.Write(v); err != nil {
 			return -1, err
 		}
 	}
@@ -103,11 +116,12 @@ func (c *parquetColumnifier) WriteFromFiles(paths []string) (int, error) {
 	var n int
 
 	for _, p := range paths {
-		data, err := ioutil.ReadFile(p)
+		f, err := os.Open(p)
 		if err != nil {
 			return -1, err
 		}
-		if n, err = c.Write(data); err != nil {
+
+		if n, err = c.WriteFromReader(f); err != nil {
 			return -1, err
 		}
 	}
