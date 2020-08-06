@@ -94,20 +94,6 @@ func (c *parquetColumnifier) WriteFromReader(reader io.Reader) (int, error) {
 	}
 	afterSize := c.w.Size
 
-	// Intermediate record type is wrapped Apache Arrow record
-	// It requires Arrow Golang implementation more logical type supports
-	// ref. https://github.com/apache/arrow/blob/9c9dc2012266442d0848e4af0cf52874bc4db151/go/arrow/array/builder.go#L211
-	/*
-		c.w.MarshalFunc = parquet.MarshalArrow
-		records, err := record.FormatToArrow(data, c.schema, c.rt)
-		if err != nil {
-			return err
-		}
-		if err := c.w.Write(&records); err != nil {
-			return err
-		}
-	*/
-
 	return int(afterSize - beforeSize), nil
 }
 
