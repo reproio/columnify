@@ -37,42 +37,43 @@ func newCsvInnerDecoder(r io.Reader, s *schema.IntermediateSchema, delimiter del
 }
 
 func (d *csvInnerDecoder) Decode(r *map[string]interface{}) error {
+	numNames := len(d.names)
+	d.r.FieldsPerRecord = numNames
+
 	values, err := d.r.Read()
 	if err != nil {
 		return err
 	}
 
-	if len(d.names) != len(values) {
-		return fmt.Errorf("incompleted value %v: %w", values, ErrUnconvertibleRecord)
-	}
-
-	*r = make(map[string]interface{})
+	record := make(map[string]interface{}, numNames)
 	for i, v := range values {
 		n := d.names[i]
 
 		// bool
 		if v != "0" && v != "1" {
 			if vv, err := strconv.ParseBool(v); err == nil {
-				(*r)[n] = vv
+				record[n] = vv
 				continue
 			}
 		}
 
 		// int
 		if vv, err := strconv.ParseInt(v, 10, 64); err == nil {
-			(*r)[n] = vv
+			record[n] = vv
 			continue
 		}
 
 		// float
 		if vv, err := strconv.ParseFloat(v, 64); err == nil {
-			(*r)[n] = vv
+			record[n] = vv
 			continue
 		}
 
 		// others; to string
-		(*r)[n] = v
+		record[n] = v
 	}
+
+	*r = record
 
 	return nil
 }

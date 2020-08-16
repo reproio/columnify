@@ -37,6 +37,9 @@ func (d *avroInnerDecoder) Decode(r *map[string]interface{}) error {
 		flatten := flattenAvroUnion(m)
 		*r = flatten
 	} else if d.r.RemainingBlockItems() == 0 {
+		if d.r.Err() != nil {
+			return d.r.Err()
+		}
 		return io.EOF
 	}
 

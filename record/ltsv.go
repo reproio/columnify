@@ -54,6 +54,9 @@ func (d *ltsvInnerDecoder) Decode(r *map[string]interface{}) error {
 			(*r)[k] = v
 		}
 	} else {
+		if err := d.s.Err(); err != nil {
+			return err
+		}
 		return io.EOF
 	}
 

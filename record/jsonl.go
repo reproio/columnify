@@ -22,6 +22,9 @@ func (d *jsonlInnerDecoder) Decode(r *map[string]interface{}) error {
 			return err
 		}
 	} else {
+		if err := d.s.Err(); err != nil {
+			return err
+		}
 		return io.EOF
 	}
 
