@@ -31,14 +31,14 @@ func TestJsonStringConverter_Convert(t *testing.T) {
 	var v string
 	err := d.Convert(&v)
 	if err != nil {
-		t.Errorf("expected no error, but actual: %v\n", err)
+		t.Fatalf("expected no error, but actual: %v\n", err)
 	}
 
 	data, err := json.Marshal(inner.r)
 	if err != nil {
-		t.Errorf("expected no error, but actual: %v\n", err)
+		t.Fatalf("expected no error, but actual: %v\n", err)
 	}
 	if v != string(data) {
-		t.Errorf("expected: %v, but actual: %v\n", string(data), v)
+		t.Fatalf("expected: %v, but actual: %v\n", string(data), v)
 	}
 }
