@@ -15,7 +15,7 @@ func (d *nopInnerDecoder) Decode(r *map[string]interface{}) error {
 	return d.err
 }
 
-func TestJsonDecoder_Decode(t *testing.T) {
+func TestJsonStringConverter_Convert(t *testing.T) {
 	inner := &nopInnerDecoder{
 		r: map[string]interface{}{
 			"key1": 42,
@@ -24,12 +24,12 @@ func TestJsonDecoder_Decode(t *testing.T) {
 		err: nil,
 	}
 
-	d := jsonDecoder{
+	d := jsonStringConverter{
 		inner: inner,
 	}
 
 	var v string
-	err := d.Decode(&v)
+	err := d.Convert(&v)
 	if err != nil {
 		t.Errorf("expected no error, but actual: %v\n", err)
 	}

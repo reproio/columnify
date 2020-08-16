@@ -5,12 +5,13 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/xitongsys/parquet-go/marshal"
+
 	"github.com/reproio/columnify/record"
 
 	"github.com/reproio/columnify/parquet"
 	"github.com/reproio/columnify/schema"
 	"github.com/xitongsys/parquet-go-source/local"
-	"github.com/xitongsys/parquet-go/marshal"
 	parquetSource "github.com/xitongsys/parquet-go/source"
 	"github.com/xitongsys/parquet-go/writer"
 )
@@ -60,6 +61,9 @@ func NewParquetColumnifier(st string, sf string, rt string, output string, confi
 	w.RowGroupSize = config.Parquet.RowGroupSize
 	w.CompressionType = config.Parquet.CompressionCodec
 
+	// Intermediate record type is string typed JSON values
+	w.MarshalFunc = marshal.MarshalJSON
+
 	return &parquetColumnifier{
 		w:      w,
 		schema: intermediateSchema,
@@ -69,9 +73,7 @@ func NewParquetColumnifier(st string, sf string, rt string, output string, confi
 
 // Write reads, converts input binary data and write it to buffer.
 func (c *parquetColumnifier) WriteFromReader(reader io.Reader) (int, error) {
-	// Intermediate record type is map[string]interface{}
-	c.w.MarshalFunc = marshal.MarshalJSON
-	decoder, err := record.NewJsonDecoder(reader, c.schema, c.rt)
+	decoder, err := record.NewJsonStringConverter(reader, c.schema, c.rt)
 	if err != nil {
 		return -1, err
 	}
@@ -79,7 +81,7 @@ func (c *parquetColumnifier) WriteFromReader(reader io.Reader) (int, error) {
 	beforeSize := c.w.Size
 	for {
 		var v string
-		err = decoder.Decode(&v)
+		err = decoder.Convert(&v)
 		if err != nil {
 			if err == io.EOF {
 				break

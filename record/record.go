@@ -30,12 +30,12 @@ type innerDecoder interface {
 	Decode(r *map[string]interface{}) error
 }
 
-// jsonDecoder decodes data with innerDecoder and returns JSON string value.
-type jsonDecoder struct {
+// jsonStringConverter converts data with innerDecoder and returns JSON string value.
+type jsonStringConverter struct {
 	inner innerDecoder
 }
 
-func NewJsonDecoder(r io.Reader, s *schema.IntermediateSchema, recordType string) (*jsonDecoder, error) {
+func NewJsonStringConverter(r io.Reader, s *schema.IntermediateSchema, recordType string) (*jsonStringConverter, error) {
 	var inner innerDecoder
 	var err error
 
@@ -62,12 +62,12 @@ func NewJsonDecoder(r io.Reader, s *schema.IntermediateSchema, recordType string
 		return nil, fmt.Errorf("unsupported record type %s: %w", recordType, ErrUnsupportedRecord)
 	}
 
-	return &jsonDecoder{
+	return &jsonStringConverter{
 		inner: inner,
 	}, err
 }
 
-func (d *jsonDecoder) Decode(v *string) error {
+func (d *jsonStringConverter) Convert(v *string) error {
 	var vv map[string]interface{}
 
 	err := d.inner.Decode(&vv)
