@@ -1,6 +1,8 @@
 package record
 
 import (
+	"bytes"
+	"io"
 	"reflect"
 	"testing"
 
@@ -8,7 +10,7 @@ import (
 	"github.com/reproio/columnify/schema"
 )
 
-func TestFormatCsvToMap(t *testing.T) {
+func TestCsvInnerDecoder_Decode(t *testing.T) {
 	cases := []struct {
 		schema    *schema.IntermediateSchema
 		input     []byte
@@ -151,36 +153,28 @@ true	2	2	2.2	2.2	bar	bar`),
 			},
 			isErr: false,
 		},
-
-		// Not csv
-		{
-			schema: schema.NewIntermediateSchema(
-				arrow.NewSchema([]arrow.Field{}, nil),
-				"primitives",
-			),
-			input:    []byte("not-valid-csv"),
-			expected: nil,
-			isErr:    true,
-		},
-
-		// Not tsv
-		{
-			schema: schema.NewIntermediateSchema(
-				arrow.NewSchema([]arrow.Field{}, nil),
-				"primitives",
-			),
-			input:     []byte("not-valid-tsv"),
-			delimiter: TsvDelimiter,
-			expected:  nil,
-			isErr:     true,
-		},
 	}
 
 	for _, c := range cases {
-		actual, err := FormatCsvToMap(c.schema, c.input, c.delimiter)
+		buf := bytes.NewReader(c.input)
+		d, err := newCsvInnerDecoder(buf, c.schema, c.delimiter)
+		if err != nil {
+			t.Fatal(err)
+		}
 
-		if err != nil != c.isErr {
+		actual := make([]map[string]interface{}, 0)
+		for {
+			var v map[string]interface{}
+			err = d.Decode(&v)
+			if err != nil {
+				break
+			}
+			actual = append(actual, v)
+		}
+
+		if (err != nil && err != io.EOF) != c.isErr {
 			t.Errorf("expected: %v, but actual: %v\n", c.isErr, err)
+			continue
 		}
 
 		if !reflect.DeepEqual(actual, c.expected) {

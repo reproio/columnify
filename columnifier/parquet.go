@@ -1,7 +1,11 @@
 package columnifier
 
 import (
+	"io"
 	"io/ioutil"
+	"os"
+
+	"github.com/xitongsys/parquet-go/marshal"
 
 	"github.com/reproio/columnify/record"
 
@@ -57,6 +61,9 @@ func NewParquetColumnifier(st string, sf string, rt string, output string, confi
 	w.RowGroupSize = config.Parquet.RowGroupSize
 	w.CompressionType = config.Parquet.CompressionCodec
 
+	// Intermediate record type is string typed JSON values
+	w.MarshalFunc = marshal.MarshalJSON
+
 	return &parquetColumnifier{
 		w:      w,
 		schema: intermediateSchema,
@@ -65,35 +72,29 @@ func NewParquetColumnifier(st string, sf string, rt string, output string, confi
 }
 
 // Write reads, converts input binary data and write it to buffer.
-func (c *parquetColumnifier) Write(data []byte) (int, error) {
-	// Intermediate record type is map[string]interface{}
-	c.w.MarshalFunc = parquet.MarshalMap
-	records, err := record.FormatToMap(data, c.schema, c.rt)
+func (c *parquetColumnifier) WriteFromReader(reader io.Reader) (int, error) {
+	decoder, err := record.NewJsonStringConverter(reader, c.schema, c.rt)
 	if err != nil {
 		return -1, err
 	}
 
 	beforeSize := c.w.Size
-	for _, r := range records {
-		if err := c.w.Write(r); err != nil {
+	for {
+		var v string
+		err = decoder.Convert(&v)
+		if err != nil {
+			if err == io.EOF {
+				break
+			} else {
+				return -1, err
+			}
+		}
+
+		if err := c.w.Write(v); err != nil {
 			return -1, err
 		}
 	}
 	afterSize := c.w.Size
-
-	// Intermediate record type is wrapped Apache Arrow record
-	// It requires Arrow Golang implementation more logical type supports
-	// ref. https://github.com/apache/arrow/blob/9c9dc2012266442d0848e4af0cf52874bc4db151/go/arrow/array/builder.go#L211
-	/*
-		c.w.MarshalFunc = parquet.MarshalArrow
-		records, err := record.FormatToArrow(data, c.schema, c.rt)
-		if err != nil {
-			return err
-		}
-		if err := c.w.Write(&records); err != nil {
-			return err
-		}
-	*/
 
 	return int(afterSize - beforeSize), nil
 }
@@ -103,11 +104,12 @@ func (c *parquetColumnifier) WriteFromFiles(paths []string) (int, error) {
 	var n int
 
 	for _, p := range paths {
-		data, err := ioutil.ReadFile(p)
+		f, err := os.Open(p)
 		if err != nil {
 			return -1, err
 		}
-		if n, err = c.Write(data); err != nil {
+
+		if n, err = c.WriteFromReader(f); err != nil {
 			return -1, err
 		}
 	}

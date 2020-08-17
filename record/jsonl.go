@@ -1,38 +1,32 @@
 package record
 
 import (
+	"bufio"
 	"encoding/json"
-	"strings"
-
-	"github.com/reproio/columnify/schema"
+	"io"
 )
 
-func FormatJsonlToMap(data []byte) ([]map[string]interface{}, error) {
-	lines := strings.Split(string(data), "\n")
-
-	records := make([]map[string]interface{}, 0)
-	for _, l := range lines {
-		if l == "" {
-			// skip blank line
-			continue
-		}
-
-		var e map[string]interface{}
-		if err := json.Unmarshal([]byte(l), &e); err != nil {
-			return nil, err
-		}
-
-		records = append(records, e)
-	}
-
-	return records, nil
+type jsonlInnerDecoder struct {
+	s *bufio.Scanner
 }
 
-func FormatJsonlToArrow(s *schema.IntermediateSchema, data []byte) (*WrappedRecord, error) {
-	maps, err := FormatJsonlToMap(data)
-	if err != nil {
-		return nil, err
+func newJsonlInnerDecoder(r io.Reader) *jsonlInnerDecoder {
+	return &jsonlInnerDecoder{
+		s: bufio.NewScanner(r),
+	}
+}
+
+func (d *jsonlInnerDecoder) Decode(r *map[string]interface{}) error {
+	if d.s.Scan() {
+		if err := json.Unmarshal(d.s.Bytes(), r); err != nil {
+			return err
+		}
+	} else {
+		if err := d.s.Err(); err != nil {
+			return err
+		}
+		return io.EOF
 	}
 
-	return formatMapToArrowRecord(s.ArrowSchema, maps)
+	return d.s.Err()
 }

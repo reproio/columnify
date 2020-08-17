@@ -3,11 +3,12 @@ package record
 import (
 	"bytes"
 	"errors"
+	"io"
 	"reflect"
 	"testing"
 )
 
-func TestFormatMsgpackToMap(t *testing.T) {
+func TestMsgpackInnnerDecoder_Decode(t *testing.T) {
 	cases := []struct {
 		input    []byte
 		expected []map[string]interface{}
@@ -48,22 +49,35 @@ func TestFormatMsgpackToMap(t *testing.T) {
 					"string":  "bar",
 				},
 			},
-			err: nil,
+			err: io.EOF,
 		},
 
 		// Not map type
 		{
 			input:    []byte("\xa7compact"),
-			expected: nil,
+			expected: []map[string]interface{}{},
 			err:      ErrUnconvertibleRecord,
 		},
 	}
 
 	for _, c := range cases {
-		actual, err := FormatMsgpackToMap(c.input)
+		buf := bytes.NewReader(c.input)
+		d := newMsgpackInnerDecoder(buf)
+
+		actual := make([]map[string]interface{}, 0)
+		var err error
+		for {
+			var v map[string]interface{}
+			err = d.Decode(&v)
+			if err != nil {
+				break
+			}
+			actual = append(actual, v)
+		}
 
 		if !errors.Is(err, c.err) {
 			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
+			continue
 		}
 
 		if !reflect.DeepEqual(actual, c.expected) {

@@ -2,6 +2,7 @@ package record
 
 import (
 	"bytes"
+	"io"
 	"reflect"
 	"testing"
 
@@ -35,11 +36,10 @@ func TestFlattenAvroUnion(t *testing.T) {
 	}
 }
 
-func TestFormatAvroToMap(t *testing.T) {
+func TestAvroInnerDecoder_Decode(t *testing.T) {
 	cases := []struct {
 		input    []byte
 		expected []map[string]interface{}
-		isErr    bool
 	}{
 		{
 			input: func() []byte {
@@ -113,22 +113,29 @@ func TestFormatAvroToMap(t *testing.T) {
 					"string":  "bar",
 				},
 			},
-			isErr: false,
-		},
-
-		// Not avro
-		{
-			input:    []byte("not-valid-avro"),
-			expected: nil,
-			isErr:    true,
 		},
 	}
 
 	for _, c := range cases {
-		actual, err := FormatAvroToMap(c.input)
+		buf := bytes.NewReader(c.input)
+		d, err := newAvroInnerDecoder(buf)
+		if err != nil {
+			t.Fatal(err)
+		}
 
-		if err != nil != c.isErr {
-			t.Errorf("expected: %v, but actual: %v\n", c.isErr, err)
+		actual := make([]map[string]interface{}, 0)
+		for {
+			var v map[string]interface{}
+			err = d.Decode(&v)
+			if err != nil {
+				break
+			}
+			actual = append(actual, v)
+		}
+
+		if err != nil && err != io.EOF {
+			t.Errorf("expected no error or io.EOF, but actual: %v\n", err)
+			continue
 		}
 
 		if !reflect.DeepEqual(actual, c.expected) {

@@ -4,9 +4,9 @@ import "io"
 
 // Columnifier is the interface that converts input file to columnar format file.
 type Columnifier interface {
-	io.WriteCloser
-
+	WriteFromReader(reader io.Reader) (int, error)
 	WriteFromFiles(paths []string) (int, error)
+	Close() error
 }
 
 // NewColumnifier creates a new Columnifier.

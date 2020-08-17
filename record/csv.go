@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"strconv"
-	"strings"
 
 	"github.com/reproio/columnify/schema"
 )
@@ -17,10 +16,72 @@ const (
 	TsvDelimiter delimiter = '\t'
 )
 
+type csvInnerDecoder struct {
+	r     *csv.Reader
+	names []string
+}
+
+func newCsvInnerDecoder(r io.Reader, s *schema.IntermediateSchema, delimiter delimiter) (*csvInnerDecoder, error) {
+	names, err := getFieldNamesFromSchema(s)
+	if err != nil {
+		return nil, err
+	}
+
+	reader := csv.NewReader(r)
+	reader.Comma = rune(delimiter)
+
+	return &csvInnerDecoder{
+		r:     reader,
+		names: names,
+	}, nil
+}
+
+func (d *csvInnerDecoder) Decode(r *map[string]interface{}) error {
+	numNames := len(d.names)
+	d.r.FieldsPerRecord = numNames
+
+	values, err := d.r.Read()
+	if err != nil {
+		return err
+	}
+
+	record := make(map[string]interface{}, numNames)
+	for i, v := range values {
+		n := d.names[i]
+
+		// bool
+		if v != "0" && v != "1" {
+			if vv, err := strconv.ParseBool(v); err == nil {
+				record[n] = vv
+				continue
+			}
+		}
+
+		// int
+		if vv, err := strconv.ParseInt(v, 10, 64); err == nil {
+			record[n] = vv
+			continue
+		}
+
+		// float
+		if vv, err := strconv.ParseFloat(v, 64); err == nil {
+			record[n] = vv
+			continue
+		}
+
+		// others; to string
+		record[n] = v
+	}
+
+	*r = record
+
+	return nil
+}
+
 func getFieldNamesFromSchema(s *schema.IntermediateSchema) ([]string, error) {
 	elems := s.ArrowSchema.Fields()
 
-	if len(elems) < 2 {
+	if len(elems) == 0 {
 		return nil, fmt.Errorf("no element is available: %w", ErrUnconvertibleRecord)
 	}
 
@@ -30,69 +91,4 @@ func getFieldNamesFromSchema(s *schema.IntermediateSchema) ([]string, error) {
 	}
 
 	return names, nil
-}
-
-func FormatCsvToMap(s *schema.IntermediateSchema, data []byte, delimiter delimiter) ([]map[string]interface{}, error) {
-	names, err := getFieldNamesFromSchema(s)
-	if err != nil {
-		return nil, err
-	}
-
-	reader := csv.NewReader(strings.NewReader(string(data)))
-	reader.Comma = rune(delimiter)
-
-	numFields := len(names)
-	arr := make([]map[string]interface{}, 0)
-	for {
-		values, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		if numFields != len(values) {
-			return nil, fmt.Errorf("incompleted value %v: %w", values, ErrUnconvertibleRecord)
-		}
-
-		e := make(map[string]interface{})
-		for i, v := range values {
-			// bool
-			if v != "0" && v != "1" {
-				if vv, err := strconv.ParseBool(v); err == nil {
-					e[names[i]] = vv
-					continue
-				}
-			}
-
-			// int
-			if vv, err := strconv.ParseInt(v, 10, 64); err == nil {
-				e[names[i]] = vv
-				continue
-			}
-
-			// float
-			if vv, err := strconv.ParseFloat(v, 64); err == nil {
-				e[names[i]] = vv
-				continue
-			}
-
-			// others; to string
-			e[names[i]] = v
-		}
-
-		arr = append(arr, e)
-	}
-
-	return arr, nil
-}
-
-func FormatCsvToArrow(s *schema.IntermediateSchema, data []byte, delimiter delimiter) (*WrappedRecord, error) {
-	maps, err := FormatCsvToMap(s, data, delimiter)
-	if err != nil {
-		return nil, err
-	}
-
-	return formatMapToArrowRecord(s.ArrowSchema, maps)
 }

@@ -1,8 +1,10 @@
 package record
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 
 	"github.com/reproio/columnify/schema"
 )
@@ -21,53 +23,63 @@ var (
 	ErrUnconvertibleRecord = errors.New("input record is unable to convert")
 )
 
-func FormatToArrow(data []byte, s *schema.IntermediateSchema, recordType string) (*WrappedRecord, error) {
-	switch recordType {
-	case RecordTypeAvro:
-		return FormatAvroToArrow(s, data)
-
-	case RecordTypeCsv:
-		return FormatCsvToArrow(s, data, CsvDelimiter)
-
-	case RecordTypeJsonl:
-		return FormatJsonlToArrow(s, data)
-
-	case RecordTypeLtsv:
-		return FormatLtsvToArrow(s, data)
-
-	case RecordTypeMsgpack:
-		return FormatMsgpackToArrow(s, data)
-
-	case RecordTypeTsv:
-		return FormatCsvToArrow(s, data, TsvDelimiter)
-
-	default:
-		return nil, fmt.Errorf("unsupported record type %s: %w", recordType, ErrUnsupportedRecord)
-	}
+// innerDecoder decodes data from given Reader to the intermediate representation.
+type innerDecoder interface {
+	// Decode reads input data via Reader and extract it to the argument.
+	// If there is no data left to be read, Read returns nil, io.EOF.
+	Decode(r *map[string]interface{}) error
 }
 
-// FormatToMap converts input data to map based data with given schema.
-func FormatToMap(data []byte, s *schema.IntermediateSchema, recordType string) ([]map[string]interface{}, error) {
+// jsonStringConverter converts data with innerDecoder and returns JSON string value.
+type jsonStringConverter struct {
+	inner innerDecoder
+}
+
+func NewJsonStringConverter(r io.Reader, s *schema.IntermediateSchema, recordType string) (*jsonStringConverter, error) {
+	var inner innerDecoder
+	var err error
+
 	switch recordType {
 	case RecordTypeAvro:
-		return FormatAvroToMap(data)
+		inner, err = newAvroInnerDecoder(r)
 
 	case RecordTypeCsv:
-		return FormatCsvToMap(s, data, CsvDelimiter)
+		inner, err = newCsvInnerDecoder(r, s, CsvDelimiter)
 
 	case RecordTypeJsonl:
-		return FormatJsonlToMap(data)
+		inner = newJsonlInnerDecoder(r)
 
 	case RecordTypeLtsv:
-		return FormatLtsvToMap(data)
+		inner = newLtsvInnerDecoder(r)
 
 	case RecordTypeMsgpack:
-		return FormatMsgpackToMap(data)
+		inner = newMsgpackInnerDecoder(r)
 
 	case RecordTypeTsv:
-		return FormatCsvToMap(s, data, TsvDelimiter)
+		inner, err = newCsvInnerDecoder(r, s, TsvDelimiter)
 
 	default:
 		return nil, fmt.Errorf("unsupported record type %s: %w", recordType, ErrUnsupportedRecord)
 	}
+
+	return &jsonStringConverter{
+		inner: inner,
+	}, err
+}
+
+func (d *jsonStringConverter) Convert(v *string) error {
+	var vv map[string]interface{}
+
+	err := d.inner.Decode(&vv)
+	if err != nil {
+		return err
+	}
+
+	data, err := json.Marshal(vv)
+	if err != nil {
+		return err
+	}
+	*v = string(data)
+
+	return nil
 }

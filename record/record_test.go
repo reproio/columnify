@@ -1,60 +1,44 @@
 package record
 
 import (
-	"errors"
+	"encoding/json"
 	"testing"
-
-	"github.com/reproio/columnify/schema"
 )
 
-func TestFormatToArrow(t *testing.T) {
-	cases := []struct {
-		input      []byte
-		schema     *schema.IntermediateSchema
-		recordType string
-		err        error
-	}{
-		// TODO valid cases
-
-		{
-			input:      nil,
-			schema:     nil,
-			recordType: "Unknown",
-			err:        ErrUnsupportedRecord,
-		},
-	}
-
-	for _, c := range cases {
-		_, err := FormatToArrow(c.input, c.schema, c.recordType)
-
-		if !errors.Is(err, c.err) {
-			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
-		}
-	}
+type nopInnerDecoder struct {
+	r   map[string]interface{}
+	err error
 }
 
-func TestFormatToMap(t *testing.T) {
-	cases := []struct {
-		input      []byte
-		schema     *schema.IntermediateSchema
-		recordType string
-		err        error
-	}{
-		// TODO valid cases
+func (d *nopInnerDecoder) Decode(r *map[string]interface{}) error {
+	*r = d.r
+	return d.err
+}
 
-		{
-			input:      nil,
-			schema:     nil,
-			recordType: "Unknown",
-			err:        ErrUnsupportedRecord,
+func TestJsonStringConverter_Convert(t *testing.T) {
+	inner := &nopInnerDecoder{
+		r: map[string]interface{}{
+			"key1": 42,
+			"key2": "test",
 		},
+		err: nil,
 	}
 
-	for _, c := range cases {
-		_, err := FormatToMap(c.input, c.schema, c.recordType)
+	d := jsonStringConverter{
+		inner: inner,
+	}
 
-		if !errors.Is(err, c.err) {
-			t.Errorf("expected: %v, but actual: %v\n", c.err, err)
-		}
+	var v string
+	err := d.Convert(&v)
+	if err != nil {
+		t.Fatalf("expected no error, but actual: %v\n", err)
+	}
+
+	data, err := json.Marshal(inner.r)
+	if err != nil {
+		t.Fatalf("expected no error, but actual: %v\n", err)
+	}
+	if v != string(data) {
+		t.Fatalf("expected: %v, but actual: %v\n", string(data), v)
 	}
 }

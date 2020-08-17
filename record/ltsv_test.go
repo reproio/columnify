@@ -1,11 +1,13 @@
 package record
 
 import (
+	"bytes"
+	"io"
 	"reflect"
 	"testing"
 )
 
-func TestFormatLtsvToMap(t *testing.T) {
+func TestLtsvInnerDecoder_Decode(t *testing.T) {
 	cases := []struct {
 		input    []byte
 		expected []map[string]interface{}
@@ -41,16 +43,29 @@ boolean:true	int:2	long:2	float:2.2	double:2.2	bytes:bar	string:bar`),
 		// Not LTSV
 		{
 			input:    []byte("not-valid-ltsv"),
-			expected: nil,
+			expected: []map[string]interface{}{},
 			isErr:    true,
 		},
 	}
 
 	for _, c := range cases {
-		actual, err := FormatLtsvToMap(c.input)
+		buf := bytes.NewReader(c.input)
+		d := newLtsvInnerDecoder(buf)
 
-		if err != nil != c.isErr {
+		actual := make([]map[string]interface{}, 0)
+		var err error
+		for {
+			var v map[string]interface{}
+			err = d.Decode(&v)
+			if err != nil {
+				break
+			}
+			actual = append(actual, v)
+		}
+
+		if (err != nil && err != io.EOF) != c.isErr {
 			t.Errorf("expected: %v, but actual: %v\n", c.isErr, err)
+			continue
 		}
 
 		if !reflect.DeepEqual(actual, c.expected) {

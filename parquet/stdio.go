@@ -1,11 +1,16 @@
 package parquet
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
 
 	"github.com/xitongsys/parquet-go/source"
+)
+
+var (
+	ErrUnsupportedMethod = errors.New("unsupported method")
 )
 
 // stdioFile is an implementation of ParquetFile, just writing data to stdout.
