@@ -99,22 +99,33 @@ func (c *parquetColumnifier) WriteFromReader(reader io.Reader) (int, error) {
 	return int(afterSize - beforeSize), nil
 }
 
-// WriteFromFiles reads, converts input binary files.
-func (c *parquetColumnifier) WriteFromFiles(paths []string) (int, error) {
-	var n int
+// writeFromFile reads, converts an input binary file.
+func (c *parquetColumnifier) writeFromFile(path string) (int, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return -1, err
+	}
+	defer f.Close()
 
-	for _, p := range paths {
-		f, err := os.Open(p)
-		if err != nil {
-			return -1, err
-		}
-
-		if n, err = c.WriteFromReader(f); err != nil {
-			return -1, err
-		}
+	n, err := c.WriteFromReader(f)
+	if err != nil {
+		return -1, err
 	}
 
 	return n, nil
+}
+
+// WriteFromFiles reads, converts input binary files.
+func (c *parquetColumnifier) WriteFromFiles(paths []string) (int, error) {
+	var size int
+	for _, p := range paths {
+		n, err := c.writeFromFile(p)
+		if err != nil {
+			return -1, err
+		}
+		size += n
+	}
+	return size, nil
 }
 
 // Close stops writing parquet files ant finalize this conversion.
