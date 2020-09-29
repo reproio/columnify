@@ -87,6 +87,18 @@ $ parquet-tools cat -json out.parquet
   - An example is `examples/fluent-plugin-s3`
   - It works as a Compressor of fluent-plugin-s3 write parquet file to tmp via chunk data.
 
+## Additional tips
+
+### Set GOGC to reduce memory usage
+
+`columnify` might consume lots of memory usage depends on a value by `-parquetRowGroupSize`. At least, it needs memory usage of row group size. Actually, it consumes more than double row group size by default. The reason why is depending on Go's garbage collection behavior. To trigger GC frequently, set `GOGC` environment variable.
+
+> SetGCPercent sets the garbage collection target percentage: a collection is triggered when the ratio of freshly allocated data to live data remaining after the previous collection reaches this percentage. SetGCPercent returns the previous setting. The initial setting is the value of the GOGC environment variable at startup, or 100 if the variable is not set. A negative percentage disables garbage collection.
+>
+> https://golang.org/pkg/runtime/debug/#SetGCPercent
+
+Of course, frequent GC makes it increase execution time. Confirm which GOGC value (percent) is better in your environment.
+
 ## Limilations
 
 Currently it has some limitations from schema/record types.
