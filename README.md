@@ -91,7 +91,7 @@ $ parquet-tools cat -json out.parquet
 
 ### Set GOGC to reduce memory usage
 
-`columnify` might consume lots of memory usage depends on a value by `-parquetRowGroupSize`. At least, it needs memory usage of row group size. Actually, it consumes more than double row group size by default. The reason why is depending on Go's garbage collection behavior. To trigger GC frequently, set `GOGC` environment variable.
+`columnify` might consume lots of memory depending on a value specified by `-parquetRowGroupSize`. At least, it needs a memory of the row group size. Actually, it consumes more than double the row group size by default. The reason for that depends on Go's garbage collection behavior, and memory usage can decrease by triggering GC frequently. To adjust the frequency, set `GOGC` environment variable.
 
 > SetGCPercent sets the garbage collection target percentage: a collection is triggered when the ratio of freshly allocated data to live data remaining after the previous collection reaches this percentage. SetGCPercent returns the previous setting. The initial setting is the value of the GOGC environment variable at startup, or 100 if the variable is not set. A negative percentage disables garbage collection.
 >
