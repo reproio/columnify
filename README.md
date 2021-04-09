@@ -99,7 +99,7 @@ $ parquet-tools cat -json out.parquet
 
 Of course, frequent GC makes it increase execution time. Confirm which GOGC value (percent) is better in your environment.
 
-## Limilations
+## Limitations
 
 Currently it has some limitations from schema/record types.
 
