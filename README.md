@@ -116,3 +116,5 @@ Format conversion is separated by schema / record. The `schema` conversion accep
 ## Release
 
 [goreleaser](https://github.com/goreleaser/goreleaser) is integrated in GitHub Actions. It's triggerd on creating a new tag. Create a new release with semvar tag(`vx.y.z`) on this GitHub repo, then you get archives for some environments attached on the release.
+
+xxx
