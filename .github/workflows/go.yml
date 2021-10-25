@@ -34,7 +34,7 @@ jobs:
       run: make build
 
     - name: golangci-lint
-      uses: actions-contrib/golangci-lint@v1
+      uses: golangci/golangci-lint-action@v2
       env:
         GOROOT: ""
         
