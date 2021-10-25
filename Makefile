@@ -1,8 +1,8 @@
 .PHONY: init
 init:
-	GO111MODULE=off go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
-	GO111MODULE=off go get -u github.com/goreleaser/goreleaser
-	GO111MODULE=off go get -u github.com/Songmu/gocredits/cmd/gocredits
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.1
+	go install github.com/goreleaser/goreleaser@v0.183.0
+	go install github.com/Songmu/gocredits/cmd/gocredits@v0.2.0
 
 .PHONY: build
 build:
