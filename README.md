@@ -17,7 +17,7 @@ Columnar formatted data is efficient for analytics queries, lightweight and ease
 ### Installation
 
 ```sh
-$ GO111MODULE=on go get github.com/reproio/columnify/cmd/columnify
+$ go install github.com/reproio/columnify/cmd/columnify@latest
 ```
 
 ### Usage
