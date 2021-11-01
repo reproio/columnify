@@ -1,5 +1,11 @@
 # v0.1.x
 
+## Release v0.1.1 - 2021-11-01
+
+### Bug Fix
+
+- [#58 Fix to close a given file and return the total size when multiple files are given](https://github.com/reproio/columnify/pull/58)
+
 ## Release v0.1.0 - 2020/08/xx
 
 ### Breaking changes
