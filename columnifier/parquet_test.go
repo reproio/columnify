@@ -3,7 +3,6 @@ package columnifier
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -440,7 +439,7 @@ func TestWriteClose(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		out, err := ioutil.TempFile("", "out.parquet")
+		out, err := os.CreateTemp("", "out.parquet")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -492,7 +491,7 @@ func TestWriteClose_Errors(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		out, err := ioutil.TempFile("", "out.parquet")
+		out, err := os.CreateTemp("", "out.parquet")
 		if err != nil {
 			t.Fatal(err)
 		}

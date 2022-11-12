@@ -2,7 +2,6 @@ package columnifier
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 
 	"github.com/xitongsys/parquet-go/marshal"
@@ -25,7 +24,7 @@ type parquetColumnifier struct {
 
 // NewParquetColumnifier creates a new parquetColumnifier.
 func NewParquetColumnifier(st string, sf string, rt string, output string, config Config) (*parquetColumnifier, error) {
-	schemaContent, err := ioutil.ReadFile(sf)
+	schemaContent, err := os.ReadFile(sf)
 	if err != nil {
 		return nil, err
 	}

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -37,7 +36,7 @@ func TestNewStdioFile(t *testing.T) {
 
 func TestStdioFileRead(t *testing.T) {
 	data := []byte("test")
-	in := ioutil.NopCloser(bytes.NewBuffer(data))
+	in := io.NopCloser(bytes.NewBuffer(data))
 
 	sf := stdioFile{
 		in: in,
@@ -54,7 +53,7 @@ func TestStdioFileRead(t *testing.T) {
 }
 
 func TestStdioFileWrite(t *testing.T) {
-	f, err := ioutil.TempFile("", "stdio-write")
+	f, err := os.CreateTemp("", "stdio-write")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -69,7 +68,7 @@ func TestStdioFileWrite(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	written, err := ioutil.ReadFile(f.Name())
+	written, err := os.ReadFile(f.Name())
 	if err != nil {
 		t.Fatal(err)
 	}
