@@ -7,7 +7,6 @@ import (
 	"github.com/xitongsys/parquet-go/common"
 	"github.com/xitongsys/parquet-go/parquet"
 	"github.com/xitongsys/parquet-go/schema"
-	"github.com/xitongsys/parquet-go/types"
 )
 
 var (
@@ -89,7 +88,7 @@ func NewSchemaHandlerFromArrow(s IntermediateSchema) (*schema.SchemaHandler, err
 func arrowFieldToParquetSchemaInfo(f arrow.Field) ([]*parquet.SchemaElement, []*common.Tag, error) {
 	// primitive types
 	if tn, ok := arrowToParquetPrimitiveType[f.Type]; ok {
-		t, ct := types.TypeNameToParquetType(tn, "")
+		t, ct := typeNameToParquetType(tn, "")
 		e := &parquet.SchemaElement{
 			Type:           t,
 			Name:           f.Name,

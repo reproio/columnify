@@ -11,8 +11,12 @@ type jsonlInnerDecoder struct {
 }
 
 func newJsonlInnerDecoder(r io.Reader) *jsonlInnerDecoder {
+	nS := bufio.NewScanner(r)
+	bufferSize := 16 * 1024 * 1024
+	buf := make([]byte, 1024*1024)
+	nS.Buffer(buf, bufferSize)
 	return &jsonlInnerDecoder{
-		s: bufio.NewScanner(r),
+		s: nS,
 	}
 }
 
