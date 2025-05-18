@@ -12,6 +12,8 @@ cloud.google.com/go/storage v1.27.0 h1:YOO045NZI9RKfCj1c5A/ZtuuENUc8OAW+gHdGnDgy
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171 h1:nwdeQV2pNjaTv3os4N4/bKDqv0PxW/9DoEAdtW6sY9o=
 github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171/go.mod h1:LBP+tS9C2iiUoR7AGPaZYY+kjXgB5eZxZKbSEBL9UFw=
+github.com/Songmu/go-ltsv v0.1.0 h1:veR1K9TBM0PiGpxKobcJg78uiZw/FPlStpgnCHe+4tQ=
+github.com/Songmu/go-ltsv v0.1.0/go.mod h1:s3gHTN5/CPDucnCAJxoFg35cXGk+X/b04pg627Kksi0=
 github.com/apache/arrow/go/arrow v0.0.0-20200504153628-d13e8f3ed647 h1:wGcHSHIBp0+NEMyXG2N0878wAl5J3yOFDU5RZECDSj8=
 github.com/apache/arrow/go/arrow v0.0.0-20200504153628-d13e8f3ed647/go.mod h1:QNYViu/X0HXDHw7m3KXzWSVXIbfUvJqBFe6Gj8/pYA0=
 github.com/apache/thrift v0.0.0-20181112125854-24918abba929 h1:ubPe2yRkS6A/X37s0TVGfuN42NV2h0BlzWj0X76RoUw=
