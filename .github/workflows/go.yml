@@ -44,7 +44,7 @@ jobs:
     - name: Integration test
       run: make it
 
-    - uses: codecov/codecov-action@29386c70ef20e286228c72b668a06fd0e8399192 # v1.5.2
+    - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
       with:
         file: ./cover.out
         flags: unittests
