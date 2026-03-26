@@ -56,7 +56,7 @@ func NewJsonStringConverter(r io.Reader, s *schema.IntermediateSchema, recordTyp
 		inner = newMsgpackInnerDecoder(r)
 
 	case RecordTypeTsv:
-		inner, err = newCsvInnerDecoder(r, s, TsvDelimiter)
+		inner, err = newTsvInnerDecoder(r, s)
 
 	default:
 		return nil, fmt.Errorf("unsupported record type %s: %w", recordType, ErrUnsupportedRecord)
