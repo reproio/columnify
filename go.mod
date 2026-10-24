@@ -1,6 +1,6 @@
 module github.com/reproio/columnify
 
-go 1.19
+go 1.24
 
 require (
 	cloud.google.com/go/bigquery v1.43.0
@@ -24,7 +24,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.6.0 // indirect
-	github.com/klauspost/compress v1.10.5 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/vmihailenco/tagparser v0.1.1 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/net v0.0.0-20221012135044-0b7e1fb9d458 // indirect
