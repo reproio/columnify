@@ -41,7 +41,7 @@ func NewJsonStringConverter(r io.Reader, s *schema.IntermediateSchema, recordTyp
 
 	switch recordType {
 	case RecordTypeAvro:
-		inner, err = newAvroInnerDecoder(r)
+		inner, err = newAvroInnerDecoder(r, s)
 
 	case RecordTypeCsv:
 		inner, err = newCsvInnerDecoder(r, s, CsvDelimiter)
