@@ -52,6 +52,8 @@ github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapp
 github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.57.0/go.mod h1:YqwkQPrWSC7+byyc1VlKbWLBF5JsW5IoL6xUkemYSXk=
 github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171 h1:nwdeQV2pNjaTv3os4N4/bKDqv0PxW/9DoEAdtW6sY9o=
 github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171/go.mod h1:LBP+tS9C2iiUoR7AGPaZYY+kjXgB5eZxZKbSEBL9UFw=
+github.com/Songmu/go-ltsv v0.1.0 h1:veR1K9TBM0PiGpxKobcJg78uiZw/FPlStpgnCHe+4tQ=
+github.com/Songmu/go-ltsv v0.1.0/go.mod h1:s3gHTN5/CPDucnCAJxoFg35cXGk+X/b04pg627Kksi0=
 github.com/andybalholm/brotli v1.2.3 h1:8H1qwOkl2LPfjf3YezB90JnCliZb6SInJ/OJkEbA5NQ=
 github.com/andybalholm/brotli v1.2.3/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
 github.com/apache/arrow-go/v18 v18.8.0 h1:BLOzbPv7bxMPgXPacAg6HQjnxupYsZzC4tf+FkqPU/M=
