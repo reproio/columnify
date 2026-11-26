@@ -1,7 +1,7 @@
 .PHONY: init
 init:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.1
-	go install github.com/goreleaser/goreleaser@v0.183.0
+	go install github.com/goreleaser/goreleaser/v2@v2.20.3
 	go install github.com/Songmu/gocredits/cmd/gocredits@v0.2.0
 
 .PHONY: build
@@ -70,7 +70,7 @@ it: build
 # Set GITHUB_TOKEN and create release git tag
 .PHONY: release
 release:
-	goreleaser --rm-dist
+	goreleaser release --clean
 
 .PHONY: CREDITS
 CREDITS:
