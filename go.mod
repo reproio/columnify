@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	cloud.google.com/go/bigquery v1.86.3
 	github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171
-	github.com/apache/arrow/go/arrow v0.0.0-20200730104253-651201b0f516
+	github.com/apache/arrow/go/arrow v0.0.0-20211112161151-bc219186db40
 	github.com/linkedin/goavro/v2 v2.9.8
 	github.com/vmihailenco/msgpack/v4 v4.3.12
 	github.com/xitongsys/parquet-go v1.6.2
