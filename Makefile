@@ -1,8 +1,8 @@
 .PHONY: init
 init:
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.1
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0
 	go install github.com/goreleaser/goreleaser/v2@v2.20.3
-	go install github.com/Songmu/gocredits/cmd/gocredits@v0.2.0
+	go install github.com/Songmu/gocredits/cmd/gocredits@v1.1.0
 
 .PHONY: build
 build:
