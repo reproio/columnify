@@ -11,6 +11,9 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
 
     - name: Check out code into the Go module directory
@@ -44,7 +47,8 @@ jobs:
     - name: Integration test
       run: make it
 
-    - uses: codecov/codecov-action@29386c70ef20e286228c72b668a06fd0e8399192 # v1.5.2
+    - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
       with:
-        file: ./cover.out
+        files: ./cover.out
         flags: unittests
+        use_oidc: true
